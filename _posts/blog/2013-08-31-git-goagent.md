@@ -1,3 +1,10 @@
+---
+layout:     post
+title:      使用GoAgent代理访问GitHub
+category: blog
+description: 在大陆活着是那么的艰难
+---
+
 Author：华为云计算工程师 [孔令贤](http://weibo.com/lingxiankong)  
 团队：[Huawei OpenStack Team](http://openstack-huawei.github.io/)
 
