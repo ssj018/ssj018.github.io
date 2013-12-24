@@ -2,7 +2,7 @@
 layout:     post
 title:      关于python中的setup.py
 category: blog
-description: 关于打包和分发，我其实很不是特别的清楚整个流程
+description: 关于打包和分发，我其实也不是特别的清楚整个流程
 ---
 
 声明：  
