@@ -3,6 +3,7 @@ layout:     post
 title:      使用GoAgent代理访问GitHub
 category: blog
 description: 在大陆活着是那么的艰难
+tags: github goagent
 ---
 
 声明：  
