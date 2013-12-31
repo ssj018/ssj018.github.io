@@ -245,7 +245,7 @@ setup.cfg文件的形式类似于
 **Distutils2** is a new distutils library, started as a fork of the distutils codebase, with good ideas taken from setup tools (of which some were thoroughly discussed in PEPs), and a basic installer inspired by pip. The actual name you use to import Distutils2 is packaging in the Python 3.3+ standard library, or distutils2 in 2.4+ and 3.1–3.2. (A backport will be available soon.) Distutils2 did not make the Python 3.3 release, and it was put on hold.
 
 ## PBR
-[pbr](https://pypi.python.org/pypi/pbr)是setuptools的辅助工具，最初是为OpenStack开发，基于[d2to1](https://pypi.python.org/pypi/d2to1)。  
+[pbr](https://pypi.python.org/pypi/pbr)是setuptools的辅助工具，最初是为OpenStack开发(https://launchpad.net/pbr)，基于[d2to1](https://pypi.python.org/pypi/d2to1)。  
 > A library for managing setuptools packaging needs in a consistent manner.
 
 pbr会读取和过滤setup.cfg中的数据，然后将解析后的数据提供给setup.py作为参数。包含如下功能：  
