@@ -235,6 +235,39 @@ setup.cfg文件的形式类似于
 	    extras_require = dict(reST = "Docutils>=0.3.5")
 	)
 
+### Setuptools中的dependency_links
+Setuptools有一个功能叫做 dependency_links
+
+from setuptools import setup
+
+	setup(
+	    # ...
+	    dependency_links = [
+	        "http://packages.example.com/snapshots/",
+	        "http://example2.com/p/bar-1.0.tar.gz",
+	    ],
+	)
+
+这一功能除去了依赖的抽象特性，直接把依赖的获取url标在了setup.py里。就像在Go语言中修改依赖包一样，我们只需要修改依赖链中每个包的 dependency_links 。
+
+### 管理依赖
+我们写依赖声明的时候需要在 setup.py 中写好抽象依赖（install_requires），在 requirements.txt 中写好具体的依赖，但是我们并不想维护两份依赖文件，这样会让我们很难做好同步。 requirements.txt 可以更好地处理这种情况，我们可以在有 setup.py 的目录里写下一个这样的 requirements.txt
+
+	--index https://pypi.python.org/simple/
+	
+	-e .
+
+这样 pip install -r requirements.txt 可以照常工作，它会先安装该文件路径下的包，然后继续开始解析抽象依赖，结合 --index 选项后转换为具体依赖然后再安装他们。
+
+这个办法可以让我们解决一种类似这样的情形：比如你有两个或两个以上的包在一起开发但是是分开发行的，或者说你有一个尚未发布的包并把它分成了几个部分。如果你的顶层的包 依然仅仅按照“名字”来依赖的话，我们依然可以使用 requirements.txt 来安装开发版本的依赖包:
+
+	--index https://pypi.python.org/simple/
+	
+	-e https://github.com/foo/bar.git#egg=bar
+	-e .
+
+这会首先从 https://github.com/foo/bar.git 来安装包 bar ， 然后进行到第二行 -e . ，开始安装 setup 中的抽象依赖，但是包 bar 已经安装过了， 所以 pip 会跳过安装。
+
 ## Differences between distribute, distutils, setuptools and distutils2
 **Distutils** is the standard tool used for packaging. It works rather well for simple needs, but is limited and not trivial to extend.
 
@@ -252,6 +285,8 @@ pbr会读取和过滤setup.cfg中的数据，然后将解析后的数据提供�
 1、从git中获取Version、AUTHORS and ChangeLog信息  
 2、Sphinx Autodoc。pbr会扫描project，找到所有模块，生成stub files  
 3、Requirements。pbr会读取requirements.txt，生成setup函数需要的`install_requires/tests_require/dependency_links`  
+>这里需要注意，在requirements.txt文件的头部可以使用：`--index https://pypi.python.org/simple/`，这一行把一个抽象的依赖声明如 requests==1.2.0 转变为一个具体的依赖声明 requests 1.2.0 from pypi.python.org/simple/   
+
 4、long_description。从README.rst, README.txt or README file中生成`long_description`参数
 
 使用pbr很简单：
