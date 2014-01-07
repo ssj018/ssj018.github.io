@@ -303,6 +303,13 @@ pbr会读取和过滤setup.cfg中的数据，然后将解析后的数据提供�
 3、update_catalog  
 类似于msgmerge，it updates an existing translations catalog based on a PO template file (POT).
 
+## setup.py和pip
+表面上，`python setup.py install`和`pip install`都是用来安装python包的，实际上，`pip`提供了更多的特性，更易于使用。体现在以下几个方面：
+
+- pip会自动下载依赖，而如果使用setup.py，则需要手动搜索和下载；
+- pip会自动管理包的信息，使卸载/更新更加方便和容易，使用`pip uninstall`即可。而使用setup.py，必须手动删除，有时容易出错。
+- pip提供了对`virtualenv`更好的整合。
+
 ## 结语
 OK，讲了这么多琐碎的东西，现在去看看Nova或Ceilometer的setup脚本，是不是一下清晰了很多？！但说实话，setup.py的使用，我还不能讲的特别清楚，需要在后续的实战中学习。
 
