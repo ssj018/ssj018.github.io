@@ -229,6 +229,15 @@ dest - 解析后的参数名称，默认情况下，对于可选参数选取最�
 
 但个人感觉[clize][]与[argparse][]和[docopt][]比起来，支持的功能相对还比较少，而且不容易上手（因为要熟悉相关的各种装饰器及其参数的使用），要支持高级解析功能，代码写起来比较费劲。
 
+## argparse在OpenStack中的使用
+OpenStack各个组件都有相应的命令行工具，以novaclient为例，就充分利用了[argparse][]来实现命令行的解析。
+
+在novaclient脚本的开始处，就是[argparse][]的典型用法：  
+![](/images/2014-01-14-command-line-parser/1.png)  
+其中`NovaClientArgumentParser`就是继承自`argparse.ArgumentParser`，接下来就是添加Sub-commands，然后对命令行参数进行解析:    
+![](/images/2014-01-14-command-line-parser/2.png)  
+如果熟悉了上面对[argparse][]的讲解，基本上就可以开始进行novaclient的开发了。
+
 [argparse]: http://docs.python.org/2/howto/argparse.html  
 [clize]: http://clize.readthedocs.org/en/latest/
 [docopt]: http://docopt.org/
