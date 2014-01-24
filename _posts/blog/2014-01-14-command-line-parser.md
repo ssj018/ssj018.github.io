@@ -137,6 +137,8 @@ dest - 解析后的参数名称，默认情况下，对于可选参数选取最�
     >>> parser.add_argument('bar')
     >>> parser.parse_known_args(['--foo', '--badger', 'BAR', 'spam'])
     (Namespace(bar='BAR', foo=True), ['--badger', 'spam'])
+	
+对于argparse的高级使用，建议直接看一下OpenStack中Oslo组件的源码，会受益匪浅的。	
 
 ## docopt
 [docopt][]就比较强大了，它是根据你自己写的help messages（文档描述），自动为你生成parser。使用之前需要下载[相应的库](https://pypi.python.org/pypi/docopt)，[这里](http://try.docopt.org/)有个界面可以试用一下[docopt][]的强大，借用官方的一个例子：
