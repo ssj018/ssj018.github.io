@@ -1,4 +1,4 @@
----
+h---
 layout: post
 title: Python中的命令行解析工具介绍
 description: 如果要写一个python命令行程序，对于不会前端的人来说，如何展现程序的界面，对使用者就显得极其重要。本文选取了笔者所知的四种方式，做一个大致的讲解。
@@ -61,7 +61,7 @@ category: blog
 
 每个参数解释如下:  
 name or flags - 参数的名字.  
-action - 遇到参数时的动作，默认值是store。store_const，表示赋值为const；append，将遇到的值存储成列表；count，存储遇到的次数；此外，也可以继承argparse.Action自定义参数解析；  
+action - 遇到参数时的动作，默认值是store。store_const，表示赋值为const；append，将遇到的值存储成列表，也就是如果参数重复则会保存多个值; append_const，将参数规范中定义的一个值保存到一个列表；count，存储遇到的次数；此外，也可以继承argparse.Action自定义参数解析；  
 nargs - 参数的个数，可以是具体的数字，或者是?号，当不指定值时对于Positional argument使用default，对于Optional argument使用const；或者是*号，表示0或多个参数；或者是+号表示1或多个参数.  
 const - action和nargs所需要的常量值.  
 default - 不指定参数时的默认值.  
