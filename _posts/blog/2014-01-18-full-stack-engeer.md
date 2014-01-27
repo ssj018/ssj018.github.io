@@ -8,7 +8,7 @@ category: blog
 声明：  
 本博客欢迎转发，但请保留原作者信息!  
 新浪微博：@孔令贤HW；  
-博客地址：http://lingxiankong.github.io/  
+博客地址：<http://lingxiankong.github.io/>  
 内容系本人及本人团队学习、研究和总结，如有雷同，实属荣幸！
 
 最近IT届开始流行全栈工程师（Full Stack Developer ）的说法，什么是全栈工程师可以参考[这里](http://www.laurencegellert.com/2012/08/what-is-a-full-stack-developer/)。Facebook 工程师说 Facebook 只招 full stack engineer，那我就来说说 Facebook engineer 都是怎样的人。
