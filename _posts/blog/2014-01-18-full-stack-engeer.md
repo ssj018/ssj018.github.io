@@ -1,6 +1,6 @@
 ---
 layout: post
-title: [转]全栈工程师带来的思考
+title: 全栈工程师带来的思考
 description: 来自知乎的一些回答很受启发，推荐。
 category: blog
 ---
