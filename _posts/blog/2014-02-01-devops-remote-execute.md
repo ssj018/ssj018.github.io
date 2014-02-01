@@ -52,9 +52,10 @@ pnuke--并行地在多个远程主机上杀死进程
 prsync--使用rsync协议从本地计算机同步到远程主机
 
 ## Fabric
-[fabric][]是一个python命令行工具，通过ssh来部署应用或者完成常规运维任务，安装后，通过fab命令指定fabfile.py文件（当然可以指定为其他文件）中的任务函数。[fabric][]的牛逼之处在于它能很灵活的为不同的任务配置不同的执行机，这是ssh或pssh很难自动做到的。网上有很多现成的[fabric][]的教程，我这里就不细讲。列一些我认为比较重要或比较有特色的特性。
+[fabric][]是一个python命令行工具，通过ssh来部署应用或者完成常规运维任务，安装后，通过fab命令指定fabfile.py文件（当然可以指定为其他文件）中的任务函数。[fabric][]的牛逼之处在于**它能很灵活的为不同的任务配置不同的执行机**，这是ssh或pssh很难自动做到的。网上有很多现成的[fabric][]的教程，我这里就不细讲。列一些我认为比较重要或比较有特色的特性。
 
-任务可以串行(@serial)或并行(@parallel(pool_size=5))执行，执行时每个任务都有各自的hosts列表，命令行中指定主机的优先级最高，会覆盖其他地方的配置. `fab mytask:hosts="host1;host2"`；  
+任务可以串行(@serial)或并行(@parallel(pool_size=5))执行，执行时每个任务都有各自的hosts列表，命令行中为单个任务指定主机的优先级最高，会覆盖其他地方的配置.  
+`fab mytask:hosts="host1;host2"`；  
 也可以在代码中通过env.hosts配置，可以在一个task中修改该变量，会影响后面所有的任务；  
 或者使用fabric.api.hosts或roles装饰器，如果同时指定会合并，会覆盖env的配置；  
 或者直接通过命令行指定，`fab -H host1,host2 mytask`，最早被解析，会被覆盖，或被添加: env.hosts.extend(['host3', 'host4'])
@@ -94,7 +95,7 @@ env.dedupe_hosts置为False不会过滤重复的主机
 命令行中执行：fab deploy:db
 
 命令行的使用 ：  
-http://docs.fabfile.org/en/1.8/usage/fab.html
+<http://docs.fabfile.org/en/1.8/usage/fab.html>
 
 [fabric]: http://docs.fabfile.org/
 [PSSH]: https://code.google.com/p/parallel-ssh/
