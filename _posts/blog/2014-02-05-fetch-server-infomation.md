@@ -11,8 +11,6 @@ category: blog
 博客地址：<http://lingxiankong.github.io/>  
 内容系本人及本人团队学习、研究和总结，如有雷同，实属荣幸！
 
-# OpenStack中虚拟机信息注入
-
 虚拟机上如果跑业务，启动时不可避免的要从外界获取一些信息，在OpenStack中，这些信息通常是，密钥信息， 网络信息，metadata， root密码，自定义文件等。这些信息获取来源有如下几种。
 
 ## Config Drive
