@@ -83,6 +83,9 @@ PTL（或者bp review团队成员），为bp设置优先级。如果经讨论认
 
 当开发者对该插件提交代码review时，会自动触发执行外部CI，并反馈结果（+/-1），当然，为了提供用例失败时的分析，最好提供日志下载功能。
 
+关于OpenStack CI和Vendor CI的关系可以参考下图：  
+![](/images/2014-02-08-openstack-blueprint/2.png)
+
 ## Nova driver
 Nova对于新增driver的要求同Neutron一样，要求提供第三方的CI接入。目前（20140207），Nova中的driver按照功能满足度以及CI接入要求，大致分为三级：  
 GroupA：包含UT和社区功能测试，仅有libvirt (qemu/KVM on x86)满足  
