@@ -11,8 +11,6 @@ category: blog
 博客地址：<http://lingxiankong.github.io/>  
 内容系本人学习、研究和总结，如有雷同，实属荣幸！
 
-# blueprint
-
 ## blueprint简介和生命周期
 简单来说，blueprint主要阐述了一些想法，例如新功能或组件，跟踪相关开发人员完成的进度，通常用来维护新特性实现的完整记录。从第一个想法到完整实现，有序管理版本发布。OpenStack使用launchpad作为协作开发平台，每个项目都有自己页面。与Bug的区别：A bug is a description of a problem, and a blueprint is a description of a solution。
 
