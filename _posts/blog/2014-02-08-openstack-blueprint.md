@@ -192,3 +192,4 @@ OpenStack TC（Technical Commitee）考虑一个孵化项目，主要从它的�
 <https://wiki.openstack.org/wiki/HypervisorSupportMatrix>  
 <https://wiki.openstack.org/wiki/HypervisorSupportMatrix/DeprecationPlan>  
 <https://github.com/openstack/governance/blob/master/reference/incubation-integration-requirements>  
+<https://wiki.openstack.org/wiki/Governance/NewProjects>  
