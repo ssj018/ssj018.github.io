@@ -103,7 +103,12 @@ GroupC：没有提供第三方CI的driver都属于该类。对于GroupC的driver
 ## Cinder driver
 对于Cinder的插件接入，目前尚未看到官方的wiki，但从之前的讨论中，可以看到Cinder也已经开始考虑类似的约束：  <http://markmail.org/message/k7c63nsfsbrtizwx#query:+page:1+mid:hedymzw5elcnqgn7+state:results>
 
-## Incubation
+## projects related to openstack
+一个OpenStack的周边项目，从出生之日起就想着有朝一日能够与OpenStack正式版本集成，得到来自全世界各地开发者的共同维护，从项目的产生到成功进入OpenStack官方项目，有很长的路要走。  
+![](/images/2014-02-08-openstack-blueprint/3.png)  
+项目产生之后，经过自身的发展，如果足够成熟，就能[申请孵化](https://wiki.openstack.org/wiki/Governance/Incubation_Request)，孵化是项目进入正式项目前必经的阶段，旨在缩小与正式项目的管理和开发模式上的差距，这个过程至少要经历两个开发周期。在开发周期的最后，由TC对项目进行review，由各个项目的PTL进行投票决定是否将其纳入正式项目。
+
+### Incubation
 OpenStack TC（Technical Commitee）考虑一个孵化项目，主要从它的范围和对已有项目的互补性，以及项目的技术选型方面考虑，并且需要满足一定的要求（包括但不限于）。
 
 1、项目范围  
@@ -142,7 +147,7 @@ OpenStack TC（Technical Commitee）考虑一个孵化项目，主要从它的�
 - 项目的开发者必须签署CLA
 - 项目没有商标法务问题
 
-## Graduation to integrated
+### Graduation to integrated
 在OpenStack每一个发布周期，TC都会重新审视孵化项目是否满足集成（integrated）要求，如果满足，就会纳入下一个开发周期并随下一版本发布。要求包括但不限于：
 
 1、项目范围  
