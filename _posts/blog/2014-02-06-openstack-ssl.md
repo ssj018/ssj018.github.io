@@ -174,8 +174,23 @@ Heat中要调用不同组件的client，必须允许SSL配置，因为不同的�
 ## services behind web server
 虽然OpenStack支持为不同的服务配置SSL，但为了消息处理的一致性以及OpenStack服务处理消息的效率，最好的实践还是在所有SSL服务的前端统一处理SSL。OpenStack所有的服务都遵循WSGI标准，使得可以使用web server(比如Apache或是Nginx)作为OpenStack服务运行的容器，而由web server提供SSL服务。这里，我们使用Apache2 + mod_wsgi。
 
-### Keystone
+**Keystone**  
 Keystone已经支持运行在HTTPD下：<https://github.com/openstack/keystone/blob/master/doc/source/apache-httpd.rst>，需要的文件在[这里](https://github.com/openstack/keystone/tree/master/httpd)
+
+**Nova**  
+<http://andymc-stack.co.uk/2013/07/apache2-mod_wsgi-openstack-pt-2-nova-api-os-compute-nova-api-ec2/>
+
+**Cinder**  
+<http://andymc-stack.co.uk/2013/07/apache2-mod_wsgi-openstack-pt-4-cinder-api/>
+
+**Neutron**  
+<http://andymc-stack.co.uk/2013/07/apache2-mod_wsgi-openstack-pt-6-quantum-server/>
+
+**Glance**  
+<http://andymc-stack.co.uk/2013/07/apache2-mod_wsgi-openstack-pt-3-glance-api-glance-registry/>
+
+**Ceilometer**  
+<http://andymc-stack.co.uk/2013/07/apache2-mod_wsgi-openstack-pt-5-ceilometer-api/>
 
 ### Heat
 相关的[bug](https://bugs.launchpad.net/heat/+bug/1235555)：Heat API cannot cope with being behind an SSL terminator
