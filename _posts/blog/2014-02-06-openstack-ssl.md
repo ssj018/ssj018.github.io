@@ -178,7 +178,8 @@ Heat中要调用不同组件的client，必须允许SSL配置，因为不同的�
 Keystone已经支持运行在HTTPD下：<https://github.com/openstack/keystone/blob/master/doc/source/apache-httpd.rst>，需要的文件在[这里](https://github.com/openstack/keystone/tree/master/httpd)
 
 **Nova**  
-<http://andymc-stack.co.uk/2013/07/apache2-mod_wsgi-openstack-pt-2-nova-api-os-compute-nova-api-ec2/>
+<http://andymc-stack.co.uk/2013/07/apache2-mod_wsgi-openstack-pt-2-nova-api-os-compute-nova-api-ec2/>  
+<http://www.rackspace.com/blog/enabling-ssl-for-the-openstack-api/>
 
 **Cinder**  
 <http://andymc-stack.co.uk/2013/07/apache2-mod_wsgi-openstack-pt-4-cinder-api/>
