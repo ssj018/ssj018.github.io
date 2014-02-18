@@ -19,6 +19,15 @@ category: blog
       for arg in sys.argv[1:]:
         print (arg)
 
+## getopt
+getopt模块是原来的命令行选项解析器，支持UNIX函数getopt()建立的约定。它会解析一个参数序列，如sys.argv，并返回一个元祖序列和一个非选项参数序列。目前支持的选项语法包括短格式和长格式选项：`-a`, `-bval`, `-b val`, `--noarg`, `--witharg=val`, `--witharg val`。如果只是简单的命令行解析，getopt还是不错的选择。一个例子如下：
+
+    try:
+        options, remainder = getopt.getopt(sys.argv[1:], 'o:v', ['output=', 'verbose', 'version=',])
+    except getopt.GetoptError as err:
+        print 'ERROR:', err
+        sys.exit(1)
+
 ## argparse
 > optparse was deprecated since version 2.7 and will not be developed further; development will continue with the argparse module.
 
