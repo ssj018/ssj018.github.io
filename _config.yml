@@ -9,3 +9,8 @@ title: Kong's Blog
 url: http://lingxiankong.github.io
 feed: /atom.xml
 author_info: <a href="http://lingxiankong.github.io/">Lingxian Kong</a>
+
+analytics :
+  provider : google 
+  google : 
+      tracking_id : 'UA-48260695-1'
