@@ -1,7 +1,7 @@
 ---
 layout: post
-title: OpenStack社区周报第九期(02.15-02.27)
-description: OpenStack社区周报第九期(02.15-02.27)
+title: OpenStack社区动态第九期(02.15-02.27)
+description: OpenStack社区动态第九期(02.15-02.27)
 category: blog
 ---
 

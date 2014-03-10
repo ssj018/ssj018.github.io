@@ -1,7 +1,7 @@
 ---
 layout: post
-title: OpenStack社区周报第七期(01.17-02.02)
-description: OpenStack社区周报第七期(01.17-02.02)
+title: OpenStack社区动态第七期(01.17-02.02)
+description: OpenStack社区动态第七期(01.17-02.02)
 category: blog
 ---
 

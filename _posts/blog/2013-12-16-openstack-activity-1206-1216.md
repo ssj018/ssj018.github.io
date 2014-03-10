@@ -1,6 +1,6 @@
 ---
 layout: post
-title: OpenStack社区周报第四期(12.06-12.16)
+title: OpenStack社区动态第四期(12.06-12.16)
 description: 来自华为OpenStack社区团队出品的周报
 category: blog
 ---

@@ -1,6 +1,6 @@
 ---
 layout: post
-title: OpenStack社区周报第二期(11.22-11.28)
+title: OpenStack社区动态第二期(11.22-11.28)
 description: 来自华为OpenStack社区团队出品的周报
 category: blog
 ---
