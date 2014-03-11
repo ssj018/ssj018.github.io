@@ -37,7 +37,8 @@ VDI厂商[Virtual Bridges](http://vbridges.com/2014/02/18/virtual-bridges-announ
 因为OpenStack相对灵活的安装部署，大部分的贡献者都会在自己的个人主机上使用虚拟机搭建OpenStack开发环境，网上的文档有很多，看一下Rackspace的工程师是怎么玩的？  
 <http://www.rackspace.com/blog/inside-my-home-rackspace-private-cloud-openstack-lab-part-1-the-setup/>  
 <http://www.rackspace.com/blog/inside-my-home-rackspace-private-cloud-openstack-lab-part-2-the-networking/>  
-<http://www.rackspace.com/blog/inside-my-home-rackspace-private-cloud-openstack-lab-part-3-installing-a-high-availability-rackspace-private-cloud-with-chef-cookbooks/>
+<http://www.rackspace.com/blog/inside-my-home-rackspace-private-cloud-openstack-lab-part-3-installing-a-high-availability-rackspace-private-cloud-with-chef-cookbooks/>  
+<http://www.rackspace.com/blog/inside-my-home-rackspace-private-cloud-openstack-lab-part-4-neutron/>
 
 Icehouse发布在即，一些新的项目已经为Juno做准备，比如Murano，正在申请进入Juno的孵化项目。但Murano的境遇比较尴尬，因为其实它同时覆盖了Glance和Heat的功能，而OpenStack是不允许出现项目范围重复的。    
 <https://wiki.openstack.org/wiki/Murano/Incubation>
