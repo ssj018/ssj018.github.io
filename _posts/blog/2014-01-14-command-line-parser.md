@@ -27,6 +27,8 @@ getopt模块是原来的命令行选项解析器，支持UNIX函数getopt()建�
     except getopt.GetoptError as err:
         print 'ERROR:', err
         sys.exit(1)
+        
+简单说明，如果某个单字符选项需要参数，在他后面加冒号；对于长格式选项，要加等号。如果getopt在输入参数中遇到了'--'，解析会停止。
 
 ## argparse
 > optparse was deprecated since version 2.7 and will not be developed further; development will continue with the argparse module.
