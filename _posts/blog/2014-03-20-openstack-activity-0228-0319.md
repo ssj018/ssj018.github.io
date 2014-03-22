@@ -43,15 +43,15 @@ OpenStackClient release 0.3.1
 
 3.8,  Icehouse-3 development milestone available for Keystone, Glance, Nova, Horizon,
 Neutron, Cinder, Ceilometer, Heat, and Trove.  在过去6个月，共实现了 203 blueprints，修复了780 bugs fixed  
-https://launchpad.net/keystone/icehouse/icehouse-3  
-https://launchpad.net/glance/icehouse/icehouse-3  
-https://launchpad.net/nova/icehouse/icehouse-3  
-https://launchpad.net/horizon/icehouse/icehouse-3  
-https://launchpad.net/neutron/icehouse/icehouse-3  
-https://launchpad.net/cinder/icehouse/icehouse-3  
-https://launchpad.net/ceilometer/icehouse/icehouse-3  
-https://launchpad.net/heat/icehouse/icehouse-3  
-https://launchpad.net/trove/icehouse/icehouse-3  
+<https://launchpad.net/keystone/icehouse/icehouse-3>  
+<https://launchpad.net/glance/icehouse/icehouse-3>  
+<https://launchpad.net/nova/icehouse/icehouse-3>  
+<https://launchpad.net/horizon/icehouse/icehouse-3>  
+<https://launchpad.net/neutron/icehouse/icehouse-3>  
+<https://launchpad.net/cinder/icehouse/icehouse-3>  
+<https://launchpad.net/ceilometer/icehouse/icehouse-3>  
+<https://launchpad.net/heat/icehouse/icehouse-3>  
+<https://launchpad.net/trove/icehouse/icehouse-3>  
 
 3.8号，python-novaclient 2.17.0 released，支持新的API：[os-server-external-events](https://blueprints.launchpad.net/nova/+spec/admin-event-callback-api)
 
