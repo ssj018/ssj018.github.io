@@ -1,8 +1,8 @@
 ---  
-layout: post  
-title: 关于项目管理的一点体会  
-category: opinion  
-description: 1人100个月完成的项目，不是100个人1个月就可以完成  
+layout: post
+title: [转]关于项目管理的一点体会
+category: opinion
+description: 1人100个月完成的项目，不是100个人1个月就可以完成
 ---  
 
 本文转载自<http://uedc.163.com/8142.html>
