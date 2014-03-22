@@ -112,8 +112,8 @@ Heat will create resources in parallel. Each resource will be created as soon as
 fetch rules for a stack in 'watch\_rule'(name, rule, state, last\_evaluated, stack\_id, watch\_data, ) table
 
 ### preview stack
-related bp: https://blueprints.launchpad.net/heat/+spec/preview-stack
-related AWS feature: http://docs.aws.amazon.com/AWSCloudFormation/latest/APIReference/API_EstimateTemplateCost.html
+related bp: <https://blueprints.launchpad.net/heat/+spec/preview-stack>  
+related AWS feature: <http://docs.aws.amazon.com/AWSCloudFormation/latest/APIReference/API_EstimateTemplateCost.html>
 
 ### update stack
 the params of update-stack is almost the same with create-stack. In heat-engine:
