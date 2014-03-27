@@ -212,11 +212,11 @@ AWS::CloudFormation::WaitCondition通常和AWS::CloudFormation::WaitConditionHan
     +-----------------+----+------------------------+--------------------+----------------------+
 
 查看虚拟机启动过程，看到如下输出：  
-![](/image/2014-03-27-heat-waitcondition/1.png)
+![](/images/2014-03-27-heat-waitcondition/1.png)
 
 ## 代码讲解
 虽然是代码讲解，但我还是少贴点代码，毕竟是容易变动的东西，主要说一说代码背后的思路。还是以上面的template内容为例，模板中有三个资源，依赖关系是：  
-![](/image/2014-03-27-heat-waitcondition/2.png)
+![](/images/2014-03-27-heat-waitcondition/2.png)
 
 在资源映射中，'AWS::CloudFormation::WaitConditionHandle'对应于WaitConditionHandle对象，在创建该资源时，会先创建一个用户：
 
