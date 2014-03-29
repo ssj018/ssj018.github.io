@@ -119,7 +119,7 @@ related AWS feature: <http://docs.aws.amazon.com/AWSCloudFormation/latest/APIRef
 the params of update-stack is almost the same with create-stack. In heat-engine:
 
 * get the existing stack from the db, validate its status(can not be suspend or in-progress)
-* get new stack object
+* get new stack object, validate
 * get a thread from ThreadGroupManager, related to the existing stack
 * call update method of existing stack object
 * in the 'taskrunner',  change the db state, then backup stack(original name is suffixed with * ), then update.
