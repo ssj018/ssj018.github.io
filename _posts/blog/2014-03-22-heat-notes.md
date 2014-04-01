@@ -122,7 +122,10 @@ the params of update-stack is almost the same with create-stack. In heat-engine:
 * get new stack object, validate
 * get a thread from ThreadGroupManager, related to the existing stack
 * call update method of existing stack object
-* in the 'taskrunner',  change the db state, then backup stack(original name is suffixed with * ), then update.
+* in the 'taskrunner',  change the db state(in_progress), then backup stack(original name is suffixed with \* ), then update.
+* delete the resources not in the new stack, update existed resources, add new resources. 
+
+debug log: "Deleting backup resource"
 
 ## Software Deployment
 There are several bootstrap methods for software deployment:   
