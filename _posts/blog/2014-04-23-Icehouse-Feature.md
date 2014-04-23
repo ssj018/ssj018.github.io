@@ -23,7 +23,7 @@ OpenStack Icehouse于4.17正式发布，release notes也在第一时间发布。
 * 对于XML的支持目前已被废弃（depracated），在下个版本会被正式废除；
 * 提供了ExtendedServicesDelete在扩展API，彻底在系统中删除计算结点；
 * 在V3 API中，允许暴露部分而不是全部的管理员操作；
-* 由于在Keystone中允许租房名称不唯一，所以Nova与Neutron交互时，采用租户标识而不是租房名称；
+* 由于在Keystone中允许租户名称不唯一，所以Nova与Neutron交互时，采用租户标识而不是租户名称；
 * nova hypervisor-show可以得到hypervisor的IP地址；
 
 ### 调度
