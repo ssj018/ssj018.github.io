@@ -37,24 +37,24 @@ Mirantis最近可以说是好事成双，在与爱立信签订三千万美元大
 4.11号，社区各个项目的PTL竞选结果出炉：  
 * Compute (Nova): Michael Still  
 * Object Storage (Swift): John Dickinson  
-* Image Service (Glance): Mark Washenberger  
-* Identity (Keystone): Dolph Mathews
-* Dashboard (Horizon): David Lyle
-* Networking (Neutron): Kyle Mestery
-* Block Storage (Cinder): John Griffith
-* Metering/Monitoring (Ceilometer): Eoghan Glynn
-* Orchestration (Heat): Zane Bitter
-* Database Service (Trove): Nikhil Manchanda
-* Bare metal (Ironic): Devananda van der Veen
-* Common Libraries (Oslo): Doug Hellmann
-* Infrastructure: Jim Blair
-* Documentation: Anne Gentle
-* Quality Assurance (QA): Matt Treinish
-* Deployment (TripleO): Robert Collins
-* Devstack (DevStack): Dean Troyer
-* Release cycle management: Thierry Carrez
-* Queue Service (Marconi): Kurt Griffiths
-* Data Processing Service (Sahara): Sergey Lukjanov
+* Image Service (Glance): Mark Washenberger    
+* Identity (Keystone): Dolph Mathews  
+* Dashboard (Horizon): David Lyle  
+* Networking (Neutron): Kyle Mestery  
+* Block Storage (Cinder): John Griffith  
+* Metering/Monitoring (Ceilometer): Eoghan Glynn  
+* Orchestration (Heat): Zane Bitter  
+* Database Service (Trove): Nikhil Manchanda  
+* Bare metal (Ironic): Devananda van der Veen  
+* Common Libraries (Oslo): Doug Hellmann  
+* Infrastructure: Jim Blair  
+* Documentation: Anne Gentle  
+* Quality Assurance (QA): Matt Treinish  
+* Deployment (TripleO): Robert Collins  
+* Devstack (DevStack): Dean Troyer  
+* Release cycle management: Thierry Carrez  
+* Queue Service (Marconi): Kurt Griffiths  
+* Data Processing Service (Sahara): Sergey Lukjanov  
 * Key Management Service (Barbican): Jarret Raim
 
 再次讨论VMware和OpenStack的关系，[Going Hybrid With vSphere And OpenStack](http://www.rackspace.com/blog/going-hybrid-with-vsphere-and-openstack/)
