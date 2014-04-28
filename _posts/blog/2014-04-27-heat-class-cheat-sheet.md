@@ -161,7 +161,9 @@ Stack初始化时，会确保global env的初始化。
 
 `adopt(self)`：从已有资源创建stack，需要在创建stack时提供`adopt_stack_data`参数
 
-`update(self, newstack)`：更新stack。先将旧stack在db中备份（名称以星号结尾，ownerid就是stack的id），然后更新，最后再删除备份的数据。更新的动作发生在engine/update.py文件中。更新时，会先清除资源（destroy），然后构造一个Dependencies对象，包含新stack资源的顺序、旧stack资源的逆序（因为涉及删除），以及相同名称的旧资源对新资源的依赖（保证新资源创建后才能删除旧资源）。
+`update(self, newstack)`：更新stack。先将旧stack在db中备份（名称以星号结尾，ownerid就是stack的id，仅备份stack的信息，里面resource的信息没有备份），然后更新，最后再删除备份的数据，更新stack。更新的动作发生在engine/update.py文件中。更新时，会构造一个Dependencies对象，包含新stack资源的顺序、旧stack资源的逆序（因为涉及删除），以及相同名称的旧资源对新资源的依赖（保证新资源创建后才能删除旧资源）。分情况处理：  
+1、新stack中的资源。如果资源在旧stack中有，更新旧资源；否则，创建新的资源。  
+2、旧stack中的资源。如果资源在新stack中有，返回；否则，删除旧stack中的实际资源和资源对象。
 
 `delete(self, action=DELETE, backup=False)`：删除stack。删除backup，逆序依次删除资源，删除user_creds表记录，去keystone删除trust，删除domain_project，最后删除db记录。
 
