@@ -38,7 +38,8 @@ ISO第一作者：钱林
 二、使用BMC IP登录服务器，加载ISO，重启服务器  
 ![](/images/2014-04-29-openstack-icehouse-allinone/1.png)
 
-三、在弹出的安装选项中选择install，进入系统自动安装
+三、在弹出的安装选项中选择install，进入系统自动安装  
+![](/images/2014-04-29-openstack-icehouse-allinone/6.png)
 
 四、等待安装成功后进入系统，默认root密码：`Galax8800`  
 ![](/images/2014-04-29-openstack-icehouse-allinone/2.png)
@@ -70,9 +71,14 @@ OpenStack安装完成：
 ![](/images/2014-04-29-openstack-icehouse-allinone/5.png)
 
 ## 虚拟安装指导
-一、以root身份登录安装KVM的宿主机，将ISO镜像拷贝至空间足够的目录下（这里以/root/test/为例）
+一、以root身份登录安装KVM的宿主机，将ISO镜像拷贝至空间足够的目录下（这里以/home为例）
 
-二、运行命令：
+二、运行命令：  
+
+    qemu-img create -f qcow2 allinone.img 110G
+    qemu-kvm -hdb allinone.img -cdrom /home/openstack-allinone.iso -m 2048 -boot d -vnc :2
+    
+![](/images/2014-04-29-openstack-icehouse-allinone/7.png)
 
 三、后面可参考上述步骤
 
