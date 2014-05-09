@@ -71,6 +71,9 @@ OpenStack安装完成：
 ![](/images/2014-04-29-openstack-icehouse-allinone/5.png)
 
 ## 虚拟安装指导
+
+> 友情提示：虚拟安装目前暂不支持VMware Workstation安装，:(
+
 一、以root身份登录安装KVM的宿主机，将ISO镜像拷贝至空间足够的目录下（这里以/home为例）
 
 二、运行命令：  
