@@ -86,3 +86,5 @@ OpenStack安装完成：
 三、后面可参考上述步骤
 
 Enjoy！
+
+> 环境搭建完之后，可以参考[Huawei Icehouse All in One Operation Guide](http://lingxiankong.github.io/blog/2014/05/12/huawei-allinone-operation-guide/)来验证和使用业务。
