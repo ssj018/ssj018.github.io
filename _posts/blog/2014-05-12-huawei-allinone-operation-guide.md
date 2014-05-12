@@ -118,7 +118,7 @@ category: blog
     UVP:/home/kong # neutron router-gateway-set 2e9945aa-f636-468e-8d76-8386e3dfabd0 ded0dd2b-440a-4e9c-ba38-6df184747741
     Set gateway for router 2e9945aa-f636-468e-8d76-8386e3dfabd0
     
-3、创建虚拟机并验证VNC登陆  
+## 创建虚拟机并验证VNC登陆  
 
     UVP:/home/kong # nova boot cirros_vm --image 414bcb4d-8e68-4dfe-8d21-31e9bb3d26fd --flavor 1 --nic net-id=10504fd5-9c8e-4781-856f-a6d575be88a7 --key-name heathey
     UVP:/home/kong # nova get-vnc-console 735f0e66-19f9-40b1-9c13-4588051d7270  novnc
