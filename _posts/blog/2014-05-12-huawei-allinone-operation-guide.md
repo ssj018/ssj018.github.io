@@ -32,7 +32,7 @@ category: blog
     nova keypair-add heathey > heatkey.pem
     
 ## 创建网络  
-我服务器有三个网卡，eth0所在的网段是172.25.0.0/16，eth2所连接汇聚交换机端口上配置的网关为200.200.1.1/16，因此给Neutron分配的floatingIP段就比较随意了，我这里是200.200.200.100-120
+all in one的安装要求服务器有三个网卡，我的服务器eth0所在的网段是172.25.0.0/16，eth2(默认br-ex连接的网卡，all in one配置下，eth1其实用不到)所连接汇聚交换机端口上配置的网关为200.200.1.1/16，因此给Neutron分配的floatingIP段就比较随意了，我这里是200.200.200.100-120
 
     UVP:/home/kong # neutron net-create external_net1 --router:external=True
     Created a new network:
