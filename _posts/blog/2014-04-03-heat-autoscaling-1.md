@@ -1,7 +1,7 @@
 ---
 layout: post
-title: Heat中的AutoScaling
-description: Heat中的AutoScaling
+title: Heat中的AutoScaling(1)
+description: Heat中的AutoScaling(1)
 category: blog
 ---
 
