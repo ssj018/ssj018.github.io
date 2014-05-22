@@ -114,6 +114,8 @@ AutoScaling工作方式如下图：
 ## AutoScaling in OpenStack Icehouse
 在Heat中实现AutoScaling，也有几个资源定义：`OS::Heat::CWLiteAlarm`, `AWS::AutoScaling::LaunchConfiguration`, `AWS::AutoScaling::AutoScalingGroup`, `AWS::AutoScaling::ScalingPolicy`, `OS::Ceilometer::Alarm`, `OS::Ceilometer::CombinationAlarm`
 
+> 这里简单介绍下`OS::Heat::CWLiteAlarm`和`OS::Ceilometer::Alarm`，前者在资源创建时会创建watch\_rule记录，而后者会到Ceilometer创建Alarm资源，同时为了前向兼容，也会创建watch\_rule记录，但state是CEILOMETER\_CONTROLLED，此时像cfn-push-stats这样的脚本在调用heat-cloudwatch-api时就会将数据转发给Ceilometer。watch\_rule记录是在heat engine服务启动的循环任务中用到的，在循环任务中会调用WatchRule的evaluate方法。
+
 流程图如下：  
 ![](/images/2014-04-03-heat-autoscaling/3.png)
 
