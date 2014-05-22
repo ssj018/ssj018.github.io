@@ -43,6 +43,8 @@ category: blog
 
 `update(self, after, before=None, prev_resource=None)`：更新资源。如果前后的信息字典相同，直接返回；如果资源正在创建/更新/adopt，则抛异常；对更新的资源属性进行校验（properties.validate()）；调用handle_update
 
+`validate(self)`：校验资源。校验`DeletionPolicy`(若有)，校验资源属性(调用`properties.validate()`)
+
 `delete(self)`：删除资源。如果资源的action属性是init（即还没有创建），直接返回；根据DeletionPolicy（“Delete”或“Snapshot”）分别调用不同的函数；目前貌似还不支持“Retain”
 
 `destroy(self)`：资源的销毁。除了会调用delete，也会删除db中的资源；
@@ -161,7 +163,12 @@ Stack初始化时，会确保global env的初始化。
 
 `adopt(self)`：从已有资源创建stack，需要在创建stack时提供`adopt_stack_data`参数
 
-`update(self, newstack)`：更新stack。先将旧stack在db中备份（名称以星号结尾，ownerid就是stack的id，仅备份stack的信息，里面resource的信息没有备份），然后更新，最后再删除备份的数据，更新stack。更新的动作发生在engine/update.py文件中。更新时，会构造一个Dependencies对象，包含新stack资源的顺序、旧stack资源的逆序（因为涉及删除），以及相同名称的旧资源对新资源的依赖（保证新资源创建后才能删除旧资源）。分情况处理：  
+`update(self, newstack)`：更新stack。
+
+* 更新db的信息(action and status), 发送开始更新的通知, 将旧stack在db中备份（名称以星号结尾，ownerid就是stack的id），返回备份的stack对象，stack中的resource对象初始状态是(init, complete)
+* 更新stack对象的(内存)属性
+* 
+最后再删除备份的数据，更新stack。更新的动作发生在engine/update.py文件中。更新时，会构造一个Dependencies对象，包含新stack资源的顺序、旧stack资源的逆序（因为涉及删除），以及相同名称的旧资源对新资源的依赖（保证新资源创建后才能删除旧资源）。分情况处理：  
 1、新stack中的资源。如果资源在旧stack中有，更新旧资源；否则，创建新的资源。  
 2、旧stack中的资源。如果资源在新stack中有，返回；否则，删除旧stack中的实际资源和资源对象。
 
