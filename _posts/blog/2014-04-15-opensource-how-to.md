@@ -1,6 +1,6 @@
 ---
 layout: post
-title: 如何学习开源项目
+title: (转)如何学习开源项目
 description: 如何学习开源项目
 category: blog
 ---
