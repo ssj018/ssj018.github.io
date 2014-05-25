@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Python描述符（descriptor）解密
+title: (转)Python描述符（descriptor）解密
 description: Python描述符（descriptor）解密
 category: blog
 ---
