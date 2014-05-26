@@ -131,7 +131,7 @@ MapResourceInfo：关联单个映射，比如`OS::Networking::FloatingIp -> OS::
 
 `parse(self, stack, snippet)`：利用上述函数返回的映射，解析入参中的字典
 
-`validate(self)`：简单校验。看有无不存在的section。
+`validate(self)`：简单校验。看有无不存在的section，模板中包含最基本的resource资源，每个resource资源包含Type定义。
 
 > Heat目前实现的有HeatTemplateFormatVersion、AWSTemplateFormatVersion和heat_template_version（HOT）三种模板类型
 
