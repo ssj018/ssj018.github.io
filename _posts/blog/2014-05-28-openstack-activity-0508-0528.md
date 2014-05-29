@@ -72,10 +72,10 @@ OpenStack OVS GRE/VXLAN网络详解
 <http://blog.sina.com.cn/s/blog_6de3aa8a0101pfgz.html>
 
 ### Ceilometer
-Openstack ceilometer 宿主机监控模块扩展，来自[ECCP企业级云计算平台](eccp.zedata.cn)   
+Openstack ceilometer 宿主机监控模块扩展，来自[ECCP企业级云计算平台](http://eccp.zedata.cn)   
 <http://eccp.csdb.cn/blog/?p=415>
 
-Openstack ceilometer监控项扩展，同样来自[ECCP企业级云计算平台](eccp.zedata.cn)：  
+Openstack ceilometer监控项扩展，同样来自[ECCP企业级云计算平台](http://eccp.zedata.cn)：  
 <http://eccp.csdb.cn/blog/?p=352>
 
 ### Keystone
