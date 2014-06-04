@@ -24,12 +24,13 @@ category: blog
     -rw-r--r-- 1 root root   9159168 Jan 14  2013 cirros-0.3.0-i386-disk.img
     -rw-r--r-- 1 root root 213123072 Jan 14  2013 precise-server-cloudimg-i386-disk1.img
     
-注册(注意，在最后一步，我添加了一个密钥)：
+注册(注意，在最后一步，我添加了一个密钥并设置了正确的权限)：
 
     glance image-create --name="Ubuntu 12.04 cloudimg i386" --public --container-format=ovf --disk-format=qcow2 < /home/images/precise-server-cloudimg-i386-disk1.img
     glance image-create --name=cirros --public  --container-format=bare --disk-format=qcow2 < /home/images/cirros-0.3.0-i386-disk.img
     glance image-create --name="F17-x86_64-cfntools" --public --container-format=ovf --disk-format=qcow2 < /home/images/F17-x86_64-cfntools.qcow2
     nova keypair-add heathey > heatkey.pem
+    chmod 600 heatkey.pem
     
 ## 创建网络  
 all in one的安装要求服务器有三个网卡，我的服务器eth0所在的网段是172.25.0.0/16，eth2(默认br-ex连接的网卡，all in one配置下，eth1其实用不到)所连接汇聚交换机端口上配置的网关为200.200.1.1/16，因此给Neutron分配的floatingIP段就比较随意了，我这里是200.200.200.100-120
