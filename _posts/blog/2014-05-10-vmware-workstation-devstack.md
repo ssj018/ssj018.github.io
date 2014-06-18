@@ -103,6 +103,8 @@ vi /openstack/devstack/localrc #新建localrc文件
 看到下面这句话时，证明安装成功：  
 >2013-10-01 06:15:12 stack.sh completed in 676 seconds.  
 
+> 此时，再次建议为虚拟机创建第二个快照，以便恢复
+
 ## screen
 使用screen -r XXX时有时会出现：`Cannot open your terminal '/dev/pts/2' - please check.`的提示，不要急，使用如下方法解决：  
 使用root用户执行：
