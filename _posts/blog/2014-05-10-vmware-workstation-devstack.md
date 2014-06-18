@@ -41,6 +41,8 @@ index-url=http://mirrors.tuna.tsinghua.edu.cn/pypi/simple
 
 重新以root身份登录，以使pip源生效。
 
+>至此，准备工作结束。强烈建议此时为虚拟机创建快照，避免后续操作失误后，有洁癖的童鞋又要重新安装。
+
 ## 安装devstack
 假设后续都是在/openstack目录下操作。执行：
 
@@ -52,15 +54,15 @@ chown -R stack:stack /openstack/devstack
 su - stack  
 vi /openstack/devstack/localrc #新建localrc文件
 
-输入如下内容：
+输入如下内容(这里仅仅是参考，您可以根据需要自定义配置)：
 
 	# Misc
-	HOST_IP=192.168.70.132
-	DATABASE_PASSWORD=Galax8800
-	ADMIN_PASSWORD=Galax8800
-	SERVICE_PASSWORD=Galax8800
-	SERVICE_TOKEN=Galax8800
-	RABBIT_PASSWORD=Galax8800
+	HOST_IP=192.168.70.132 #修改为你的虚拟机IP
+	DATABASE_PASSWORD=password
+	ADMIN_PASSWORD=password
+	SERVICE_PASSWORD=password
+	SERVICE_TOKEN=password
+	RABBIT_PASSWORD=password
 	
 	# Enable Logging
 	
@@ -71,9 +73,6 @@ vi /openstack/devstack/localrc #新建localrc文件
 	# Pre-requisite
 	ENABLED_SERVICES=rabbit,mysql,key
     KEYSTONE_TOKEN_FORMAT=UUID
-	
-	# 使用csdn的代码仓库，也可以不使用
-	# GIT_BASE=https://code.csdn.net
 	
 	# Nova
 	ENABLED_SERVICES+=,n-api,n-crt,n-obj,n-cpu,n-cond,n-sch
@@ -100,7 +99,7 @@ vi /openstack/devstack/localrc #新建localrc文件
 	ENABLED_SERVICES+=,ceilometer-acompute,ceilometer-acentral,ceilometer-collector,ceilometer-api
 	ENABLED_SERVICES+=,ceilometer-alarm-notifier,ceilometer-alarm-evaluator
 
-保存文件，然后切换到stack用户执行`./stack.sh`，根据本机网速，自动安装all-in-one的devstack环境.  
+保存文件，切换到/openstack/devstack目录下执行`./stack.sh`，根据本机网速，自动安装all-in-one的devstack环境.  
 看到下面这句话时，证明安装成功：  
 >2013-10-01 06:15:12 stack.sh completed in 676 seconds.  
 
@@ -126,7 +125,7 @@ vi /openstack/devstack/localrc #新建localrc文件
 
 因为是在虚拟机中安装devstack，所以对于规格尽量占的资源少（主要是内存）因此修改数据库中的flavor：  
 
-	mysql -uroot -pGalax8800
+	mysql -uroot -ppassword
 	mysql> use nova;
 	mysql> update instance_types set memory_mb=100 where id=2;
 
