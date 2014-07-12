@@ -78,7 +78,7 @@ vi /openstack/devstack/localrc #新建localrc文件
     KEYSTONE_TOKEN_FORMAT=UUID
 	
 	# Nova
-	ENABLED_SERVICES+=,n-api,n-crt,n-obj,n-cpu,n-cond,n-sch
+	ENABLED_SERVICES+=,n-api,n-crt,n-obj,n-cpu,n-cond,n-sch,n-novnc
 	#IMAGE_URLS+=",https://launchpad.net/cirros/trunk/0.3.0/+download/cirros-0.3.0-x86_64-disk.img"
 	
 	#Horizon
