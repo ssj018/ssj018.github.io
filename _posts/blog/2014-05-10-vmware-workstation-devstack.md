@@ -66,6 +66,7 @@ vi /openstack/devstack/localrc #新建localrc文件
 	RABBIT_PASSWORD=password
     
     RECLONE=no
+    SERVICE_TIMEOUT=600
 	
 	# Enable Logging
 	LOGFILE=/opt/stack/logs/stack.sh.log
