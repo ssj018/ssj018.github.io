@@ -37,7 +37,8 @@ category: blog
 配置pip国内源，新建`~/.pip/pip.conf`文件，输入如下内容：
 
 >[global]  
-index-url=http://mirrors.tuna.tsinghua.edu.cn/pypi/simple
+index-url=http://mirrors.tuna.tsinghua.edu.cn/pypi/simple  
+# 或者豆瓣的源：index-url = http://pypi.douban.com/simple/
 
 重新以root身份登录，以使pip源生效。
 
@@ -63,11 +64,13 @@ vi /openstack/devstack/localrc #新建localrc文件
 	SERVICE_PASSWORD=password
 	SERVICE_TOKEN=password
 	RABBIT_PASSWORD=password
+    
+    RECLONE=no
 	
 	# Enable Logging
-	
 	LOGFILE=/opt/stack/logs/stack.sh.log
 	VERBOSE=True
+    LOG_COLOR=False
 	SCREEN_LOGDIR=/opt/stack/logs
 	
 	# Pre-requisite
@@ -80,12 +83,22 @@ vi /openstack/devstack/localrc #新建localrc文件
 	
 	#Horizon
 	ENABLED_SERVICES+=,horizon
+    # HORIZON_REPO=https://github.com/openstack/horizon
 	
 	# Glance
 	ENABLED_SERVICES+=,g-api,g-reg
 	
 	# Neutron
 	ENABLED_SERVICES+=,q-svc,q-agt,q-dhcp,q-l3,q-meta,neutron
+    # VLAN configuration
+    #Q_PLUGIN=ml2
+    #ENABLE_TENANT_VLANS=True
+    # GRE tunnel configuration
+    #Q_PLUGIN=ml2
+    #ENABLE_TENANT_TUNNELS=True
+    # VXLAN tunnel configuration
+    #Q_PLUGIN=ml2
+    #Q_ML2_TENANT_NETWORK_TYPE=vxlan 
 	
 	# Cinder
 	ENABLED_SERVICES+=,cinder,c-api,c-vol,c-sch
