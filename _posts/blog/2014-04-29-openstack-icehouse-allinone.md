@@ -60,7 +60,7 @@ ISO第一作者：钱林
 
 七、请喝杯茶，耐心等待...  
 
-八、验证安装。登录主机，查看健康检查的日志；登录Horizon页面  
+八、验证安装。登录主机，查看健康检查的日志；登录Horizon页面(admin/admin)  
 ![](/images/2014-04-29-openstack-icehouse-allinone/7-1.png)   
 ![](/images/2014-04-29-openstack-icehouse-allinone/7-2.png)
 
