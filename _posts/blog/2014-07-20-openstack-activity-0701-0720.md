@@ -1,7 +1,3 @@
-# OpenStack社区动态第十七期(0701-0720)
-
-Tags: 社区动态
-
 ---
 layout: post
 title: OpenStack社区动态第十七期(0701-0720)
