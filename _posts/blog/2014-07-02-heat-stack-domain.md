@@ -36,7 +36,7 @@ stack domain解决以下几个问题：
 
 3、创建domain管理员
 
-    UVP:/home/kong # openstack --os-token 2012 --os-url=http://172.25.150.8:5000/v3 --os-identity-api-version=3 user create --password Galax8800 --domain a660f3993095439d9abe9aa52ae3929e heat_domain_admin --description "Manages users and projects created by heat"
+    UVP:/home/kong # openstack --os-token 2012 --os-url=http://172.25.150.8:5000/v3 --os-identity-api-version=3 user create --password passwd --domain a660f3993095439d9abe9aa52ae3929e heat_domain_admin --description "Manages users and projects created by heat"
     +-------------+----------------------------------------------------------------------------------+
     | Field       | Value                                                                            |
     +-------------+----------------------------------------------------------------------------------+
@@ -62,10 +62,10 @@ stack domain解决以下几个问题：
 4、在Heat中配置  
 
     stack_domain_admin = heat_domain_admin
-    stack_domain_admin_password = Galax8800
+    stack_domain_admin_password = passwd
     stack_user_domain = a660f3993095439d9abe9aa52ae3929e
 
-这样，Heat在创建stack时资源时(比如waitconditionhandle)，会在`stack_domain_admin`内创建一个租户(与stack相关联，保存在stack的`stack_user_project_id`属性)，进而创建用户(保存在资源的`user_id`字段)，用户的角色由配置项`heat_stack_user_role`定义，默认值是`heat_stack_user`。
+这样，Heat在创建stack的资源时(比如waitconditionhandle)，会在`stack_domain_admin`内创建一个租户(与stack相关联，保存在stack的`stack_user_project_id`属性)，进而创建用户(保存在资源的`user_id`字段)，用户的角色由配置项`heat_stack_user_role`定义，默认值是`heat_stack_user`。
 
 ----------
 参考文档：  
