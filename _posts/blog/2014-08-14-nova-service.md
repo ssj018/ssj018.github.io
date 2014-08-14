@@ -51,8 +51,8 @@ X-Auth-Token: {token}
     }
 
 其中：  
-zone是服务所在的主机所属的availability zone，会查询aggregates数据表(和关联表metadata, host)；
-status是服务disable属性的体现，该属性可以直接通过API修改； 
+zone是服务所在的主机所属的availability zone，会查询aggregates数据表(和关联表metadata, host)；  
+status是服务disable属性的体现，该属性可以直接通过API修改;  
 state是服务真实的状态，是通过servicegroup api获取。每个服务在启动时会加入servicegroup，以db后端为例，会在服务中启动定时器，更新service表中的`report_count`的值，同时也会刷新更新时间，后续会根据这个更新时间确定服务的死活； 
 
 服务的删除会直接将db中的数据干掉。
