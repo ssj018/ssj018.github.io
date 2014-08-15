@@ -91,4 +91,8 @@ state是服务真实的状态，是通过servicegroup api获取。每个服务�
 同时，如果evacuate时没有指定目的主机，那么会走类似create vm的调度流程，就会检测节点服务的status and state。
 
 ### resize/code migration
+<<<<<<< HEAD
 resize虽然从功能上是“Use this function to convert an existing server to a different flavor, in essence, scaling the server up or down”，但内部实现其实是虚拟机冷迁移过程，所以，会有选择主机的过程，同create调度流程一样，会检测节点服务的status and state。
+=======
+resize虽然从功能上是“Use this function to convert an existing server to a different flavor, in essence, scaling the server up or down”，但内部实现其实是虚拟机冷迁移过程，所以，会有选择主机的过程，同create调度流程，会检测节点服务的status and state。
+>>>>>>> e716088230017fffa7276a1e642d1c63a64f62f9
