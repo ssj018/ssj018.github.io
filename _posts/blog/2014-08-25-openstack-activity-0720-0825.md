@@ -1,7 +1,7 @@
 ---
 layout: post
-title: OpenStack社区动态第十七期(0720-0825)
-description: OpenStack社区动态第十七期(0720-0825)
+title: OpenStack社区动态第十八期(0720-0825)
+description: OpenStack社区动态第十八期(0720-0825)
 category: blog
 ---
 
