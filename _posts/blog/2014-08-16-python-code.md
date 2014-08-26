@@ -88,3 +88,170 @@ Note: the notify() and notifyAll() methods don’t release the lock; this means 
     with Timer() as timer:
         func()
     return timer.duration()
+    
+## 元类
+参考来源：<http://www.liaoxuefeng.com/wiki/001374738125095c955c1e6d8bb493182103fac9270762a000/001386820064557c69858840b4c48d2b8411bc2ea9099ba000>
+
+`__new__()`方法接收到的参数依次是：  
+当前准备创建的类的对象；  
+类的名字；  
+类继承的父类集合；  
+类的方法集合；
+
+    class ModelMetaclass(type):
+        def __new__(cls, name, bases, attrs):
+            if name=='Model':
+                return type.__new__(cls, name, bases, attrs)
+            mappings = dict()
+            for k, v in attrs.iteritems():
+                if isinstance(v, Field):
+                    print('Found mapping: %s==>%s' % (k, v))
+                    mappings[k] = v
+            for k in mappings.iterkeys():
+                attrs.pop(k)
+            attrs['__table__'] = name # 假设表名和类名一致
+            attrs['__mappings__'] = mappings # 保存属性和列的映射关系
+            return type.__new__(cls, name, bases, attrs)
+            
+    class Model(dict):
+        __metaclass__ = ModelMetaclass
+
+        def __init__(self, **kw):
+            super(Model, self).__init__(**kw)
+
+        def __getattr__(self, key):
+            try:
+                return self[key]
+            except KeyError:
+                raise AttributeError(r"'Model' object has no attribute '%s'" % key)
+
+        def __setattr__(self, key, value):
+            self[key] = value
+
+        def save(self):
+            fields = []
+            params = []
+            args = []
+            for k, v in self.__mappings__.iteritems():
+                fields.append(v.name)
+                params.append('?')
+                args.append(getattr(self, k, None))
+            sql = 'insert into %s (%s) values (%s)' % (self.__table__, ','.join(fields), ','.join(params))
+            print('SQL: %s' % sql)
+            print('ARGS: %s' % str(args))
+            
+    class Field(object):
+        def __init__(self, name, column_type):
+            self.name = name
+            self.column_type = column_type
+        def __str__(self):
+            return '<%s:%s>' % (self.__class__.__name__, self.name)
+            
+    class StringField(Field):
+        def __init__(self, name):
+            super(StringField, self).__init__(name, 'varchar(100)')
+
+    class IntegerField(Field):
+        def __init__(self, name):
+            super(IntegerField, self).__init__(name, 'bigint')
+            
+    class User(Model):
+        # 定义类的属性到列的映射：
+        id = IntegerField('id')
+        name = StringField('username')
+        email = StringField('email')
+        password = StringField('password')
+
+    # 创建一个实例：
+    u = User(id=12345, name='Michael', email='test@orm.org', password='my-pwd')
+    # 保存到数据库：
+    u.save()
+    
+输出如下：
+    
+    Found model: User
+    Found mapping: email ==> <StringField:email>
+    Found mapping: password ==> <StringField:password>
+    Found mapping: id ==> <IntegerField:uid>
+    Found mapping: name ==> <StringField:username>
+    SQL: insert into User (password,email,username,uid) values (?,?,?,?)
+    ARGS: ['my-pwd', 'test@orm.org', 'Michael', 12345]
+    
+## SQLAlchemy简单使用
+
+    # 导入:
+    from sqlalchemy import Column, String, create_engine
+    from sqlalchemy.orm import sessionmaker
+    from sqlalchemy.ext.declarative import declarative_base
+
+    # 创建对象的基类:
+    Base = declarative_base()
+
+    # 定义User对象:
+    class User(Base):
+        # 表的名字:
+        __tablename__ = 'user'
+
+        # 表的结构:
+        id = Column(String(20), primary_key=True)
+        name = Column(String(20))
+
+    # 初始化数据库连接:
+    engine = create_engine('mysql+mysqlconnector://root:password@localhost:3306/test') # '数据库类型+数据库驱动名称://用户名:口令@机器地址:端口号/数据库名'
+    # 创建DBSession类型:
+    DBSession = sessionmaker(bind=engine)
+    # 创建新User对象:
+    new_user = User(id='5', name='Bob')
+    # 添加到session:
+    session.add(new_user)
+    # 提交即保存到数据库:
+    session.commit()
+    # 创建Query查询，filter是where条件，最后调用one()返回唯一行，如果调用all()则返回所有行:
+    user = session.query(User).filter(User.id=='5').one()
+    # 关闭session:
+    session.close()
+    
+## WSGI简单使用和Web框架Flask的简单使用
+
+    from wsgiref.simple_server import make_server
+
+    def application(environ, start_response):
+        start_response('200 OK', [('Content-Type', 'text/html')])
+        return '<h1>Hello, web!</h1>'
+
+    # 创建一个服务器，IP地址为空，端口是8000，处理函数是application:
+    httpd = make_server('', 8000, application)
+    print "Serving HTTP on port 8000..."
+    # 开始监听HTTP请求:
+    httpd.serve_forever()
+
+了解了WSGI框架，我们发现：其实一个Web App，就是写一个WSGI的处理函数，针对每个HTTP请求进行响应。  
+但是如何处理HTTP请求不是问题，问题是如何处理100个不同的URL。  
+一个最简单和最土的想法是从environ变量里取出HTTP请求的信息，然后逐个判断。
+    
+    from flask import Flask
+    from flask import request
+
+    app = Flask(__name__)
+
+    @app.route('/', methods=['GET', 'POST'])
+    def home():
+        return '<h1>Home</h1>'
+
+    @app.route('/signin', methods=['GET'])
+    def signin_form():
+        return '''<form action="/signin" method="post">
+                  <p><input name="username"></p>
+                  <p><input name="password" type="password"></p>
+                  <p><button type="submit">Sign In</button></p>
+                  </form>'''
+
+    @app.route('/signin', methods=['POST'])
+    def signin():
+        # 需要从request对象读取表单内容：
+        if request.form['username']=='admin' and request.form['password']=='password':
+            return '<h3>Hello, admin!</h3>'
+        return '<h3>Bad username or password.</h3>'
+
+    if __name__ == '__main__':
+        app.run()
