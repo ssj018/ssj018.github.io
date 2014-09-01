@@ -255,3 +255,10 @@ Note: the notify() and notifyAll() methods don’t release the lock; this means 
 
     if __name__ == '__main__':
         app.run()
+        
+## 格式化显示json
+
+    print(json.dumps(data, indent=4))
+    # 或者
+    import pprint
+    pprint.pprint(data)
