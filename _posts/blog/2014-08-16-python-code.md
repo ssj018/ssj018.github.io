@@ -262,3 +262,37 @@ Note: the notify() and notifyAll() methods don’t release the lock; this means 
     # 或者
     import pprint
     pprint.pprint(data)
+
+## 实现类似Java或C中的枚举
+
+    #!/usr/bin/env python
+    # -*- coding: utf-8 -*-
+
+    import itertools
+    import sys
+
+    class ImmutableMixin(object):
+        _inited = False
+
+        def __init__(self):
+            self._inited = True
+
+        def __setattr__(self, key, value):
+            if self._inited:
+                raise Exception("unsupported action")
+            super(ImmutableMixin, self).__setattr__(key, value)
+
+    class EnumMixin(object):
+        def __iter__(self):
+            for k, v in itertools.imap(lambda x: (x, getattr(self, x)), dir(self)):
+                if not k.startswith('_'):
+                    yield v
+
+    class _RunnerType(ImmutableMixin, EnumMixin):
+        SERIAL = "serial"
+        CONSTANT = "constant"
+        CONSTANT_FOR_DURATION = "constant_for_duration"
+        RPS = "rps"
+
+    if __name__=="__main__":
+        print _RunnerType.CONSTANT
