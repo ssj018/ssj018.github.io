@@ -264,6 +264,7 @@ Note: the notify() and notifyAll() methods don’t release the lock; this means 
     pprint.pprint(data)
 
 ## 实现类似Java或C中的枚举
+代码来源，Rally
 
     #!/usr/bin/env python
     # -*- coding: utf-8 -*-
@@ -296,3 +297,31 @@ Note: the notify() and notifyAll() methods don’t release the lock; this means 
 
     if __name__=="__main__":
         print _RunnerType.CONSTANT
+        
+## 创建文件时指定权限
+代码来源，Nova
+
+    import os
+
+    def write_to_file(path, contents, umask=None):
+        """Write the given contents to a file
+
+        :param path: Destination file
+        :param contents: Desired contents of the file
+        :param umask: Umask to set when creating this file (will be reset)
+        """
+        if umask:
+            saved_umask = os.umask(umask)
+
+        try:
+            with open(path, 'w') as f:
+                f.write(contents)
+        finally:
+            if umask:
+                os.umask(saved_umask)
+                
+    if __name__ == '__main__':
+        write_to_file('/home/kong/tmp', 'test', 31)
+        # Then you will see a file is created with permission 640.
+        # Warning: If the file already exists, its permission will not be changed.
+        # Note：For file, default all permission is 666, and 777 for directory.
