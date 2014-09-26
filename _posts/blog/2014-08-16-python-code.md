@@ -325,3 +325,32 @@ Note: the notify() and notifyAll() methods don’t release the lock; this means 
         # Then you will see a file is created with permission 640.
         # Warning: If the file already exists, its permission will not be changed.
         # Note：For file, default all permission is 666, and 777 for directory.
+        
+## 多进程并发执行
+代码来源：Rally
+
+    import multiprocessing
+    import time
+    import os
+
+    def run(flag):
+        print "flag: %s, sleep 2s in run" % flag
+        time.sleep(2)
+        print "%s exist" % flag
+        return flag
+        
+    if __name__ == '__main__':
+        pool = multiprocessing.Pool(3)
+        iter_result = pool.imap(run, xrange(6))
+        print "sleep 5s\n\n"
+        time.sleep(5)
+        for i in range(6):
+            try:
+                result = iter_result.next(600)
+            except multiprocessing.TimeoutError as e:
+                raise
+            
+            print result
+                
+        pool.close()
+        pool.join()
