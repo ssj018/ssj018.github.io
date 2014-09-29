@@ -3,6 +3,7 @@ auto: true
 markdown: rdiscount
 pygments: true
 paginate: 10
+paginate_path: "page:num"
 permalink: pretty
 
 title: Kong's Blog

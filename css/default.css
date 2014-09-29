@@ -183,3 +183,25 @@ h3.about {color:#777;margin-top:20px;font-size:22px;margin-bottom:10px}
 @media (max-width: 1300px){
     .home-menu { position:absolute; }
 }
+
+#pagination {
+    border-top: 1px dotted #888888;
+    padding-top: 1em;
+}
+#pagination li {
+    float: left;
+    display: block;
+    height: 1.3em;
+    width: 1.3em;
+    line-height: 1.3em;
+    text-align: center;
+}
+#pagination li.last_page {
+    width: 3em;
+}
+#pagination li.current-page {
+    background-color: #ddd;
+}
+#pagination li a {
+    text-decoration: underline;
+}
