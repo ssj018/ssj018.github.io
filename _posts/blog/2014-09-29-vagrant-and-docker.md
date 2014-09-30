@@ -38,4 +38,233 @@ docker其他的优势：
 * Thanks to providers now you can take the same file ( your Vagrant file ) and just type vagrant up —provider=“provider” where the provider is your next host and Vagrant will take care of everything. For example, if you choose AWS then Vagrant will: Connect to your AMI in AWS, install the same OS you used in your computer, install Docker, launch your Docker containers and give you a ssh session.
 * Test your containers in AWS and look that they behave exactly as you expect.
 
+看完了大概的特性差异对比，我们来实践一下两者的使用。这里我以使用OpenStack为例，因为每个参与OpenStack的开发者都需要一套开发环境devstack，那么对于开发环境的分发就可以基于vagrant或docker去实现。
+
+## vagrant下安装devstack
+
+### 安装vagrant
+vagrant的几个概念：  
+box： 基础镜像，类似于编程中的类；  
+project：使用镜像创建出的VM，类似于基于类创建对象；  
+同一个box可以被不同的project使用。
+
+因为我们使用virtualBox作为vagrant的虚拟化实现工具（你也可以使用vmware），所以要先安装 virtualBox，参考文档<https://help.ubuntu.com/community/VirtualBox/Installation>。
+
+    sudo sh -c "echo 'deb http://download.virtualbox.org/virtualbox/debian '$(lsb_release -cs)' contrib non-free' > /etc/apt/sources.list.d/virtualbox.list" && wget -q http://download.virtualbox.org/virtualbox/debian/oracle_vbox.asc -O- | sudo apt-key add - && sudo apt-get update && sudo apt-get install virtualbox-4.3 dkms
+
+下载 ubuntu下的vagrant deb包（链接：<http://www.vagrantup.com/downloads>），放在某一目录下（比如`/var/kong/vagrant_1.6.5_x86_64.deb`）， 然后进行安装。   
+![](/images/2014-09-29-vagrant-docker/2.png)
+
+安装vagrant插件（可选）   
+![](/images/2014-09-29-vagrant-docker/3.png)
+
+在/var/vagrant目录下clone vagrant安装devstack的工程，链接：<https://git.openstack.org/openstack-dev/devstack-vagrant>
+
+但这个工程需要设置一些东西，想了想，还是自己一步一步在vagrant虚拟机里安装devstack吧。
+
+    root@ubuntu:/var/openstack# mkdir /var/vagrant/devstack
+    root@ubuntu:/var/openstack# cd /var/vagrant/devstack
+    root@ubuntu:/var/vagrant/devstack# vagrant init
+    A `Vagrantfile` has been placed in this directory. You are now
+    ready to `vagrant up` your first virtual environment! Please read
+    the comments in the Vagrantfile as well as documentation on
+    `vagrantup.com` for more information on using Vagrant.
+    root@ubuntu:/var/vagrant/devstack# ll
+    total 16
+    drwxr-xr-x 2 root root 4096 Sep 30 09:33 ./
+    drwxr-xr-x 4 root root 4096 Sep 30 09:33 ../
+    -rw-r--r-- 1 root root 4814 Sep 30 09:33 Vagrantfile
+
+下载ubuntu vagrant box，地址：<http://files.vagrantup.com/precise64.box>，下载precise64.box文件，放在某个目录下（我这里是/var/kong），其他box在[这里](http://www.vagrantbox.es/)可以找到。
+
+    vagrant add Ubuntu12.04x64 /var/kong/precise64.box 
+
+命令运行之后，可以在`~/.vagrant.d/boxes/`目录下看到新增的box。之后，编辑/var/vagrant/devstack目录下的Vagrantfile：
+
+    config.vm.box = "Ubuntu12.04x64"
+    config.vm.network "private_network", ip: "192.168.33.10"
+    config.vm.provider "virtualbox" do |vb|
+      vb.customize ["modifyvm", :id, "--memory", "8192"]
+      vb.customize ["modifyvm", :id, "--cpus", "2"]
+    end
+
+启动vagrant虚拟机。  
+![](/images/2014-09-29-vagrant-docker/4.png)
+
+虚拟机启动后，可以通过virtualBox命令验证：
+
+    root@ubuntu:/var/vagrant/devstack# VBoxManage list runningvms
+    "devstack_default_1412056881390_39322" {c3f2fecc-1316-4823-b870-659dccc4e251}
+
+也可以查询更详细的信息：
+
+    root@ubuntu:/var/vagrant/devstack# VBoxManage showvminfo c3f2fecc-1316-4823-b870-659dccc4e251
+    Name:            devstack_default_1412056881390_39322
+    Groups:          /
+    Guest OS:        Ubuntu (64 bit)
+    UUID:            c3f2fecc-1316-4823-b870-659dccc4e251
+    Config file:     /root/VirtualBox VMs/devstack_default_1412056881390_39322/devstack_default_1412056881390_39322.vbox
+    Snapshot folder: /root/VirtualBox VMs/devstack_default_1412056881390_39322/Snapshots
+    Log folder:      /root/VirtualBox VMs/devstack_default_1412056881390_39322/Logs
+    Hardware UUID:   c3f2fecc-1316-4823-b870-659dccc4e251
+    Memory size:     8192MB
+    Page Fusion:     off
+    VRAM size:       8MB
+    CPU exec cap:    100%
+    HPET:            off
+    Chipset:         piix3
+    Firmware:        BIOS
+    Number of CPUs:  2
+    PAE:             on
+    Long Mode:       on
+    Synthetic CPU:   off
+    CPUID overrides: None
+    Boot menu mode:  message and menu
+    Boot Device (1): HardDisk
+    Boot Device (2): DVD
+    Boot Device (3): Not Assigned
+    Boot Device (4): Not Assigned
+    ACPI:            on
+    IOAPIC:          on
+    Time offset:     0ms
+    RTC:             UTC
+    Hardw. virt.ext: on
+    Nested Paging:   on
+    Large Pages:     on
+    VT-x VPID:       on
+    VT-x unr. exec.: on
+    State:           running (since 2014-09-30T06:01:24.581000000)
+    Monitor count:   1
+    3D Acceleration: off
+    2D Video Acceleration: off
+    Teleporter Enabled: off
+    Teleporter Port: 0
+    Teleporter Address:
+    Teleporter Password:
+    Tracing Enabled: off
+    Allow Tracing to Access VM: off
+    Tracing Configuration:
+    Autostart Enabled: off
+    Autostart Delay: 0
+    Default Frontend:
+    Storage Controller Name (0):            IDE Controller
+    Storage Controller Type (0):            PIIX4
+    Storage Controller Instance Number (0): 0
+    Storage Controller Max Port Count (0):  2
+    Storage Controller Port Count (0):      2
+    Storage Controller Bootable (0):        on
+    Storage Controller Name (1):            SATA Controller
+    Storage Controller Type (1):            IntelAhci
+    Storage Controller Instance Number (1): 0
+    Storage Controller Max Port Count (1):  30
+    Storage Controller Port Count (1):      1
+    Storage Controller Bootable (1):        on
+    IDE Controller (0, 0): Empty
+    IDE Controller (1, 0): Empty
+    SATA Controller (0, 0): /root/VirtualBox VMs/devstack_default_1412056881390_39322/box-disk1.vmdk (UUID: e9c4252c-d1b4-42be-acfa-dbc29dd9ddc4)
+    NIC 1:           MAC: 080027880CA6, Attachment: NAT, Cable connected: on, Trace: off (file: none), Type: 82540EM, Reported speed: 0 Mbps, Boot priority: 0, Promisc Policy: deny, Bandwidth group: none
+    NIC 1 Settings:  MTU: 0, Socket (send: 64, receive: 64), TCP Window (send:64, receive: 64)
+    NIC 1 Rule(0):   name = ssh, protocol = tcp, host ip = 127.0.0.1, host port = 2222, guest ip = , guest port = 22
+    NIC 2:           MAC: 080027EE8044, Attachment: Host-only Interface 'vboxnet0', Cable connected: on, Trace: off (file: none), Type: 82540EM, Reported speed: 0 Mbps, Boot priority: 0, Promisc Policy: deny, Bandwidth group: none
+    NIC 3:           disabled
+    NIC 4:           disabled
+    NIC 5:           disabled
+    NIC 6:           disabled
+    NIC 7:           disabled
+    NIC 8:           disabled
+    Pointing Device: PS/2 Mouse
+    Keyboard Device: PS/2 Keyboard
+    UART 1:          disabled
+    UART 2:          disabled
+    LPT 1:           disabled
+    LPT 2:           disabled
+    Audio:           disabled
+    Clipboard Mode:  disabled
+    Drag'n'drop Mode: disabled
+    Session type:    headless
+    Video mode:      640x480x32 at 0,0
+    VRDE:            disabled
+    USB:             disabled
+    EHCI:            disabled
+    
+    USB Device Filters:
+    
+    <none>
+    
+    Available remote USB devices:
+    
+    <none>
+    
+    Currently Attached USB Devices:
+    
+    <none>
+    
+    Bandwidth groups:  <none>
+    
+    Shared folders: 
+    
+    Name: 'vagrant', Host path: '/var/vagrant/devstack' (machine mapping), writable
+    
+    VRDE Connection:    not active
+    Clients so far:     0
+    
+    Video capturing:    not active
+    Capture screens:    0
+    Capture file:       /root/VirtualBox VMs/devstack_default_1412056881390_39322/devstack_default_1412056881390_39322.webm
+    Capture dimensions: 1024x768
+    Capture rate:       512 kbps
+    Capture FPS:        25
+    
+    Guest:
+    
+    Configured memory balloon size:      0 MB
+    OS type:                             Linux26_64
+    Additions run level:                 2
+    Additions version:                   4.2.0 r80737
+    
+    
+    Guest Facilities:
+    
+    Facility "VirtualBox Base Driver": active/running (last update: 2014/09/30 06:01:32 UTC)
+    Facility "VirtualBox System Service": active/running (last update: 2014/09/30 06:01:35 UTC)
+    Facility "Seamless Mode": not active (last update: 2014/09/30 06:01:32 UTC)
+    Facility "Graphics Mode": not active (last update: 2014/09/30 06:01:32 UTC)
+    
+> VirtualBox命令行工具VBoxManage的一些使用。  
+> list vms，可以加-l参数显示详细信息。   
+> 启动虚拟机：VBoxManage startvm "slackware"   
+> 虚拟机其他action：VBoxManage controlvm "slackware" pause/resume/reset/poweroff/savestate   
+> 修改虚拟机配置（<http://www.virtualbox.org/manual/ch08.html#vboxmanage-modifyvm>）。VBoxManage modifyvm "winxp" -memory "256MB" -acpi on -boot1 dvd -nic1 nat    
+> 创建一个虚拟磁盘. VBoxManage createhd -filename "WinXP.vdi" -size 10000 –register   
+> 将虚拟磁盘和虚拟机关联. VBoxManage modifyvm "winxp" -hda "WinXP.vdi"   
+> 挂载光盘镜像 ISO. VBoxManage openmedium dvd /full/path/to/iso.iso   
+> 将光盘镜像 ISO 和虚拟机关联. VBoxManage modifyvm "winxp" -dvd /full/path/to/iso.iso   
+> 创建虚拟机. VBoxManage createvm -name "SUSE 10.2" -register
+
+通过vagrant ssh命令登录虚拟机，切换root账户， 查看系统挂载目录，新建文件，然后在宿主机上验证一下，最后，再确定一下网络是否OK。  
+![](/images/2014-09-29-vagrant-docker/5.png)
+ 
+查看宿主机上的/var/vagrant/devstack目录：  
+![](/images/2014-09-29-vagrant-docker/6.png)
+
+如果虚拟机在运行时修改了配置，可以通过`vagrant reload --provision`使用最新的配置重启虚拟机。
+
+一个很牛逼的特性，vagrant share，参考[这里](http://docs.vagrantup.com/v2/getting-started/share.html)
+
+### 安装DevStack
+有个虚拟机，虚拟机又能联网，那么安装devstack就是老话题了。  
+参考我之前的[这篇](http://lingxiankong.github.io/blog/2014/05/10/vmware-workstation-devstack/)文章。
+
+## Docker下安装devstack
+### 安装Docker
+参考[这篇](https://docs.docker.com/installation/ubuntulinux/)文章。
+
+docker中的基本概念：  
+image：类似于vagrant中的box；  
+container：类似于vagrant中的VM；
+
+与vagrant一样，装完docker，首先想到的是到docker image repo（官方叫docker hub）找与devstack相关的image。直接到<https://registry.hub.docker.com>，搜索“devstack”（或者通过命令行`docker search devstack`也能搜索出来），有三个结果：  
+![](/images/2014-09-29-vagrant-docker/7.png)  
+看了下三个image的描述，感觉都不靠谱。
+
 未完待续。
