@@ -36,9 +36,9 @@ category: blog
 查看虚拟机IP，然后在本机通过ssh登录，方便后续操作。  
 配置pip国内源，新建`~/.pip/pip.conf`文件，输入如下内容：
 
->[global]  
-index-url=http://mirrors.tuna.tsinghua.edu.cn/pypi/simple  
-# 或者豆瓣的源：index-url = http://pypi.douban.com/simple/
+    [global]  
+    index-url=http://mirrors.tuna.tsinghua.edu.cn/pypi/simple  
+    # 或者豆瓣的源：index-url = http://pypi.douban.com/simple/
 
 重新以root身份登录，以使pip源生效。
 
@@ -109,7 +109,7 @@ vi /openstack/devstack/localrc #新建localrc文件
 	#IMAGE_URLS+=",http://fedorapeople.org/groups/heat/prebuilt-jeos-images/F17-x86_64-cfntools.qcow2"
 	
 	# Ceilometer - Metering Service (metering + alarming)
-    CEILOMETER_BACKEND=mongo
+    CEILOMETER_BACKEND=mysql
 	ENABLED_SERVICES+=,ceilometer-acompute,ceilometer-acentral,ceilometer-collector,ceilometer-api
 	ENABLED_SERVICES+=,ceilometer-alarm-notifier,ceilometer-alarm-evaluator
 
@@ -119,13 +119,27 @@ vi /openstack/devstack/localrc #新建localrc文件
 
 > 此时，再次建议为虚拟机创建第二个快照，以便恢复
 
-## screen
+## 安装过程中的问题
+### screen attach出错
 使用screen -r XXX时有时会出现：`Cannot open your terminal '/dev/pts/2' - please check.`的提示，不要急，使用如下方法解决：  
 使用root用户执行：
 
     chown stack:stack `readlink /proc/self/fd/0`
     
-如果不想使用screen，则可以修改stackrc文件中的`USE_SCREEN=False`    
+可以把这个命令写入~/.bashrc文件末尾，这样第一次登陆shell时就会自动执行。  
+如果不想使用screen，则可以修改stackrc文件中的`USE_SCREEN=False`。  
+
+### ceilometer-api启动失败
+错误信息：`AttributeError: 'module' object has no attribute 'MongoClient'`。  
+解决方法：
+
+    pip install --upgrade pymongo
+
+但问题没有解决，尝试重启ceilometer-api，又抛出如下错误：`StorageBadVersion: Need at least MongoDB 2.4`，看来是mongodb版本太低了，干脆，直接把Ceilometer的后端db改成MySQL（上面的配置里面已经是Mysql了）。
+
+### q-dhcp启动失败
+错误信息：`Unable to determine dnsmasq version. Please ensure that its version is 2.63 or above!`，看了一眼dnsmasq的版本，还真的是不满足要求，但在ubuntu上如何升级dnsmasq？懒得去研究了。图个省事儿，直接改源码。在文件`/neutron/agent/linux/dhcp.py`的`check_version`函数中，其实以前判断到dnsmasq版本不满足要求时，不会退出，只会打印warning日志，只是Juno中将其改成了强制退出。于是，这里我直接回退这部分代码，版本不匹配时不强制退出。  
+![](/images/2014-05-10-vmware-workstation-devstack/2.png) 
 
 ## 验证安装
 按照下述步骤，看功能是否OK：  

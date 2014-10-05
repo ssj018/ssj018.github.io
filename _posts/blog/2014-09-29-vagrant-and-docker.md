@@ -259,9 +259,8 @@ project：使用镜像创建出的VM，类似于基于类创建对象；
 ### 如何共享
 一个vagrant下的devstack虚拟机有了，如果只是自己用，那没有必要非要使用vagrant，直接用VirtualBox就行了。所以，分享、协作才是体现vagrant价值的真谛。如何分享呢？
 
-首先想到的就是刚才提到的vagrant share，但大部分人还是希望在一个小团队中自由分发，而不是直接暴漏在公网上。其实，直接使用vagrant命令就可以重新打包box：
-
-    vagrant box repackage NAME PROVIDER
+首先想到的就是刚才提到的vagrant share，但大部分人还是希望在一个小团队中自由分发，而不是直接暴漏在公网上。其实，直接使用vagrant package命令就可以重新打包box：  
+![](/images/2014-09-29-vagrant-docker/8.png)
 
 ## Docker下安装devstack
 ### 安装Docker
