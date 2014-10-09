@@ -38,6 +38,10 @@ docker其他的优势：
 * Thanks to providers now you can take the same file ( your Vagrant file ) and just type vagrant up —provider=“provider” where the provider is your next host and Vagrant will take care of everything. For example, if you choose AWS then Vagrant will: Connect to your AMI in AWS, install the same OS you used in your computer, install Docker, launch your Docker containers and give you a ssh session.
 * Test your containers in AWS and look that they behave exactly as you expect.
 
+有人在KVM上的OpenStack以及Docker和LXC进行了基准测试，发现Docker的性能或者比KVM出众很多或者可以与KVM相媲美。测试结果让他认为今后传统的虚拟机将会被边缘化。尽管某些企业可能会使用Docker取代现有的虚拟化技术，但更可能出现的情况是像上面的场景一样，企业将会使用Docker来扩大现有的虚拟化规模。例如，企业可能会同时运行Docker和Vmware环境，或者在VMware 虚拟机内部署Docker容器来确保管理的一致性。企业对Docker的敏捷性感兴趣，但真正感兴趣的是压缩数据中心的规模并减少许可费用。所以，在单个虚拟机内可以运行10个Linux容器，如果你有10台虚拟机，那么现在就拥有了100个容器。
+
+但Docker以及容器的健壮性是其缺陷，尤其是在异构企业环境中更是如此。Docker开销低以及存储占用空间少源于其并没有为所有被封装的应用提供操作系统副本。然而这使得Docker仅限于支持LXC的Linux实例，换句话说，如果你想使用Docker封装Windows应用，那只能说声抱歉了。传统的虚拟化还提供了一些引人注目的用例，比如LXC所不支持的实例，以及虚拟机需要使用与该物理主机上其他虚拟机完全不同的内核设置。所以说尽管Docker性能不错、易于使用而且在很大程度上是免费的，但并不适合所有用户。
+
 看完了大概的特性差异对比，我们来实践一下两者的使用。这里我以使用OpenStack为例，因为每个参与OpenStack的开发者都需要一套开发环境devstack，那么对于开发环境的分发就可以基于vagrant或docker去实现。
 
 ## vagrant下安装devstack
