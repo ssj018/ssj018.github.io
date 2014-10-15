@@ -1,7 +1,7 @@
 ---
 layout: post
-title: eventlet中的backdoor
-description: eventlet中的backdoor
+title: OpenStack中如何获取程序运行时状态
+description: OpenStack中如何获取程序运行时状态
 category: blog
 ---
 
@@ -12,6 +12,8 @@ category: blog
 内容系本人学习、研究和总结，如有雷同，实属荣幸！
 
 ------------------
+
+## eventlet中的backdoor
 
 OpenStack中编程模型中大量使用了GreenThread，使用eventlet库实现，关于eventlet可以参考官方文档。这里单独说一说backdoor的使用。
 
@@ -107,3 +109,16 @@ OpenStack每一个服务在创建时，都会根据backdoor_port配置项决定�
     >>> Connection closed by foreign host.    
     
 你会发现，运行完后，telnet自动断开了，是因为主程序退出，协程也就不存在了。
+
+## Guru Meditation Reports
+简称GMR，关于Guru Meditaion，wikipedia上有详细的[解释](http://en.wikipedia.org/wiki/Guru_Meditation)，大致意思就是系统宕机后的提示，比如windows系统出现致命问题后，大家看到的蓝屏。
+
+为什么还需要GMR上呢？上面提到的backdoor有一些使用上的限制：
+
+* 每个需要backdoor的服务都需要预留一个TCP端口号，管理员需要一一记录；
+* 一旦服务重启，那么关键信息就会遗失；
+* 最后，也是最重要的，每个服务开一个端口，对系统安全性是一种极大的考验，所以backdoor在生产环境基本不会被采用；
+
+关于GMR，我还没有上手测试过，没有过多的发言权。可以参见官方文档：  
+<https://wiki.openstack.org/wiki/GuruMeditationReport>  
+<http://docs.openstack.org/developer/nova/devref/gmr.html>
