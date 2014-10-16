@@ -19,7 +19,8 @@ unset var命令可以清除变量var，var相当于没有定义过
 readonly var可以把var变为只读变量，定义之后不能对var进行任何更改。  
 对shell变量的引用方式很多，用这些方式可以方便的获取shell变量的值，变量值的长度，变量的一个字串，变量被部分替换后的值等等。shell变量常见引用方式如下：  
 ![](/images/2014-10-16-shell-variable/1.png)  
-![](/images/2014-10-16-shell-variable/2.png)    
+![](/images/2014-10-16-shell-variable/2.png)
+![](/images/2014-10-16-shell-variable/3.png)        
 
 补充：  
 从左边第几个字符开始，及字符的个数  
