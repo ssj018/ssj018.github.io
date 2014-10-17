@@ -1,7 +1,7 @@
 ---
 layout: post
-title: OpenStack社区动态第二十期(0917-10.15)
-description: OpenStack社区动态第二十期(0917-10.15)
+title: OpenStack社区动态第二十期(0917-1015)
+description: OpenStack社区动态第二十期(0917-1015)
 category: blog
 ---
 
