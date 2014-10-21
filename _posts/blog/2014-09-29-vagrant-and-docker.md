@@ -278,4 +278,6 @@ container：类似于vagrant中的VM；
 ![](/images/2014-09-29-vagrant-docker/7.png)  
 看了下三个image的描述，感觉都不靠谱。
 
+关于Docker与OpenStack快速部署，也可以参见[这篇](http://allthingsopen.com/2014/07/09/docker-all-the-things-openstack-keystone-and-ceilometer-automated-builds-on-docker-hub)博客，作者仅以Keystone和Ceilometer为例介绍了如何使用Docker快速部署OpenStack服务。
+
 未完待续。
