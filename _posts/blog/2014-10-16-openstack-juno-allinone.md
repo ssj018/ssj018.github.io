@@ -25,14 +25,14 @@ ISO第一作者：刘胜
 * 集成了简单的健康检查
 * 同时支持虚拟部署和物理部署
 * 现在只需一个网卡了
-* 为了方便小白用户，我们提供了创建网络、上传image并创建虚拟机的脚本
+* 为了照顾小白用户，我们提供了创建网络、上传镜像并创建虚拟机的一键式脚本
 * discovered by you……
 
 ## 缺点
 * 我们还真没发现有啥缺点，期待大家的反馈！
 
 ## 使用前提
-* 获取ISO，地址：<http://dl.vmall.com/c0u84jdkpx> (2014.10.13号更新)
+* 获取ISO，地址：<http://dl.vmall.com/c04z4ngxxc> (2014.10.23号更新)
 * 获取网络信息规划
 * 如果是物理安装，请获取预安装服务器的BMC IP地址；
 
@@ -45,7 +45,7 @@ ISO第一作者：刘胜
 
 2、安装完操作系统自动重启后会看到如下界面，表示正在安装OpenStack，用时跟具体的环境有关。  
 ![](/images/2014-10-16-openstack-juno-allinone/1.png)  
-3、如果你受不了这个光秃秃的界面或者你有强迫症的话，你也可以按alt+f2键登录（root/root），然后执行`tailf /opt/opoenstack/install.log `来观察openstack的安装进度。直到最后一步简单检查各服务是否正常，如果都OK，表示openstack已经安装成功  
+3、如果你受不了这个光秃秃的界面或者你有强迫症的话，你也可以按alt+F2键登录（root/root），然后执行`tailf /opt/opoenstack/install.log`来观察openstack的安装进度。直到最后一步检查各服务是否正常，如果都OK，表示OpenStack已经安装成功  
 ![](/images/2014-10-16-openstack-juno-allinone/2.png)  
 ![](/images/2014-10-16-openstack-juno-allinone/3.png)  
 4、all-in-one提供了一个创建网络、上传镜像并创建虚拟机的脚本，使用方式如下：  
@@ -54,6 +54,6 @@ ISO第一作者：刘胜
     
 最终通过`nova list`命令可以看到一个虚拟机。
 
+5、除了host登录信息外，其他所有登录密码均为openstack。
 
-
-使用：<http://lingxiankong.github.io/blog/2014/05/12/huawei-allinone-operation-guide/>
+其他使用参考：<http://lingxiankong.github.io/blog/2014/05/12/huawei-allinone-operation-guide/>
