@@ -19,7 +19,7 @@ ISO第一作者：刘胜
 
 ## 优点
 * 基于Juno正式版本
-* 主机操作系统基于Ubuntu 14.10 server版，与OpenStack兼容性高
+* 主机操作系统基于Ubuntu 14.04 server版，与OpenStack兼容性高
 * **离线安装**，特别适用于有网络限制的场景
 * 集成Ubuntu和OpenStack的安装，傻瓜式安装配置，简单，高效
 * 集成了简单的健康检查
