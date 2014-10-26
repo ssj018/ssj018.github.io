@@ -45,7 +45,7 @@ ISO第一作者：刘胜
 
 2、安装完操作系统自动重启后会看到如下界面，表示正在安装OpenStack，用时跟具体的环境有关。  
 ![](/images/2014-10-16-openstack-juno-allinone/1.png)  
-3、如果你受不了这个光秃秃的界面或者你有强迫症的话，你也可以按alt+F2键登录（root/root），然后执行`tailf /opt/opoenstack/install.log`来观察openstack的安装进度。直到最后一步检查各服务是否正常，如果都OK，表示OpenStack已经安装成功  
+3、如果你受不了这个光秃秃的界面或者你有强迫症的话，你也可以按alt+F2键登录（root/root），然后执行`tailf /opt/openstack/install.log`来观察openstack的安装进度。直到最后一步检查各服务是否正常，如果都OK，表示OpenStack已经安装成功  
 ![](/images/2014-10-16-openstack-juno-allinone/2.png)  
 ![](/images/2014-10-16-openstack-juno-allinone/3.png)  
 4、all-in-one提供了一个创建网络、上传镜像并创建虚拟机的脚本，使用方式如下：  
