@@ -15,6 +15,8 @@ ISO第一作者：刘胜
 支撑团队：华为OpenStack社区团队（西安）  
 **更新日期：2014.10.28**
 
+The English Version is [here](http://yizhaolingyan.net/?p=227)
+
 ----------
 
 ## 优点
