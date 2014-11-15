@@ -82,7 +82,7 @@ project：使用镜像创建出的VM，类似于基于类创建对象；
 
 下载ubuntu vagrant box，地址：<http://files.vagrantup.com/precise64.box>，下载precise64.box文件，放在某个目录下（我这里是/var/kong），其他box在[这里](http://www.vagrantbox.es/)可以找到。
 
-    vagrant add Ubuntu12.04x64 /var/kong/precise64.box 
+    vagrant box add Ubuntu12.04x64 /var/kong/precise64.box 
 
 命令运行之后，可以在`~/.vagrant.d/boxes/`目录下看到新增的box。之后，编辑/var/vagrant/devstack目录下的Vagrantfile：
 
