@@ -45,7 +45,7 @@ Date: 2013-12-23
 	Creating tar archive
 	removing 'foo-1.0' (and everything under it)
 
-在当前目录下，会创建`dist`目录，里面有个文件名为`foo-1.0.tar.gz`，这个就是可以分发的包。使用者拿到这个包后，解压，到foo-1.0目录下执行：`python setup.py install`，那么，foo.py就会被拷贝到python类路径下，可以被导入使用。
+在当前目录下，会创建`dist`目录，里面有个文件名为`foo-1.0.tar.gz`，这个就是可以分发的包（如果使用命令`python setup.py bdist_egg`，那么会在dist目录中生成foo-1.0-py2.7.egg包，setup.py中第一句引入需要改为`from setuptools import setup`）。使用者拿到这个包后，解压，到foo-1.0目录下执行：`python setup.py install`，那么，foo.py就会被拷贝到python类路径下，可以被导入使用（如果安装是egg文件，会把egg文件拷贝到dist-packages目录下）。
 
 	root@network:/kong/setup/dist/foo-1.0# python setup.py install
 	running install
@@ -75,13 +75,15 @@ Date: 2013-12-23
 	  --formats=wininst  Windows executable installer
 	  --formats=zip      ZIP file
 	  --formats=msi      Microsoft Installer
+      
+
 
 setup函数还有一些参数：  
 
 1、`packages`  
 告诉Distutils需要处理那些包（包含`__init__.py`的文件夹）  
 2、`package_dir`  
-告诉Distutils哪些目录下的文件被映射到哪个源码包。一个例子：`package_dir = {'': 'lib'}`，表示“root package”中的模块都在lib目录中。  
+告诉Distutils哪些目录下的文件被映射到哪个源码包，感觉好像是一个相对路径的定义。一个例子：`package_dir = {'': 'lib'}`，表示以lib为主目录。  
 3、`ext_modules`  
 是一个包含Extension实例的列表，Extension的定义也有一些参数。  
 4、`ext_package`  
