@@ -354,3 +354,24 @@ Note: the notify() and notifyAll() methods don’t release the lock; this means 
                 
         pool.close()
         pool.join()
+		
+## 运行时自动填充函数参数
+代码来源：Rally
+
+	import decorator
+	
+	def default_from_global(arg_name, env_name):
+	    def default_from_global(f, *args, **kwargs):
+	        id_arg_index = f.func_code.co_varnames.index(arg_name)
+	        args = list(args)
+	        if args[id_arg_index] is None:
+	            args[id_arg_index] = get_global(env_name)
+	            if not args[id_arg_index]:
+	                print("Missing argument: --%(arg_name)s" % {"arg_name": arg_name})
+	                return(1)
+	        return f(*args, **kwargs)
+	    return decorator.decorator(default_from_global)
+
+	# 如下是一个装饰器，可以用在需要自动填充参数的函数上。功能是：
+	# 如果没有传递函数的deploy_id参数，那么就从环境变量中获取（调用自定义的get_global函数）
+	with_default_deploy_id = default_from_global('deploy_id', ENV_DEPLOYMENT)    
