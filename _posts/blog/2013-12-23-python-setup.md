@@ -95,7 +95,12 @@ setup函数还有一些参数：
 7、`scripts`  
 指定python源码文件，可以从命令行执行。在安装时指定`--install-script`  
 8、`package_data`  
-通常包含与包实现相关的一些数据文件或类似于readme的文件。如果没有提供模板，会被添加到MANIFEST文件中。  
+通常包含与包实现相关的一些数据文件或类似于readme的文件。
+
+	package_data = {'': ['*.txt'], 'mypkg': ['data/*.dat'],}
+
+表示包含所有目录下的txt文件和mypkg/data目录下的所有dat文件。
+  
 9、`data_files`  
 指定其他的一些文件（如配置文件）  
 
@@ -136,7 +141,7 @@ setup.cfg文件的形式类似于
 
 符合Distutils2的setup.cfg有些不同。包含一些sections：  
 1、`global`  
-定义Distutils2的全局选项，可能包含commands，compilers，setup_hook（定义脚本，在setup.cfg被读取后执行，可以修改setup.cfg的配置）  
+定义Distutils2的全局选项，可能包含commands，compilers，setup_hook（定义脚本，在setup.cfg被读取后执行，可以修改setup.cfg的配置，pbr就用到了这个）  
 2、`metadata`  
 3、`files`  
 
@@ -146,10 +151,8 @@ setup.cfg文件的形式类似于
 - scripts
 - extra_files
 
-4、*command* sections
-
 ## Setuptools
-上面的setup.py和setup.cfg都是遵循python标准库中的Distutils，而setuptools工具针对Python官方的distutils做了很多针对性的功能增强，比如依赖检查，动态扩展等。很多高级功能我就不详述了，自己也没有用过，等用的时候再作补充。
+上面的setup.py和setup.cfg都是遵循python标准库中的Distutils，而setuptools工具针对Python官方的distutils做了很多针对性的功能增强，比如依赖检查，动态扩展等。很多高级功能我就不详述了，自己也没有用过，等用的时候再作补充。详情可参见[这里](https://pythonhosted.org/setuptools/setuptools.html)。
 
 一个典型的遵循setuptools的脚本：
 
@@ -167,7 +170,7 @@ setup.cfg文件的形式类似于
 	    package_data = {
 	        # If any package contains *.txt or *.rst files, include them:
 	        '': ['*.txt', '*.rst'],
-	        # And include any *.msg files found in the 'hello' package, too:
+	        # include any *.msg files found in the 'hello' package, too:
 	        'hello': ['*.msg'],
 	    },
 	
@@ -181,6 +184,14 @@ setup.cfg文件的形式类似于
 	
 	    # could also include long_description, download_url, classifiers, etc.
 	)
+    
+setuptools相对distutils，增强的关键字：  
+`include_package_data`：为True时自动添加受版本控制的数据文件，可替代`package_data`，同时，`exclude_package_data`可以排除某些文件。当你需要加入没有被版本控制的文件时，还是老老实实使用`package_data`吧。  
+`install_requires`：代替`require`函数。表示当前包的安装依赖于哪些分发包，这些信息会写入egg的元信息中，这些包在安装时会自动（从PyPI）下载并安装。如果包在PyPI中找不到，则会从`dependency_links`标识的URL中获取。  
+`extras_require`：当前包的高级/额外特性需要依赖的分发包。  
+`entry_points`：这个很经典。见下面的讲解。  
+`setup_requires`： 安装脚本执行时需要依赖的分发包，主要用于构建过程。注意，这里列出的包不会自动安装，如果需要，同时要在`install_requires`中指定。  
+`dependency_links`：URL地址。这些地址在安装`setup_requires`或`tests_require`指定的包时使用。会写入egg的metadata信息中。  
 
 ### 如何让一个egg可被执行？
 
@@ -204,21 +215,25 @@ setup.cfg文件的形式类似于
 	    }
 	)
 
-特性如何使用呢？需要与entry points结合使用：
+表示如果系统安装docutils了，那么可提供reST特性。当然，docutils包不会自动安装，只有第三方包依赖本包的reST特性时，才会下载安装。
+
+特性如何使用呢？需要与entry points结合使用，在上一个setup.py脚本中增加：
 
 	setup(
 	    name="Project-A",
 	    ...
 	    entry_points = {
 	        'console_scripts': [
-	            'rst2pdf = project_a.tools.pdfgen [PDF]',
+	            'rst2pdf = project_a.tools.pdfgen [reST]',
 	            'rst2html = project_a.tools.htmlgen',
 	            # more script entry points ...
 	        ],
 	    }
 	)
 
-或者被其他project依赖：install_requires = ["Project-A[PDF]"]
+表示如果要使用rst2pdf脚本，就要安装docutils。
+
+或者被其他project依赖：`install_requires = ["Project-A[PDF]"]`
 
 ### 插件式开发
 我想大家最熟悉的就是这个特性了吧。比如一个博客系统想用不同的插件支持不同的语言输出格式，那么就可以定义一个“entry point group”，不同的插件就可以注册“entry point”，插件注册的示例：
@@ -236,21 +251,6 @@ setup.cfg文件的形式类似于
 	    """,
 	    extras_require = dict(reST = "Docutils>=0.3.5")
 	)
-
-### Setuptools中的dependency_links
-Setuptools有一个功能叫做 dependency_links
-
-from setuptools import setup
-
-	setup(
-	    # ...
-	    dependency_links = [
-	        "http://packages.example.com/snapshots/",
-	        "http://example2.com/p/bar-1.0.tar.gz",
-	    ],
-	)
-
-这一功能除去了依赖的抽象特性，直接把依赖的获取url标在了setup.py里。就像在Go语言中修改依赖包一样，我们只需要修改依赖链中每个包的 dependency_links 。
 
 ### 管理依赖
 我们写依赖声明的时候需要在 setup.py 中写好抽象依赖（install_requires），在 requirements.txt 中写好具体的依赖，但是我们并不想维护两份依赖文件，这样会让我们很难做好同步。 requirements.txt 可以更好地处理这种情况，我们可以在有 setup.py 的目录里写下一个这样的 requirements.txt
