@@ -52,18 +52,26 @@ pnuke--并行地在多个远程主机上杀死进程
 prsync--使用rsync协议从本地计算机同步到远程主机
 
 ## Fabric
-[fabric][]是一个python命令行工具，通过ssh来部署应用或者完成常规运维任务，安装后，通过fab命令指定fabfile.py文件（当然可以指定为其他文件）中的任务函数。[fabric][]的牛逼之处在于**它能很灵活的为不同的任务配置不同的执行机**，这是ssh或pssh很难自动做到的。网上有很多现成的[fabric][]的教程，我这里就不细讲。列一些我认为比较重要或比较有特色的特性。
+[fabric][]是一个python命令行工具，通过ssh来部署应用或者完成常规运维任务，安装后，通过fab命令指定fabfile.py文件（当然可以指定为其他文件）中的任务函数。[fabric][]的牛逼之处在于**它能很灵活的为不同的任务配置不同的执行机**，这是ssh或pssh很难自动做到的。网上有很多现成的[fabric][]的教程，我这里就不细讲。列一些我认为比较重要或比较有特色的特性。  
+> 安装fabric需要：fabric paramiko pycrypto ecdsa。  
+> 据说Instagram就使用Fabric管理上百台服务器的应用部署。详情参见：  
+<http://instagram-engineering.tumblr.com/post/13649370142/what-powers-instagram-hundreds-of-instances-dozens-of>
 
-任务可以串行(@serial)或并行(@parallel(pool_size=5))执行，执行时每个任务都有各自的hosts列表，命令行中为单个任务指定主机的优先级最高，会覆盖其他地方的配置.  
-`fab mytask:hosts="host1;host2"`；  
-也可以在代码中通过env.hosts配置，可以在一个task中修改该变量，会影响后面所有的任务；  
-或者使用fabric.api.hosts或roles装饰器，如果同时指定会合并，会覆盖env的配置；  
-或者直接通过命令行指定，`fab -H host1,host2 mytask`，最早被解析，会被覆盖，或被添加: env.hosts.extend(['host3', 'host4'])
+* 支持IPv6主机网络
+* 支持任务的并发执行（`--pool-size --parallel`，默认是线性执行），支持不同的任务在不同的主机上执行（`fab mytask:hosts="host1;host2"`--优先级最高或`@hosts('host1', 'host2')`--优先级次高），支持有些任务并行执行、某些任务线性执行。
+* 支持主机角色（env.roledefs），也就是定义一组主机，可以嵌套。支持执行任务时从角色中排除主机
+* 支持动态指定主机，`execute`
+* 主机连接的自管理，即在任务执行后自动关闭连接，仅限于使用fab命令行时
+* 同时提供了命令行和编程接口
 
-env环境变量：<http://docs.fabfile.org/en/1.8/usage/env.html>  
-env.dedupe_hosts置为False不会过滤重复的主机  
-可以排除主机：--exclude-hosts/-x  
-可以将主机划分角色组
+指定主机的几种方式：  
+
+    fab -H host1,host2 func
+    fab func:hosts="host1;host2"
+    fab -R role1 -x host2,host5 func
+    fab func:roles=role1,exclude_hosts="host2;host5"
+    env.hosts=['host1', 'host2']
+    @hosts('host1', 'host2'), roles同理
 
 使用execute可以不必在命令行中指定多个task，如下，migrate和update是两个task
 
@@ -94,8 +102,50 @@ env.dedupe_hosts置为False不会过滤重复的主机
 
 命令行中执行：fab deploy:db
 
+execute为编程使用Fabric提供了便利，但要注意调用连接的关闭接口（`from fabric.network import disconnect_all`）。可以从`fabric/main.py`中找到其他注意事项。 
+
+快速执行任务(以run的方式，类似于Ansible的ad-hoc方式)：`fab -H system1,system2,system3 -- uname -a` 
+
 命令行的使用 ：  
 <http://docs.fabfile.org/en/1.8/usage/fab.html>
+
+## Ansible
+(2014.11.25)  
+Ansible是这几个工具中我最后才开始了解的。看了网上大家的评论，有一个哥们的总结让我决定学习一下这个工具。文章中写道：
+
+* 充分利用现有设施。使用 Ansible 无需安装服务端和客户端，只要 SSH 即可。这意味着，任何一台装有 Ansible 的机器都可以成为强大的管理端。这种去中心化的思路显得更为灵活。可能有人会担心 SSH 的效率，Ansible 的并行执行及加速模式或许可以打消你的顾虑。
+* 使用简单，快速上手相当容易。我在用 Puppet 之前，就没少花时间钻研它。想想吧，我们使用这类自动化管理工具不就是想把自己从重复的、复杂的事情中解放出来么？为了简化一件事，而沉入另一件复杂的事，是不是有些不划算？从我的体验来看，Ansible 上手十分快，用 Ad-Hoc 可以应付简单的管理任务，麻烦点的也可以定义 Playbook 文件来搞定。
+* 采用人类易读的格式。Ansible 的主机定义文件使用 INI 格式，支持分组，能够指定模式；此外也能动态生成，这对管理云主机应当很有用。而 Playbook 则是 YAML 格式， 我觉得它比 Puppet 的 DSL 要易读易写多了。
+* 能够使用你熟悉的语言来编写模块。虽然 Ansible 是使用 Python 开发的，但它不会将你限制到某种具体的编程语言，Bash、Python、Perl、Ruby 等等都可以，你擅长什么就用什么。
+* 榜样的力量是无穷的。Fedora、Rackspace、Evernote 都在使用Ansible。
+
+文章链接：<https://linuxtoy.org/archives/hands-on-with-ansible.html>
+
+我的理解，Ansible与Fabric一样，都是基于ssh（确切的说是基于paramiko），而且都是Python实现，支持主机角色/分组，但Ansible的Playbook乍看起来，不像使用Fabric自定义Python函数那样顺畅，还是有很多语法。
+
+Ansible的精髓在与它有丰富的模块可以使用。
+
+一个例子热热身：
+
+	# deploy-blog-simple.yml
+	---
+	- hosts: local  # hosts中指定
+	  remote_user: kong  # 如果和当前用户一样，则无需指定
+	  tasks:
+	    - name: check out django_blog
+	      git: dest=~/demos/django_selfblog repo=https://github.com/the5fire/django_selfblog
+	           update=yes
+	    - name: make virtualenv
+	      shell: 'virtualenv ~/demos'
+	    - name: install requirements
+	      pip: requirements=~/demos/django_selfblog/requirements.txt
+	           virtualenv=~/demos
+	    - name: init database
+	      shell: . ./bin/activate && cd django_selfblog/selfblog && ./init_database.sh chdir=~/demos
+	    - name: run manage.py
+	      shell: . ./bin/activate && cd django_selfblog/selfblog &&  ./run.sh chdir=~/demos
+
+更多的例子参见[这里](https://github.com/ansible/ansible-examples)。
 
 [fabric]: http://docs.fabfile.org/
 [PSSH]: https://code.google.com/p/parallel-ssh/
