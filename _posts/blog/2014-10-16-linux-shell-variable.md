@@ -1,7 +1,7 @@
 ---
 layout: post
-title: shell编程--变量
-description: shell编程--变量
+title: linux shell编程--变量
+description: linux shell编程--变量
 category: blog
 ---
 
