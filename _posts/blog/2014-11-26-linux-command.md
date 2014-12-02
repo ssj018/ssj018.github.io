@@ -13,7 +13,7 @@ category: blog
 
 ---
 
-有的OS不支持像`ll`这样的快捷命令，添加`aliase ll='ls -l'`到~/.bashrc
+有的OS不支持像`ll`这样的快捷命令，添加`alias ll='ls -l'`到~/.bashrc
 
 清理当前目录中pyc：`find . -name "*.pyc" -exec rm -f '{}' \;`
 

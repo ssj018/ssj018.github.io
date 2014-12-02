@@ -375,3 +375,40 @@ Note: the notify() and notifyAll() methods don’t release the lock; this means 
 	# 如下是一个装饰器，可以用在需要自动填充参数的函数上。功能是：
 	# 如果没有传递函数的deploy_id参数，那么就从环境变量中获取（调用自定义的get_global函数）
 	with_default_deploy_id = default_from_global('deploy_id', ENV_DEPLOYMENT)    
+    
+## 嵌套装饰器
+代码来源：Rally  
+> validator函数装饰func1，func1使用时接收参数(*arg, **kwargs)，而func1又装饰func2（其实就是Rally中的scenario函数），给func2增加validators属性，是一个函数的列表，函数的接收参数config, clients, task。这些函数最终调用func1，传入参数（config, clients, task, *args, **kwargs），所以func1定义时参数是（config, clients, task, *arg, **kwargs）  
+最终实现的效果是，func2有很多装饰器，每个都会接收自己的参数，做一些校验工作。
+
+    def validator(fn):
+        """Decorator that constructs a scenario validator from given function.
+
+        Decorated function should return ValidationResult on error.
+
+        :param fn: function that performs validation
+        :returns: rally scenario validator
+        """
+        def wrap_given(*args, **kwargs):
+            """Dynamic validation decorator for scenario.
+
+            :param args: the arguments of the decorator of the benchmark scenario
+            ex. @my_decorator("arg1"), then args = ('arg1',)
+            :param kwargs: the keyword arguments of the decorator of the scenario
+            ex. @my_decorator(kwarg1="kwarg1"), then kwargs = {"kwarg1": "kwarg1"}
+            """
+            def wrap_validator(config, clients, task):
+                return (fn(config, clients, task, *args, **kwargs) or
+                        ValidationResult())
+
+            def wrap_scenario(scenario):
+                wrap_validator.permission = getattr(fn, "permission",
+                                                    consts.EndpointPermission.USER)
+                if not hasattr(scenario, "validators"):
+                    scenario.validators = []
+                scenario.validators.append(wrap_validator)
+                return scenario
+
+            return wrap_scenario
+
+        return wrap_given
