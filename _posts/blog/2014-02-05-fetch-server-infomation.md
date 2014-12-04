@@ -1,4 +1,4 @@
----
+ng .---
 layout: post
 title: OpenStack中虚拟机信息注入
 description: 虚拟机上如果跑业务，启动时不可避免的要从外界获取一些信息，在OpenStack中，这些信息通常是，密钥信息， 网络信息，metadata， root密码，自定义文件等
@@ -20,7 +20,7 @@ config drive可以被任何允许挂载ISO 9660或VFAT文件系统的镜像使�
 
 > cloud-init的数据源通常有：EC2（169.254.169.254）、Config Drive（OpenStack）、Alt cloud（RHEVm和vSphere）等
 
-使用config drive的途径：  
+使用config drive的2种途径：  
 1、在nova boot命令中显式的指定`--config-drive=true`，如下，使用config drive传递userdata，2个文件，2对metadata
 
     $ nova boot --config-drive=true --image my-image-name \
@@ -66,7 +66,7 @@ meta_data.json中的内容：
         "uuid": "83679162-1378-4288-a2d4-70e13ec132aa"
     }
 
-2、在nova配置文件`/etc/nova/nova.conf`中配置`force_config_drive=true`，在虚拟机启动时自动配置config drive
+2、或者，在nova配置文件`/etc/nova/nova.conf`中配置`force_config_drive=true`(或者是always)，在虚拟机启动时自动配置config drive
 
 >需要注意的是，如果使用config drive的默认配置，每个计算节点上必须安装`genisoimage`程序
 
@@ -108,3 +108,10 @@ neutron metadata_agent.ini:
 `nova_metadata_ip`: Nova metadata server的IP地址  
 `nova_metadata_port`: 服务端口，默认8775  
 `metadata_proxy_shared_secret`: 与nova保持一致  
+
+---
+
+参考链接：  
+officical documentation: <http://docs.openstack.org/user-guide/content/config-drive.html>  
+Red Hat Enterprise Linux OpenStack Platform 4： <https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux_OpenStack_Platform/4/html/End_User_Guide/config-drive.html>  
+很详细的一篇blog，基于Havana版本: <http://kimizhang.wordpress.com/2014/03/18/how-to-inject-filemetassh-keyroot-passworduserdataconfig-drive-to-a-vm-during-nova-boot/>
