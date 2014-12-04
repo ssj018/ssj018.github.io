@@ -102,7 +102,8 @@ filter的扩展机制与下面要讲的ResourceTracker中的ResourceHandler扩�
 
 每个计算节点上有很多资源，在最开始时，虚拟机的调度和创建，只关心节点的cpu、内存、磁盘等资源。但是随着虚拟化管理越来越精细，特别是NFV场景下，我们需要更为精细化的资源控制。但众口难调，哪些资源需要刷新，哪些不需要刷新，大家难以达成一致。于是，社区就针对rt提供了扩展机制，意思是告诉大家，你关心啥资源，就自己写插件实现这个资源的管理。
 
-rt中有一个`ext_resources_handler`（`/nova/compute/resources/`），采用stevedore库实现插件机制，默认只有一个vcpu处理类。关于对stevedore的简介可以参考我的[这篇](http://blog.csdn.net/lynn_kong/article/details/9704413)博客。在刷新资源的最后，调用ResourceHandler的write方法，将资源最新状态写到rt的Resources中，更新数据库。
+rt中有一个`ext_resources_handler`（`/nova/compute/resources/`），采用stevedore库实现插件机制，默认只有一个vcpu处理类。关于对stevedore的简介可以参考我的[这篇](http://blog.csdn.net/lynn_kong/article/details/9704413)博客。在刷新资源的最后，调用ResourceHandler的write方法，将资源最新状态写到rt的Resources中，更新数据库。  
+> 这里其实也是设计失败之处。自定义资源，必须在DB中的ComputeNode表新增资源属性。否则，即便加了resource extension，nova-scheduler还是无法获取到。所以，所谓的‘扩展’是个假扩展，无法完全解耦。
 
 此外，资源上报时还会获取主机的metrics资源，与ResourceHandler不同的是，这个metrics资源的获取是采用extension机制。它的实现在/nova/compute/monitors/目录下，目前也只有一个ComputeDriverCPUMonitor实现。
 
