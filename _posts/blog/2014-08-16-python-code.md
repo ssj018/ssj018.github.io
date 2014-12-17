@@ -378,8 +378,9 @@ Note: the notify() and notifyAll() methods don’t release the lock; this means 
     
 ## 嵌套装饰器
 代码来源：Rally  
-> validator函数装饰func1，func1使用时接收参数(*arg, **kwargs)，而func1又装饰func2（其实就是Rally中的scenario函数），给func2增加validators属性，是一个函数的列表，函数的接收参数config, clients, task。这些函数最终调用func1，传入参数（config, clients, task, *args, **kwargs），所以func1定义时参数是（config, clients, task, *arg, **kwargs）  
-最终实现的效果是，func2有很多装饰器，每个都会接收自己的参数，做一些校验工作。
+
+    validator函数装饰func1，func1使用时接收参数(*arg, **kwargs)，而func1又装饰func2（其实就是Rally中的scenario函数），给func2增加validators属性，是一个函数的列表，函数的接收参数config, clients, task。这些函数最终调用func1，传入参数（config, clients, task, *args, **kwargs），所以func1定义时参数是（config, clients, task, *arg, **kwargs）  
+    最终实现的效果是，func2有很多装饰器，每个都会接收自己的参数，做一些校验工作。
 
     def validator(fn):
         """Decorator that constructs a scenario validator from given function.
