@@ -52,16 +52,18 @@ all in one ISO的定位就是一个简单、易用、高效的OpenStack安装工
 
 3、安装完操作系统自动重启后会看到如下界面，表示正在安装OpenStack，用时跟具体的环境有关。  
 ![](/images/2014-10-16-openstack-juno-allinone/1.png)  
-4、（optional）如果你受不了这个光秃秃的界面或者你有强迫症的话，你也可以按alt+F2键登录（root/root），然后执行`tailf /opt/openstack/install.log`来观察openstack的安装进度。直到最后一步检查各服务是否正常，如果都OK，表示OpenStack已经安装成功  
+4、（optional）如果你受不了这个光秃秃的界面或者你有强迫症的话，你也可以按ALT+F2键登录（root/root），然后执行`tailf /opt/openstack/install.log`来观察openstack的安装进度。直到最后一步检查各服务是否正常，如果都OK，表示OpenStack已经安装成功  
 ![](/images/2014-10-16-openstack-juno-allinone/2.png)  
 ![](/images/2014-10-16-openstack-juno-allinone/3.png)  
 5、（optional）all-in-one提供了一个创建网络、上传镜像并创建虚拟机的脚本，使用方式如下：  
 
-    cd /opt/openstack/etc/ && /bin/bash createvm.sh {ip}  #其中ip是你规划的一个external网段的ip。比如你填写192.168.10.4，那么该脚本会创建一个子网是192.168.10.0/24的external net，后续可通过API修改。
+    cd /opt/openstack/etc/ && /bin/bash createvm.sh {CIDR} 
+    
+其中CIDR是你规划的一个external网段(默认掩码24位)。比如你填写192.168.10.1，那么该脚本会创建一个子网是192.168.10.0/24的external net，后续可通过API修改
     
 最终通过`nova list`命令可以看到一个虚拟机。
 
-6、除了host登录信息外，其他所有登录密码均为openstack。
+6、除了host登录信息（root/root）外，其他所有登录密码均为openstack。
 
 7、（optional）安装后，host上的网络模型如下（需要有OpenStack网络基础）：  
 ![](/images/2014-10-16-openstack-juno-allinone/4.png)   
@@ -70,4 +72,5 @@ all in one ISO的定位就是一个简单、易用、高效的OpenStack安装工
 * 安装成功后，eth0的网络信息被转移到系统内的br-ex接口上；
 * 要保证给虚拟机分配的外网IP与您host所在网络互通，可能要有一些交换机的知识；
 
-8、其他使用参考：<http://lingxiankong.github.io/blog/2014/05/12/huawei-allinone-operation-guide/>
+8、如果你不喜欢一键式脚本创建虚拟机，想自己一步一步学习命令的使用，恭喜你又找对地方了！请参考：  
+<http://lingxiankong.github.io/blog/2014/05/12/huawei-allinone-operation-guide/>
