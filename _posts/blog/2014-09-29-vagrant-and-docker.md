@@ -274,6 +274,35 @@ docker中的基本概念：
 image：类似于vagrant中的box；  
 container：类似于vagrant中的VM；
 
+### Docker的基本使用
+有时使用官方的镜像速度比较慢，`docker pull ubuntu`的命令可以替换为：
+
+	#第一种方法url下载安装ubuntu
+	docker import http://docker.widuu.com/ubuntu.tar 
+	#第二种方法，下载下来然后根据自己配置安装
+	wget http://docker.widuu.com/ubuntu.tar
+	cat test.tar | sudo docker import - xiaowei:new
+
+运行交互式的shell：`docker run -i -t ubuntu /bin/bash`，退出可以使用CTRL -p+CTRL -q
+
+开启一个长时间运行的工作进程：  
+
+	# 开启一个非常有用的长时间工作进程
+	CONTAINER_ID=$(sudo docker run -d ubuntu /bin/sh -c "while true; do echo Hello world; sleep 1; done")
+	# 到目前为止的收集的输出
+	sudo docker logs $CONTAINER_ID
+	# 或者连接上容器实时查看
+	sudo docker attach $CONTAINER_ID
+	# 杀死这个容器 
+	sudo docker kill $CONTAINER_ID
+
+docker ps命令：  
+
+	sudo docker ps，列出当前所有正在运行的container
+	sudo docker ps -l，列出最近一次启动的，且正在运行的container
+	sudo docker ps -a，列出所有的container
+
+### 安装Devstack
 与vagrant一样，装完docker，首先想到的是到docker image repo（官方叫docker hub）找与devstack相关的image。直接到<https://registry.hub.docker.com>，搜索“devstack”（或者通过命令行`docker search devstack`也能搜索出来），有三个结果：  
 ![](/images/2014-09-29-vagrant-docker/7.png)  
 看了下三个image的描述，感觉都不靠谱。
