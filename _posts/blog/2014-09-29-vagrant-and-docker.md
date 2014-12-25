@@ -260,6 +260,8 @@ project：使用镜像创建出的VM，类似于基于类创建对象；
 有个虚拟机，虚拟机又能联网，那么安装devstack就是老话题了。  
 参考我之前的[这篇](http://lingxiankong.github.io/blog/2014/05/10/vmware-workstation-devstack/)文章。
 
+或者使用别人做好的box/Vagrantfile，这里有一个可以参考（我没试用过）：<https://github.com/patux/mydevstack>
+
 ### 如何共享
 一个vagrant下的devstack虚拟机有了，如果只是自己用，那没有必要非要使用vagrant，直接用VirtualBox就行了。所以，分享、协作才是体现vagrant价值的真谛。如何分享呢？
 
