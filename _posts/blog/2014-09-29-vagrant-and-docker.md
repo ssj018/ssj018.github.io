@@ -285,24 +285,31 @@ container：类似于vagrant中的VM；
 	wget http://docker.widuu.com/ubuntu.tar
 	cat test.tar | sudo docker import - xiaowei:new
 
-运行交互式的shell：`docker run -i -t ubuntu /bin/bash`，退出可以使用CTRL -p+CTRL -q
+运行交互式的shell：`docker run -i -t ubuntu /bin/bash`，退出可以使用CTRL -p+CTRL -q或输入exit
 
 开启一个长时间运行的工作进程：  
 
 	# 开启一个非常有用的长时间工作进程
-	CONTAINER_ID=$(sudo docker run -d ubuntu /bin/sh -c "while true; do echo Hello world; sleep 1; done")
-	# 到目前为止的收集的输出
+	CONTAINER_ID=$(sudo docker run -d ubuntu:14.04 /bin/sh -c "while true; do echo Hello world; sleep 1; done")
+	# 到目前为止的收集的输出，可以加-f达到类似于tail -f的效果
 	sudo docker logs $CONTAINER_ID
 	# 或者连接上容器实时查看
 	sudo docker attach $CONTAINER_ID
-	# 杀死这个容器 
-	sudo docker kill $CONTAINER_ID
 
 docker ps命令：  
 
 	sudo docker ps，列出当前所有正在运行的container
 	sudo docker ps -l，列出最近一次启动的，且正在运行的container
 	sudo docker ps -a，列出所有的container
+
+绑定ports：`docker run -d -p 5000:5000 training/webapp python app.py`  
+或者通过`docker port $CONTAINER_ID 5000`查询container port 5000绑定的external port。
+
+查看container中的进程：`docker top $CONTAINER_ID`
+
+创建images：  
+1. `docker commit -m "update and install puppet" -a "kong" 9cf3b285b7e4 kong/ubuntu:v1`  
+2. 编写Dockerfile
 
 ### 安装Devstack
 与vagrant一样，装完docker，首先想到的是到docker image repo（官方叫docker hub）找与devstack相关的image。直接到<https://registry.hub.docker.com>，搜索“devstack”（或者通过命令行`docker search devstack`也能搜索出来），有三个结果：  
