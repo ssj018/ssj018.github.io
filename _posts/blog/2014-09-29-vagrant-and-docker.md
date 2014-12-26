@@ -302,14 +302,33 @@ docker ps命令：
 	sudo docker ps -l，列出最近一次启动的，且正在运行的container
 	sudo docker ps -a，列出所有的container
 
-绑定ports：`docker run -d -p 5000:5000 training/webapp python app.py`  
-或者通过`docker port $CONTAINER_ID 5000`查询container port 5000绑定的external port。
-
 查看container中的进程：`docker top $CONTAINER_ID`
 
 创建images：  
 1. `docker commit -m "update and install puppet" -a "kong" 9cf3b285b7e4 kong/ubuntu:v1`  
-2. 编写Dockerfile
+2. 编写[Dockerfile](http://docs.docker.com/reference/builder/)，在文件目录下使用`docker build -t="kong/ubuntu:v2"`创建image，一个示例：
+
+	FROM ubuntu:14.04
+	MAINTAINER Kate Smith <ksmith@example.com>
+	RUN apt-get update && apt-get install -y puppet puppetmaster
+
+> 需要注意，Dockerfile中每一个RUN都会进行一次commit，最多能有127次
+
+#### docker网络
+绑定ports：`docker run -d -p 5000:5000 training/webapp python app.py`，在第一个5000前可以加本机的IP，同时可以指定协议（/udp）。使用-P时自动绑定，范围49153 to 65535。  
+
+可以通过`docker port $CONTAINER_ID 5000`查询container port 5000绑定的external port。
+
+[container link](http://docs.docker.com/userguide/dockerlinks/)：  
+`sudo docker run -d -P --name web --link db:db training/webapp python app.py`  
+`--link name:alias`，Where name is the name of the container we're linking to and alias is an alias for the link name. 这样，在container web中会得到container db暴露的端口信息的环境变量。同时，web中的/etc/hosts增加db的记录，并且随着db IP的改变而自动变更。
+
+#### docker存储
+`docker run -d -P --name web -v /webapp training/webapp python app.py`，创建新卷；  
+`docker run -d -P --name web -v /src/webapp:/opt/webapp training/webapp python app.py`，映射本地目录，注意这种方式Dockerfile不支持。  
+`docker run -d -P --name web -v /src/webapp:/opt/webapp:ro training/webapp python app.py`，只读。
+
+卷的共享参见[这里](http://docs.docker.com/userguide/dockervolumes/)。
 
 ### 安装Devstack
 与vagrant一样，装完docker，首先想到的是到docker image repo（官方叫docker hub）找与devstack相关的image。直接到<https://registry.hub.docker.com>，搜索“devstack”（或者通过命令行`docker search devstack`也能搜索出来），有三个结果：  
@@ -317,5 +336,3 @@ docker ps命令：
 看了下三个image的描述，感觉都不靠谱。
 
 关于Docker与OpenStack快速部署，也可以参见[这篇](http://allthingsopen.com/2014/07/09/docker-all-the-things-openstack-keystone-and-ceilometer-automated-builds-on-docker-hub)博客，作者仅以Keystone和Ceilometer为例介绍了如何使用Docker快速部署OpenStack服务。
-
-未完待续。
