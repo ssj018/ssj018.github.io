@@ -32,6 +32,11 @@ head，默认显示开头前10行
 tail，默认显示最后10行  
 后5行：`tail -n 5 file`或`tail -5 file`  
 
+如何确定linux是32位还是64位  
+`uname -a`或者更直接的方式：  
+`getconf LONG_BIT`
+
+
 ## 使用文件锁
 避免脚本重入。
 
