@@ -80,6 +80,12 @@ HTTPie的用法要比cURL直观很多，没有那么多选项，基本上心里�
 
 看到了吧！HTTPie返回的消息体自动做了高亮和格式化！
 
+但是如果PUT操作呢？消息体该如何写？其实也很简单，举个例子：  
+
+    http PUT api.example.com/person/1 name=John age:=29 married:=false hobbies:='["http", "pies"]'
+
+`name:=value`这种格式表示非string的值。
+
 ## 小结
 这篇文章的目的是为了抛砖引玉，在实际使用中cURL和HTTPie都有很多高级用法，我这里仅仅是最简单的使用场景(但其实对于访问OpenStack来说，似乎足够了)。从实验结果上看，虽然HTTPie确实比cURL强大很多，但对于我个人而言，始终不喜欢命令行操作，可能有些人觉得我不够“极客”，但我确实觉得有些事情使用命令行效率太低。相比于cURL和HTTPie，chrome下的Postman才是我的最爱。
 
