@@ -277,35 +277,36 @@ image：类似于vagrant中的box；
 container：类似于vagrant中的VM；
 
 ### Docker的基本使用
-有时使用官方的镜像速度比较慢，`docker pull ubuntu`的命令可以替换为：
-
-	#第一种方法url下载安装ubuntu
-	docker import http://docker.widuu.com/ubuntu.tar 
-	#第二种方法，下载下来然后根据自己配置安装
-	wget http://docker.widuu.com/ubuntu.tar
-	cat test.tar | sudo docker import - xiaowei:new
-
-运行交互式的shell：`docker run -i -t ubuntu /bin/bash`，退出可以使用CTRL -p+CTRL -q或输入exit
+运行交互式的shell：`docker run -i -t --name test ubuntu:14.04 /bin/bash`，退出可以使用CTRL-p+CTRL-q跳出容器或输入exit终止容器
 
 开启一个长时间运行的工作进程：  
 
 	# 开启一个非常有用的长时间工作进程
 	CONTAINER_ID=$(sudo docker run -d ubuntu:14.04 /bin/sh -c "while true; do echo Hello world; sleep 1; done")
 	# 到目前为止的收集的输出，可以加-f达到类似于tail -f的效果
-	sudo docker logs $CONTAINER_ID
+	docker logs $CONTAINER_ID
 	# 或者连接上容器实时查看
-	sudo docker attach $CONTAINER_ID
+	docker attach $CONTAINER_ID
 
 docker ps命令：  
 
-	sudo docker ps，列出当前所有正在运行的container
-	sudo docker ps -l，列出最近一次启动的，且正在运行的container
-	sudo docker ps -a，列出所有的container
+	docker ps，列出当前所有正在运行的container
+	docker ps -l，列出最近一次启动的，且正在运行的container
+	docker ps -a，列出所有的container
 
 查看container中的进程：`docker top $CONTAINER_ID`
 
-创建images：  
-1. `docker commit -m "update and install puppet" -a "kong" 9cf3b285b7e4 kong/ubuntu:v1`  
+#### 镜像
+有时使用官方的镜像速度比较慢，`docker pull ubuntu`的命令可以替换为（基于本地模板导入镜像）：
+
+	#第一种方法url下载安装ubuntu
+	docker import http://docker.widuu.com/ubuntu.tar 
+	#第二种方法，下载下来然后根据自己配置安装
+	wget http://docker.widuu.com/ubuntu.tar.gz
+	cat ubuntu.tar.gz | sudo docker import - ubuntu:14.04
+
+创建镜像：  
+1. `docker commit -m "update and install puppet" -a "author name" 9cf3b285b7e4 kong/ubuntu:v1`  
 2. 编写[Dockerfile](http://docs.docker.com/reference/builder/)，在文件目录下使用`docker build -t="kong/ubuntu:v2"`创建image，一个示例：
 
 	FROM ubuntu:14.04
@@ -313,6 +314,10 @@ docker ps命令：
 	RUN apt-get update && apt-get install -y puppet puppetmaster
 
 > 需要注意，Dockerfile中每一个RUN都会进行一次commit，最多能有127次
+
+镜像的导出和载入：  
+`docker save -o ubuntu_14.04.tar ubuntu:14.04`  
+`docker load --input ubuntu_14.04.tar`
 
 #### docker网络
 绑定ports：`docker run -d -p 5000:5000 training/webapp python app.py`，在第一个5000前可以加本机的IP，同时可以指定协议（/udp）。使用-P时自动绑定，范围49153 to 65535。  
