@@ -277,7 +277,7 @@ image：类似于vagrant中的box；
 container：类似于vagrant中的VM；
 
 ### Docker的基本使用
-运行交互式的shell：`docker run -i -t --name test ubuntu:14.04 /bin/bash`，退出可以使用CTRL-p+CTRL-q跳出容器或输入exit终止容器
+运行交互式的shell：`docker run -i -t --name test -h hostname ubuntu:14.04 /bin/bash`，退出可以使用CTRL-p+CTRL-q跳出容器或输入exit终止容器，或者在run时加--rm（与-d参数互斥），容器在终止后立刻删除。
 
 开启一个长时间运行的工作进程：  
 
@@ -299,24 +299,30 @@ container：类似于vagrant中的VM；
 #### 镜像
 创建镜像：  
 1. `docker commit -m "update and install puppet" -a "author name" 9cf3b285b7e4 kong/ubuntu:v1`  
-2. 编写[Dockerfile](http://docs.docker.com/reference/builder/)，在文件目录下使用`docker build -t="kong/ubuntu:v2"`创建image，一个示例：
+2. 编写[Dockerfile](http://docs.docker.com/reference/builder/)，在当前目录下使用`docker build -t="kong/ubuntu:v2" .`创建image，一个最简单的示例如下：
 
 	FROM ubuntu:14.04
 	MAINTAINER Kate Smith <ksmith@example.com>
 	RUN apt-get update && apt-get install -y puppet puppetmaster
+	EXPOSE 22
+	CMD service puppetmaster start
 
 > 需要注意，Dockerfile中每一个RUN都会进行一次commit，最多能有127次
+
+Dockerfile创建镜像时会继承父镜像的开放端口，但不会继承启动命令。
 
 镜像的导出和载入：  
 `docker save -o ubuntu_14.04.tar ubuntu:14.04`  
 `docker load --input ubuntu_14.04.tar`
 
 #### docker网络
+/etc/hosts, /etc/hostname, /etc/resolve.conf只能临时编辑，容器终止或重启后并不会被保存，也不会被docker commit提交。
+
 绑定ports：`docker run -d -p 5000:5000 training/webapp python app.py`，在第一个5000前可以加本机的IP，同时可以指定协议（/udp）。使用-P时自动绑定，范围49153 to 65535。  
 
-可以通过`docker port $CONTAINER_ID 5000`查询container port 5000绑定的external port。
+可以通过`docker port $CONTAINER_ID 5000`查询container port 5000绑定的external port和绑定的地址，docker ps也能查到。
 
-[container link](http://docs.docker.com/userguide/dockerlinks/)：  
+[container link](http://docs.docker.com/userguide/dockerlinks/)，在源和接收容器间创建隧道，接收容器可以看到源容器指定的信息：  
 `sudo docker run -d -P --name web --link db:db training/webapp python app.py`  
 `--link name:alias`，Where name is the name of the container we're linking to and alias is an alias for the link name. 这样，在container web中会得到container db暴露的端口信息的环境变量。同时，web中的/etc/hosts增加db的记录，并且随着db IP的改变而自动变更。
 
@@ -326,7 +332,7 @@ container：类似于vagrant中的VM；
 `docker run -d -P --name web -v /src/webapp:/opt/webapp:ro training/webapp python app.py`，只读。
 
 卷的共享参见[这里](http://docs.docker.com/userguide/dockervolumes/)。  
-只需要注意，删除数据卷，需要在删除最后一个挂载该卷的容器时指定-v参数。
+注意，要删除数据卷，需要在删除最后一个挂载该卷的容器时指定-v参数。
 
 ### 安装Devstack
 与vagrant一样，装完docker，首先想到的是到docker image repo（官方叫docker hub）找与devstack相关的image。直接到<https://registry.hub.docker.com>，搜索“devstack”（或者通过命令行`docker search devstack`也能搜索出来），有三个结果：  
