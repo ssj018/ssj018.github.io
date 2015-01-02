@@ -287,24 +287,16 @@ container：类似于vagrant中的VM；
 	docker logs $CONTAINER_ID
 	# 或者连接上容器实时查看
 	docker attach $CONTAINER_ID
-
-docker ps命令：  
-
-	docker ps，列出当前所有正在运行的container
-	docker ps -l，列出最近一次启动的，且正在运行的container
-	docker ps -a，列出所有的container
+	# attach命令有时并不方便，当多个窗口同时attach到一个容器时，所有窗口都会同步显示，其中一个窗口因命令阻塞时，其他窗口也无法执行操作。连接容器也可以用nsenter工具。
 
 查看container中的进程：`docker top $CONTAINER_ID`
 
+容器的导出（文件）和（从文件）导入（镜像）：  
+`docker export CONTAINER_ID > file.tar`  
+`cat file.tar | docker import - kong/ubuntu:v1.0`  
+容器的导出与镜像的导出很像，但容器快照文件将丢弃镜像所有的历史记录和元数据信息，而镜像文件会保存完整记录，体积也要大。此外，容器文件导入时可以重新指定镜像标签等元数据信息。
+
 #### 镜像
-有时使用官方的镜像速度比较慢，`docker pull ubuntu`的命令可以替换为（基于本地模板导入镜像）：
-
-	#第一种方法url下载安装ubuntu
-	docker import http://docker.widuu.com/ubuntu.tar 
-	#第二种方法，下载下来然后根据自己配置安装
-	wget http://docker.widuu.com/ubuntu.tar.gz
-	cat ubuntu.tar.gz | sudo docker import - ubuntu:14.04
-
 创建镜像：  
 1. `docker commit -m "update and install puppet" -a "author name" 9cf3b285b7e4 kong/ubuntu:v1`  
 2. 编写[Dockerfile](http://docs.docker.com/reference/builder/)，在文件目录下使用`docker build -t="kong/ubuntu:v2"`创建image，一个示例：
@@ -333,7 +325,8 @@ docker ps命令：
 `docker run -d -P --name web -v /src/webapp:/opt/webapp training/webapp python app.py`，映射本地目录，注意这种方式Dockerfile不支持。  
 `docker run -d -P --name web -v /src/webapp:/opt/webapp:ro training/webapp python app.py`，只读。
 
-卷的共享参见[这里](http://docs.docker.com/userguide/dockervolumes/)。
+卷的共享参见[这里](http://docs.docker.com/userguide/dockervolumes/)。  
+只需要注意，删除数据卷，需要在删除最后一个挂载该卷的容器时指定-v参数。
 
 ### 安装Devstack
 与vagrant一样，装完docker，首先想到的是到docker image repo（官方叫docker hub）找与devstack相关的image。直接到<https://registry.hub.docker.com>，搜索“devstack”（或者通过命令行`docker search devstack`也能搜索出来），有三个结果：  
