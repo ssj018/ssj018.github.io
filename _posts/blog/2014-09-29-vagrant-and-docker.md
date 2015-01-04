@@ -62,6 +62,72 @@ project：使用镜像创建出的VM，类似于基于类创建对象；
 安装vagrant插件（可选）   
 ![](/images/2014-09-29-vagrant-docker/3.png)
 
+### Vagrant的基本使用
+同docker hub一样，vagrant也有box库：<https://atlas.hashicorp.com/boxes/search>
+
+配置vagrant vm启动时运行脚本：  
+
+	Vagrant.configure("2") do |config|
+	  config.vm.box = "hashicorp/precise32"
+	  config.vm.provision :shell, path: "bootstrap.sh"
+	end
+
+如果修改了Vagrantfile，对于正在运行的vm，可以使用vagrant reload --provision使配置生效。
+
+#### vagrant网络
+[端口转发](https://docs.vagrantup.com/v2/networking/forwarded_ports.html)，如下是一个简单例子，后面的`auto_correct`是让vagrant自动修正冲突的port forwarding配置：  
+
+	Vagrant.configure("2") do |config|
+	  config.vm.box = "hashicorp/precise32"
+	  config.vm.provision :shell, path: "bootstrap.sh"
+	  config.vm.network :forwarded_port, host: 4567, guest: 80, auto_correct: true
+	end
+
+使用private network：  
+1、使用DHCP
+
+	Vagrant.configure("2") do |config|
+	  config.vm.network "private_network", type: "dhcp"
+	end
+
+2、STATIC IP
+
+	Vagrant.configure("2") do |config|
+	  config.vm.network "private_network", ip: "192.168.50.4"
+	end
+
+使用[public network](https://docs.vagrantup.com/v2/networking/public_network.html)：  
+
+> 注意，public network未来可能会被`:bridged`代替
+
+1、使用DHCP：
+
+	Vagrant.configure("2") do |config|
+	  config.vm.network "public_network"
+	end
+
+2、使用static ip  
+`config.vm.network "public_network", ip: "192.168.0.17"`
+
+#### 多实例管理
+
+	Vagrant.configure("2") do |config|
+	  config.vm.provision "shell", inline: "echo Hello"
+	
+	  config.vm.define "web" do |web|
+	    web.vm.box = "apache"
+	  end
+	
+	  config.vm.define "db" do |db|
+	    db.vm.box = "mysql"
+	  end
+	end
+
+此时要登录某一台VM，`vagrant ssh <name>`，批量操作命令支持正则，`vagrant up /follower[0-9]/`
+
+`primary: true`：指定主VM，用于如果命令显式指定VM name时。  
+`autostart: false`：指定某台VM不自动随vagrant up启动。
+
 ### 安装ubuntu
 在/var/vagrant目录下clone vagrant安装devstack的工程，链接：<https://git.openstack.org/openstack-dev/devstack-vagrant>
 
