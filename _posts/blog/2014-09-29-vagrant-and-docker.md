@@ -150,7 +150,7 @@ project：使用镜像创建出的VM，类似于基于类创建对象；
 
     vagrant box add Ubuntu12.04x64 /var/kong/precise64.box 
 
-命令运行之后，可以在`~/.vagrant.d/boxes/`目录下看到新增的box。之后，编辑/var/vagrant/devstack目录下的Vagrantfile：
+命令运行之后，可以在`~/.vagrant.d/boxes/`目录下看到新增的box(也可以通过vagrant box list确认)。之后，编辑/var/vagrant/devstack目录下的Vagrantfile：
 
     config.vm.box = "Ubuntu12.04x64"
     config.vm.network "private_network", ip: "192.168.33.10"
@@ -164,12 +164,12 @@ project：使用镜像创建出的VM，类似于基于类创建对象；
 
 虚拟机启动后，可以通过virtualBox命令验证：
 
-    root@ubuntu:/var/vagrant/devstack# VBoxManage list runningvms
+    root@ubuntu:/var/vagrant/devstack# vboxmanage list runningvms
     "devstack_default_1412056881390_39322" {c3f2fecc-1316-4823-b870-659dccc4e251}
 
 也可以查询更详细的信息：
 
-    root@ubuntu:/var/vagrant/devstack# VBoxManage showvminfo c3f2fecc-1316-4823-b870-659dccc4e251
+    root@ubuntu:/var/vagrant/devstack# vboxmanage showvminfo c3f2fecc-1316-4823-b870-659dccc4e251
     Name:            devstack_default_1412056881390_39322
     Groups:          /
     Guest OS:        Ubuntu (64 bit)
@@ -186,131 +186,18 @@ project：使用镜像创建出的VM，类似于基于类创建对象；
     Chipset:         piix3
     Firmware:        BIOS
     Number of CPUs:  2
-    PAE:             on
-    Long Mode:       on
-    Synthetic CPU:   off
-    CPUID overrides: None
-    Boot menu mode:  message and menu
-    Boot Device (1): HardDisk
-    Boot Device (2): DVD
-    Boot Device (3): Not Assigned
-    Boot Device (4): Not Assigned
-    ACPI:            on
-    IOAPIC:          on
-    Time offset:     0ms
-    RTC:             UTC
-    Hardw. virt.ext: on
-    Nested Paging:   on
-    Large Pages:     on
-    VT-x VPID:       on
-    VT-x unr. exec.: on
-    State:           running (since 2014-09-30T06:01:24.581000000)
-    Monitor count:   1
-    3D Acceleration: off
-    2D Video Acceleration: off
-    Teleporter Enabled: off
-    Teleporter Port: 0
-    Teleporter Address:
-    Teleporter Password:
-    Tracing Enabled: off
-    Allow Tracing to Access VM: off
-    Tracing Configuration:
-    Autostart Enabled: off
-    Autostart Delay: 0
-    Default Frontend:
-    Storage Controller Name (0):            IDE Controller
-    Storage Controller Type (0):            PIIX4
-    Storage Controller Instance Number (0): 0
-    Storage Controller Max Port Count (0):  2
-    Storage Controller Port Count (0):      2
-    Storage Controller Bootable (0):        on
-    Storage Controller Name (1):            SATA Controller
-    Storage Controller Type (1):            IntelAhci
-    Storage Controller Instance Number (1): 0
-    Storage Controller Max Port Count (1):  30
-    Storage Controller Port Count (1):      1
-    Storage Controller Bootable (1):        on
-    IDE Controller (0, 0): Empty
-    IDE Controller (1, 0): Empty
-    SATA Controller (0, 0): /root/VirtualBox VMs/devstack_default_1412056881390_39322/box-disk1.vmdk (UUID: e9c4252c-d1b4-42be-acfa-dbc29dd9ddc4)
-    NIC 1:           MAC: 080027880CA6, Attachment: NAT, Cable connected: on, Trace: off (file: none), Type: 82540EM, Reported speed: 0 Mbps, Boot priority: 0, Promisc Policy: deny, Bandwidth group: none
-    NIC 1 Settings:  MTU: 0, Socket (send: 64, receive: 64), TCP Window (send:64, receive: 64)
-    NIC 1 Rule(0):   name = ssh, protocol = tcp, host ip = 127.0.0.1, host port = 2222, guest ip = , guest port = 22
-    NIC 2:           MAC: 080027EE8044, Attachment: Host-only Interface 'vboxnet0', Cable connected: on, Trace: off (file: none), Type: 82540EM, Reported speed: 0 Mbps, Boot priority: 0, Promisc Policy: deny, Bandwidth group: none
-    NIC 3:           disabled
-    NIC 4:           disabled
-    NIC 5:           disabled
-    NIC 6:           disabled
-    NIC 7:           disabled
-    NIC 8:           disabled
-    Pointing Device: PS/2 Mouse
-    Keyboard Device: PS/2 Keyboard
-    UART 1:          disabled
-    UART 2:          disabled
-    LPT 1:           disabled
-    LPT 2:           disabled
-    Audio:           disabled
-    Clipboard Mode:  disabled
-    Drag'n'drop Mode: disabled
-    Session type:    headless
-    Video mode:      640x480x32 at 0,0
-    VRDE:            disabled
-    USB:             disabled
-    EHCI:            disabled
+    ......
     
-    USB Device Filters:
-    
-    <none>
-    
-    Available remote USB devices:
-    
-    <none>
-    
-    Currently Attached USB Devices:
-    
-    <none>
-    
-    Bandwidth groups:  <none>
-    
-    Shared folders: 
-    
-    Name: 'vagrant', Host path: '/var/vagrant/devstack' (machine mapping), writable
-    
-    VRDE Connection:    not active
-    Clients so far:     0
-    
-    Video capturing:    not active
-    Capture screens:    0
-    Capture file:       /root/VirtualBox VMs/devstack_default_1412056881390_39322/devstack_default_1412056881390_39322.webm
-    Capture dimensions: 1024x768
-    Capture rate:       512 kbps
-    Capture FPS:        25
-    
-    Guest:
-    
-    Configured memory balloon size:      0 MB
-    OS type:                             Linux26_64
-    Additions run level:                 2
-    Additions version:                   4.2.0 r80737
-    
-    
-    Guest Facilities:
-    
-    Facility "VirtualBox Base Driver": active/running (last update: 2014/09/30 06:01:32 UTC)
-    Facility "VirtualBox System Service": active/running (last update: 2014/09/30 06:01:35 UTC)
-    Facility "Seamless Mode": not active (last update: 2014/09/30 06:01:32 UTC)
-    Facility "Graphics Mode": not active (last update: 2014/09/30 06:01:32 UTC)
-    
-> VirtualBox命令行工具VBoxManage的一些使用。  
+> VirtualBox命令行工具vboxmanage的一些使用。  
 > list vms，可以加-l参数显示详细信息。   
-> 启动虚拟机：VBoxManage startvm "slackware"   
-> 虚拟机其他action：VBoxManage controlvm "slackware" pause/resume/reset/poweroff/savestate   
+> 启动虚拟机：vboxmanage startvm "slackware"   
+> 虚拟机其他action：vboxmanage controlvm "slackware" pause/resume/reset/poweroff/savestate   
 > 修改虚拟机配置（<http://www.virtualbox.org/manual/ch08.html#vboxmanage-modifyvm>）。VBoxManage modifyvm "winxp" -memory "256MB" -acpi on -boot1 dvd -nic1 nat    
-> 创建一个虚拟磁盘. VBoxManage createhd -filename "WinXP.vdi" -size 10000 –register   
-> 将虚拟磁盘和虚拟机关联. VBoxManage modifyvm "winxp" -hda "WinXP.vdi"   
-> 挂载光盘镜像 ISO. VBoxManage openmedium dvd /full/path/to/iso.iso   
-> 将光盘镜像 ISO 和虚拟机关联. VBoxManage modifyvm "winxp" -dvd /full/path/to/iso.iso   
-> 创建虚拟机. VBoxManage createvm -name "SUSE 10.2" -register
+> 创建一个虚拟磁盘. vboxmanage createhd -filename "WinXP.vdi" -size 10000 –register   
+> 将虚拟磁盘和虚拟机关联. vboxmanage modifyvm "winxp" -hda "WinXP.vdi"   
+> 挂载光盘镜像 ISO. vboxmanage openmedium dvd /full/path/to/iso.iso   
+> 将光盘镜像 ISO 和虚拟机关联. vboxmanage modifyvm "winxp" -dvd /full/path/to/iso.iso   
+> 创建虚拟机. vboxmanage createvm -name "SUSE 10.2" -register
 
 通过vagrant ssh命令登录虚拟机，切换root账户， 查看系统挂载目录，新建文件，然后在宿主机上验证一下，最后，再确定一下网络是否OK。  
 ![](/images/2014-09-29-vagrant-docker/5.png)
