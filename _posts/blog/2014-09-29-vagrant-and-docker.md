@@ -63,7 +63,7 @@ project：使用镜像创建出的VM，类似于基于类创建对象；
 ![](/images/2014-09-29-vagrant-docker/3.png)
 
 ### Vagrant的基本使用
-同docker hub一样，vagrant也有box库：<https://atlas.hashicorp.com/boxes/search>
+同docker hub一样，vagrant也有box库：<http://www.vagrantbox.es/>
 
 配置vagrant vm启动时运行脚本：  
 
@@ -148,7 +148,7 @@ project：使用镜像创建出的VM，类似于基于类创建对象；
 
 下载ubuntu vagrant box，地址：<http://files.vagrantup.com/precise64.box>，下载precise64.box文件，放在某个目录下（我这里是/var/kong），其他box在[这里](http://www.vagrantbox.es/)可以找到。
 
-    vagrant box add Ubuntu12.04x64 /var/kong/precise64.box 
+    vagrant box add Ubuntu1204 /var/kong/precise64.box 
 
 命令运行之后，可以在`~/.vagrant.d/boxes/`目录下看到新增的box(也可以通过vagrant box list确认)。之后，编辑/var/vagrant/devstack目录下的Vagrantfile：
 
@@ -162,12 +162,14 @@ project：使用镜像创建出的VM，类似于基于类创建对象；
 启动vagrant虚拟机。  
 ![](/images/2014-09-29-vagrant-docker/4.png)
 
+> 当使用ubuntu 1404时，在挂载共享目录时失败，提示“Failed to mount folders in Linux guest. This is usually because the "vboxsf" file system is not available...”，在网上找到的解决方法是在Vagrantfile添加：config.vm.synced_folder ".", "/vagrant", type: "rsync"，但该方法只能保证挂载不出错，共享目录无法实现实时同步。暂时没有找到更好的方法，所以，最好还是老老实实使用ubuntu 1204吧, :(
+
 虚拟机启动后，可以通过virtualBox命令验证：
 
     root@ubuntu:/var/vagrant/devstack# vboxmanage list runningvms
     "devstack_default_1412056881390_39322" {c3f2fecc-1316-4823-b870-659dccc4e251}
 
-也可以查询更详细的信息：
+也可以查询更详细的信息(just snippet)：
 
     root@ubuntu:/var/vagrant/devstack# vboxmanage showvminfo c3f2fecc-1316-4823-b870-659dccc4e251
     Name:            devstack_default_1412056881390_39322
@@ -188,7 +190,7 @@ project：使用镜像创建出的VM，类似于基于类创建对象；
     Number of CPUs:  2
     ......
     
-> VirtualBox命令行工具vboxmanage的一些使用。  
+> VirtualBox命令行工具vboxmanage的一些使用命令。  
 > list vms，可以加-l参数显示详细信息。   
 > 启动虚拟机：vboxmanage startvm "slackware"   
 > 虚拟机其他action：vboxmanage controlvm "slackware" pause/resume/reset/poweroff/savestate   
