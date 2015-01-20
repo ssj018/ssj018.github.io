@@ -128,6 +128,25 @@ project：使用镜像创建出的VM，类似于基于类创建对象；
 `primary: true`：指定主VM，用于如果命令显式指定VM name时。  
 `autostart: false`：指定某台VM不自动随vagrant up启动。
 
+#### SSH
+使用`vagrant ssh-config`查看vagrant对ssh的配置。
+
+    root@ubuntu:/opt/kong/vagrant/ubuntu01# vagrant ssh-config
+    Host default
+      HostName 127.0.0.1
+      User vagrant
+      Port 2200
+      UserKnownHostsFile /dev/null
+      StrictHostKeyChecking no
+      PasswordAuthentication no
+      IdentityFile /root/.vagrant.d/insecure_private_key
+      IdentitiesOnly yes
+      LogLevel FATAL
+
+然后就可以直接ssh而不用vagrant ssh登录VM：
+
+    ssh vagrant@127.0.0.1 -p 2200 -i /root/.vagrant.d/insecure_private_key
+
 ### 安装ubuntu
 在/var/vagrant目录下clone vagrant安装devstack的工程，链接：<https://git.openstack.org/openstack-dev/devstack-vagrant>
 
