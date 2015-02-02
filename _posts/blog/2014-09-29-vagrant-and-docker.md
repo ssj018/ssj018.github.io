@@ -183,6 +183,8 @@ project：使用镜像创建出的VM，类似于基于类创建对象；
 
 > 当使用ubuntu 1404时，在挂载共享目录时失败，提示“Failed to mount folders in Linux guest. This is usually because the "vboxsf" file system is not available...”，在网上找到的解决方法是在Vagrantfile添加：config.vm.synced_folder ".", "/vagrant", type: "rsync"，但该方法只能保证挂载不出错，共享目录无法实现实时同步。暂时没有找到更好的方法，所以，最好还是老老实实使用ubuntu 1204吧, :(
 
+> (2015.02.02号更新)解决了！最好还是把vagrant更新一下，然后vagrant plugin install vagrant-vbguest
+
 虚拟机启动后，可以通过virtualBox命令验证：
 
     root@ubuntu:/var/vagrant/devstack# vboxmanage list runningvms
