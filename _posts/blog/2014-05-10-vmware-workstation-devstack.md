@@ -82,7 +82,7 @@ vi /openstack/devstack/localrc #新建localrc文件
     KEYSTONE_TOKEN_FORMAT=UUID
 
     # Nova
-    ENABLED_SERVICES+=,n-api,n-crt,n-obj,n-cpu,n-cond,n-sch,n-novnc
+    ENABLED_SERVICES+=,n-api,n-crt,n-obj,n-cpu,n-cond,n-sch,n-novnc,n-cauth
     #IMAGE_URLS+=",https://launchpad.net/cirros/trunk/0.3.0/+download/cirros-0.3.0-x86_64-disk.img"
 
     #Horizon
@@ -105,7 +105,7 @@ vi /openstack/devstack/localrc #新建localrc文件
     #Q_ML2_TENANT_NETWORK_TYPE=vxlan 
 
     # Cinder
-    ENABLED_SERVICES+=,cinder,c-api,c-vol,c-sch
+    ENABLED_SERVICES+=,cinder,c-api,c-vol,c-sch,c-bak
 
     # Heat - Orchestration Service
     ENABLED_SERVICES+=,heat,h-api,h-api-cfn,h-api-cw,h-eng
