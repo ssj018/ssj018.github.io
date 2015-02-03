@@ -58,25 +58,28 @@ vi /openstack/devstack/localrc #新建localrc文件
 输入如下内容(这里仅仅是参考，您可以根据需要自定义配置)：
 
 	# Misc
-	HOST_IP=192.168.70.132 #修改为你的虚拟机IP
+	# modify the IP address according to your own
+	HOST_IP=192.168.70.132
 	DATABASE_PASSWORD=password
 	ADMIN_PASSWORD=password
 	SERVICE_PASSWORD=password
 	SERVICE_TOKEN=password
 	RABBIT_PASSWORD=password
     
-    RECLONE=no
-    SERVICE_TIMEOUT=600
+        RECLONE=no
+        SERVICE_TIMEOUT=600
+        GIT_BASE=https://github.com
+        LOGDAYS=1
 	
 	# Enable Logging
 	LOGFILE=/opt/stack/logs/stack.sh.log
 	VERBOSE=True
-    LOG_COLOR=False
+        LOG_COLOR=False
 	SCREEN_LOGDIR=/opt/stack/logs
 	
 	# Pre-requisite
 	ENABLED_SERVICES=rabbit,mysql,key
-    KEYSTONE_TOKEN_FORMAT=UUID
+        KEYSTONE_TOKEN_FORMAT=UUID
 	
 	# Nova
 	ENABLED_SERVICES+=,n-api,n-crt,n-obj,n-cpu,n-cond,n-sch,n-novnc
@@ -84,22 +87,22 @@ vi /openstack/devstack/localrc #新建localrc文件
 	
 	#Horizon
 	ENABLED_SERVICES+=,horizon
-    # HORIZON_REPO=https://github.com/openstack/horizon
+        # HORIZON_REPO=https://github.com/openstack/horizon
 	
 	# Glance
 	ENABLED_SERVICES+=,g-api,g-reg
 	
 	# Neutron
 	ENABLED_SERVICES+=,q-svc,q-agt,q-dhcp,q-l3,q-meta,neutron
-    # VLAN configuration
-    #Q_PLUGIN=ml2
-    #ENABLE_TENANT_VLANS=True
-    # GRE tunnel configuration
-    #Q_PLUGIN=ml2
-    #ENABLE_TENANT_TUNNELS=True
-    # VXLAN tunnel configuration
-    #Q_PLUGIN=ml2
-    #Q_ML2_TENANT_NETWORK_TYPE=vxlan 
+        # VLAN configuration
+        #Q_PLUGIN=ml2
+        #ENABLE_TENANT_VLANS=True
+        # GRE tunnel configuration
+        #Q_PLUGIN=ml2
+        #ENABLE_TENANT_TUNNELS=True
+        # VXLAN tunnel configuration
+        #Q_PLUGIN=ml2
+        #Q_ML2_TENANT_NETWORK_TYPE=vxlan 
 	
 	# Cinder
 	ENABLED_SERVICES+=,cinder,c-api,c-vol,c-sch
@@ -109,7 +112,7 @@ vi /openstack/devstack/localrc #新建localrc文件
 	#IMAGE_URLS+=",http://fedorapeople.org/groups/heat/prebuilt-jeos-images/F17-x86_64-cfntools.qcow2"
 	
 	# Ceilometer - Metering Service (metering + alarming)
-    CEILOMETER_BACKEND=mysql
+        CEILOMETER_BACKEND=mysql
 	ENABLED_SERVICES+=,ceilometer-acompute,ceilometer-acentral,ceilometer-collector,ceilometer-api
 	ENABLED_SERVICES+=,ceilometer-alarm-notifier,ceilometer-alarm-evaluator
 
