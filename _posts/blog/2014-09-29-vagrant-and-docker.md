@@ -232,6 +232,8 @@ project：使用镜像创建出的VM，类似于基于类创建对象；
 
 一个很牛逼的特性，vagrant share，参考[这里](http://docs.vagrantup.com/v2/getting-started/share.html)
 
+> 其实，使用vagrant也并非就是完美的解决方案，在使用过程中还是有一些限制。例如，在服务器上启动vagrant虚拟机后，想在windows PC上ssh或winscp到该虚拟机，目前除了使用public ip外，没有好的办法。因为虚拟机的ssh端口转发默认是绑定在127.0.0.1上，而不是0.0.0.0，导致无法在服务器外连接虚拟机。
+
 ### 安装DevStack
 有个虚拟机，虚拟机又能联网，那么安装devstack就是老话题了。  
 参考我之前的[这篇](http://lingxiankong.github.io/blog/2014/05/10/vmware-workstation-devstack/)文章。
