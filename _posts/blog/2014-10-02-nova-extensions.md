@@ -107,6 +107,9 @@ rt中有一个`ext_resources_handler`（`/nova/compute/resources/`），采用st
 
 此外，资源上报时还会获取主机的metrics资源，与ResourceHandler不同的是，这个metrics资源的获取是采用extension机制。它的实现在/nova/compute/monitors/目录下，目前也只有一个ComputeDriverCPUMonitor实现。
 
+在Kilo版本，Jaypipes提出一个blueprint解决resource tracker资源操作不一致的问题，有兴趣可以参见如下链接：  
+<http://specs.openstack.org/openstack/nova-specs/specs/kilo/approved/resource-objects.html>
+
 ## 与Libvirt的交互
 说白了，Nova从本质上来说就是在玩libvirt，与libvirt交互时，可能有这样的use case：虚拟化层想知道关于自己管理domain（也就是Nova instance）的信息，那么要么它需要调用Nova API查询，要么直接访问DB。但我想如果你是虚拟化层的SE，你不会想依赖任何第三方。于是我们可以用如下的方式：
 
