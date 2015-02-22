@@ -119,6 +119,7 @@ OpenStack每一个服务在创建时，都会根据backdoor_port配置项决定�
 * 一旦服务重启，那么关键信息就会遗失；
 * 最后，也是最重要的，每个服务开一个端口，对系统安全性是一种极大的考验，所以backdoor在生产环境基本不会被采用；
 
-关于GMR，我还没有上手测试过，没有过多的发言权。可以参见官方文档：  
+关于GMR，我还没有上手测试过，没有过多的发言权。可以参见官方文档和一些老外写的博客：  
 <https://wiki.openstack.org/wiki/GuruMeditationReport>  
-<http://docs.openstack.org/developer/nova/devref/gmr.html>
+<http://docs.openstack.org/developer/nova/devref/gmr.html>  
+<https://www.berrange.com/posts/2015/02/19/nova-and-its-use-of-olso-incubator-guru-meditation-reports/>
