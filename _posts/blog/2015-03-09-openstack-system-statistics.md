@@ -37,7 +37,6 @@ host是service所在的主机名称；
 zone是service所属的AZ，其实就是service所在的主机所属的aggregate，只是aggregate的概念不对外呈现，所以用户看到的是AZ。其实，在Nova内部，AZ是AG的metadata而已。  
 
     zone的确定，涉及到两个配置项，对于非计算节点，zone的名称依赖于配置项internal_service_availability_zone（默认是internal）；
-    
     对于计算节点，如果不属于任何AG，或者所属的AG没有AZ的metadata信息，默认的zone依赖于配置项default_availability_zone（默认是nova）。
 
 status&state：可以参见我的[这篇博客](http://lingxiankong.github.io/blog/2014/08/14/nova-service/)。
