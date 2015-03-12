@@ -70,10 +70,10 @@ Nova中对于hypervisor的查询情况支持较为丰富。
 上面的几个资源，默认都是管理员有权限查询，普通租户是看不到的。那么作为租户，能够对系统使用状态有一个什么样的了解呢？
 
 #### 租户的资源配额
-租户可以查询自己的资源配额使用情况，管理员（admin）可以查询普通租户的资源配额使用情况（os-used-limits-for-admin extension）。参见[这里](http://developer.openstack.org/api-ref-compute-v2.html#compute_limits), [这里](http://developer.openstack.org/api-ref-compute-v2-ext.html#ext-limits)和[这里](http://developer.openstack.org/api-ref-compute-v2-ext.html#ext-compute_limits_admins)。
+租户可以查询自己的资源配额限制和使用情况，管理员（admin）可以查询普通租户的资源配额使用情况（os-used-limits-for-admin extension）。参见[这里](http://developer.openstack.org/api-ref-compute-v2.html#compute_limits), [这里](http://developer.openstack.org/api-ref-compute-v2-ext.html#ext-limits)和[这里](http://developer.openstack.org/api-ref-compute-v2-ext.html#ext-compute_limits_admins)。
 
 #### 租户的资源使用量
-管理员可以查询所有租户对计算资源的使用量，也可以查询某个租户的计算资源使用量（包括每个虚拟机计算资源实用信息），参见[这里](http://developer.openstack.org/api-ref-compute-v2-ext.html#ext-os-simple-tenant-usage)。 
+管理员可以查询所有租户对计算资源的使用量，也可以查询某个租户的计算资源使用量（包括每个虚拟机计算资源使用信息），参见[这里](http://developer.openstack.org/api-ref-compute-v2-ext.html#ext-os-simple-tenant-usage)。 
 
 ## 虚拟机状态
 说到底，作为IaaS，OpenStack玩的还是虚拟机，因为各种资源（存储、网络）都是为了更好的使用虚拟机服务。所以对虚拟机状态的掌握就显得格外重要。
@@ -86,7 +86,7 @@ Nova中对于hypervisor的查询情况支持较为丰富。
     
     另外，Nova中除了上述说的操作事件通知外，还有一种审计通知，即在一段时间内的系统资源状态，
     相关的配置项instance_usage_audit_period，目前Nova中只有event_type类型为compute.instance.exists一种审计通知，
-    这种通知可以让你对一短周期内系统中存在的虚拟机有一个全局的了解。
+    这种通知可以让你对一段周期内系统中存在的虚拟机有一个全局的了解。
 
 ### 虚拟机操作事件记录
 Nova中的虚拟机每个操作（启动、停止、暂停、恢复等等），都会在db中保存相关的操作记录，给用户提供查询。利用这个功能，**用户对自己的虚拟机整个生命周期的过程和状态都会了如指掌**，便于用户的管理。参见[这里](http://developer.openstack.org/api-ref-compute-v2-ext.html#ext-os-instance-actions)。
@@ -102,6 +102,11 @@ OpenStack智慧的社区开发者们已经为我们提供了这种能力。其�
 
 * 先说通知，虚拟机操作异常时，一般都会发送error通知，通知中包含异常的函数名称、异常时函数的参数以及异常信息。
 * 再说db，虚拟机操作异常时，无论是在conductor, scheduler还是compute层，除了会发送通知外，还会记录异常信息到数据库（`instance_faults`表），当查询虚拟机信息时，会返回虚拟机的异常信息。
+
+### 虚拟机诊断信息
+租户可以查询虚拟机使用过程中的一些统计信息，比如虚拟机磁盘的读写情况、网络的IO情况等，对于KVM来讲，这些信息都是通过libvirt接口获取。
+
+API示例参见[这里](http://developer.openstack.org/api-ref-compute-v2-ext.html#ext-diagnostics)。
 
 ## 参考链接
 <https://wiki.openstack.org/wiki/SystemUsageData>   
