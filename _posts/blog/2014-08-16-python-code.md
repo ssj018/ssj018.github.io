@@ -413,3 +413,11 @@ Note: the notify() and notifyAll() methods don’t release the lock; this means 
             return wrap_scenario
 
         return wrap_given
+        
+## inspect库的一些常见用法
+inspect.getargspec(func) 获取函数参数的名称和默认值，返回一个四元组(args, varargs, keywords, defaults)，其中：  
+args是参数名称的列表；  
+varargs和keywords是`*`号和`**`号的变量名称；  
+defaults是参数默认值的列表；
+
+inspect.getcallargs(func[, *args][, **kwds]) 绑定函数参数。返回绑定后函数的入参字典。
