@@ -39,7 +39,7 @@ zone是service所属的AZ，其实就是service所在的主机所属的aggregate
     zone的确定，涉及到两个配置项，对于非计算节点，zone的名称依赖于配置项internal_service_availability_zone（默认是internal）；
     对于计算节点，如果不属于任何AG，或者所属的AG没有AZ的metadata信息，默认的zone依赖于配置项default_availability_zone（默认是nova）。
 
-status&state：可以参见我的[这篇博客](http://lingxiankong.github.io/blog/2014/08/14/nova-service/)。
+关于status&state：可以参见我的[这篇博客](http://lingxiankong.github.io/blog/2014/08/14/nova-service/)。
 
 当然，查询service信息也支持过滤条件，比如：  
 1、查询某个host相关的service；  
@@ -72,8 +72,80 @@ Nova中对于hypervisor的查询情况支持较为丰富。
 #### 租户的资源配额
 租户可以查询自己的资源配额限制和使用情况，管理员（admin）可以查询普通租户的资源配额使用情况（os-used-limits-for-admin extension）。参见[这里](http://developer.openstack.org/api-ref-compute-v2.html#compute_limits), [这里](http://developer.openstack.org/api-ref-compute-v2-ext.html#ext-limits)和[这里](http://developer.openstack.org/api-ref-compute-v2-ext.html#ext-compute_limits_admins)。
 
+如下是租户查到的自己的资源配额限制和使用情况（片段）：
+
+    {
+        "limits": {
+            "absolute": {
+                "maxImageMeta": 128,
+                "maxPersonality": 5,
+                "maxPersonalitySize": 10240,
+                "maxSecurityGroupRules": 20,
+                "maxSecurityGroups": 10,
+                "maxServerMeta": 128,
+                "maxTotalCores": 20,
+                "maxTotalFloatingIps": 10,
+                "maxTotalInstances": 10,
+                "maxTotalKeypairs": 100,
+                "maxTotalRAMSize": 51200,
+                "maxServerGroups": 10,
+                "maxServerGroupMembers": 10,
+                "totalCoresUsed": 0,
+                "totalInstancesUsed": 0,
+                "totalRAMUsed": 0,
+                "totalSecurityGroupsUsed": 0,
+                "totalFloatingIpsUsed": 0,
+                "totalServerGroupsUsed": 
+    ...
+
 #### 租户的资源使用量
 管理员可以查询所有租户对计算资源的使用量，也可以查询某个租户的计算资源使用量（包括每个虚拟机计算资源使用信息），参见[这里](http://developer.openstack.org/api-ref-compute-v2-ext.html#ext-os-simple-tenant-usage)。 
+
+示例1，管理员查询租户对计算资源的使用量：
+
+    {
+        "tenant_usages": [
+            {
+                "start": "2012-10-08T21:10:44.587336",
+                "stop": "2012-10-08T22:10:44.587336",
+                "tenant_id": "openstack",
+                "total_hours": 1.0,
+                "total_local_gb_usage": 1.0,
+                "total_memory_mb_usage": 512.0,
+                "total_vcpus_usage": 1.0
+            }
+        ]
+    }
+    
+示例2，查询某个租户的计算资源使用量：
+
+    {
+        "tenant_usage": {
+            "server_usages": [
+                {
+                    "ended_at": null,
+                    "flavor": "m1.tiny",
+                    "hours": 1.0,
+                    "instance_id": "1f1deceb-17b5-4c04-84c7-e0d4499c8fe0",
+                    "local_gb": 1,
+                    "memory_mb": 512,
+                    "name": "new-server-test",
+                    "started_at": "2012-10-08T20:10:44.541277",
+                    "state": "active",
+                    "tenant_id": "openstack",
+                    "uptime": 3600,
+                    "vcpus": 1
+                }
+            ],
+            "start": "2012-10-08T20:10:44.587336",
+            "stop": "2012-10-08T21:10:44.587336",
+            "tenant_id": "openstack",
+            "total_hours": 1.0,
+            "total_local_gb_usage": 1.0,
+            "total_memory_mb_usage": 512.0,
+            "total_vcpus_usage": 1.0
+        }
+    }
 
 ## 虚拟机状态
 说到底，作为IaaS，OpenStack玩的还是虚拟机，因为各种资源（存储、网络）都是为了更好的使用虚拟机服务。所以对虚拟机状态的掌握就显得格外重要。
@@ -89,9 +161,32 @@ Nova中对于hypervisor的查询情况支持较为丰富。
     这种通知可以让你对一段周期内系统中存在的虚拟机有一个全局的了解。
 
 ### 虚拟机操作事件记录
-Nova中的虚拟机每个操作（启动、停止、暂停、恢复等等），都会在db中保存相关的操作记录，给用户提供查询。利用这个功能，**用户对自己的虚拟机整个生命周期的过程和状态都会了如指掌**，便于用户的管理。参见[这里](http://developer.openstack.org/api-ref-compute-v2-ext.html#ext-os-instance-actions)。
+Nova中的虚拟机每个操作（启动、停止、暂停、恢复等等），都会在db中保存相关的操作记录，给用户提供查询。利用这个功能，**用户对自己的虚拟机整个生命周期的过程和状态都会了如指掌**，便于用户的管理。参见[这里](http://developer.openstack.org/api-ref-compute-v2-ext.html#ext-os-instance-actions)。示例如下：
 
-在内部实现中，nova-api层会记录action开始的记录，在nova-compute层，则会添加event开始和结束的信息，action和event根据request id关联。
+    {
+        "instanceActions": [
+            {
+                "action": "resize",
+                "instance_uuid": "b48316c5-71e8-45e4-9884-6c78055b9b13",
+                "message": "",
+                "project_id": "842",
+                "request_id": "req-25517360-b757-47d3-be45-0e8d2a01b36a",
+                "start_time": "2012-12-05 01:00:00.000000",
+                "user_id": "789"
+            },
+            {
+                "action": "reboot",
+                "instance_uuid": "b48316c5-71e8-45e4-9884-6c78055b9b13",
+                "message": "",
+                "project_id": "147",
+                "request_id": "req-3293a3f1-b44c-4609-b8d2-d81b105636b8",
+                "start_time": "2012-12-05 00:00:00.000000",
+                "user_id": "789"
+            }
+        ]
+    }
+
+在内部实现中，nova-api层会记录action开始的记录，在nova-compute层，则会添加event开始和结束的信息，action和event根据request id（一次消息请求的标识）关联。
 
 ### 虚拟机错误信息记录
 因为OpenStack的安装部署复杂性，或者操作过程对环境、配置等要求比较苛刻，稍不注意，就有可能发生错误。一旦发生错误，除了从日志中获取错误信息外，还有什么比较方便、快捷的方式能够迅速定位错误呢？
@@ -106,7 +201,27 @@ OpenStack智慧的社区开发者们已经为我们提供了这种能力。其�
 ### 虚拟机诊断信息
 租户可以查询虚拟机使用过程中的一些统计信息，比如虚拟机磁盘的读写情况、网络的IO情况等，对于KVM来讲，这些信息都是通过libvirt接口获取。
 
-API示例参见[这里](http://developer.openstack.org/api-ref-compute-v2-ext.html#ext-diagnostics)。
+API示例参见[这里](http://developer.openstack.org/api-ref-compute-v2-ext.html#ext-diagnostics)。返回消息示例：
+
+    {
+        "vnet0_tx_errors": 0,
+        "vda_errors": -1,
+        "vda_read": 4447232,
+        "vda_write": 4347904,
+        "vnet0_tx_packets": 1259,
+        "vda_write_req": 3523,
+        "memory-actual": 524288,
+        "cpu0_time": 195230000000,
+        "vnet0_tx": 364840,
+        "vnet0_rx_drop": 0,
+        "vnet0_rx_packets": 1423,
+        "vnet0_rx_errors": 0,
+        "memory": 524288,
+        "memory-rss": 243188,
+        "vda_read_req": 291,
+        "vnet0_rx": 363725,
+        "vnet0_tx_drop": 0
+    }
 
 ## 参考链接
 <https://wiki.openstack.org/wiki/SystemUsageData>   
