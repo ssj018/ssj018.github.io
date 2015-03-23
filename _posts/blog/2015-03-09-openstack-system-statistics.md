@@ -15,7 +15,7 @@ category: blog
 
 写此文的目的：
 
-转眼间OpenStack已经发展到了K，马上L开发周也要开始了。记得我最早接触OpenStack是从E版本，时间过去了2年多，OpenStack社区仍然如火如荼，OpenStack玩家，特别是重量级玩家越来越多，通过每次OpenStack峰会的报道、社区的user survey以及圈里的分享，我们发现OpenStack的生产环境部署也越来越多，但是相信很多企业，很多人，在使用OpenStack的过程中仍然很痛苦。安装部署困难，系统复杂性，过于灵活的架构，眼花缭乱的配置项，特别是系统搭建好以后，运行过程中各种各样的错误等等，足以让一个充满热情的人望而却步。关于安装部署，目前已有有很多开源工具在做，像TripleO、Fuel、RDO以及一些更native的Ansible、Puppet、Chef等工具，已经极大程度的降低了安装OpenStack的门槛，我就不再过多阐述。而关于运行期间如何排错，如何掌握系统的运行状态，在不了解系统实现原理的情况下，也会令人一筹莫展。当然，已经有很多发行版中包含了这部分功能。
+转眼间OpenStack已经发展到了K，马上L版本开发周期也要开始了。记得我最早接触OpenStack是从E版本，时间过去了2年多，OpenStack社区仍然如火如荼，OpenStack玩家，特别是重量级玩家越来越多，通过每次OpenStack峰会的报道、社区的user survey以及圈里的分享，我们发现OpenStack的生产环境部署也越来越多，但是相信很多企业，很多人，在使用OpenStack的过程中仍然很痛苦。安装部署困难，系统复杂性，过于灵活的架构，眼花缭乱的配置项，特别是系统搭建好以后，运行过程中各种各样的错误等等，足以让一个充满热情的人望而却步。关于安装部署，目前已有有很多开源工具在做，像TripleO、Fuel、RDO以及一些像Ansible、Puppet、Chef等更native的工具，已经极大程度的降低了安装OpenStack的门槛，我就不再过多阐述。而关于运行期间如何排错，如何掌握系统的运行状态，在不了解系统实现原理的情况下，也会令人一筹莫展。当然，已经有很多发行版中包含了这部分功能。
 
 本文的目的不是指导读者写一个新的类似的工具，而是分析为了配合这些工具，可以使用到的OpenStack自身能力。当然，系统的监控运维是一个大的话题，我能力和视野有限，喷不了那么多（没有真正用过的东西，我也不愿意喷），像主机的CPU监控、进程监控、网络流量监控、存储监控这些，也不在本文的范畴内。
 
@@ -39,7 +39,8 @@ zone是service所属的AZ，其实就是service所在的主机所属的aggregate
     zone的确定，涉及到两个配置项，对于非计算节点，zone的名称依赖于配置项internal_service_availability_zone（默认是internal）；
     对于计算节点，如果不属于任何AG，或者所属的AG没有AZ的metadata信息，默认的zone依赖于配置项default_availability_zone（默认是nova）。
 
-关于status&state：可以参见我的[这篇博客](http://lingxiankong.github.io/blog/2014/08/14/nova-service/)。
+status是服务disable属性的体现，该属性可以直接通过API修改;  
+state是服务真实的状态，是通过servicegroup api获取。每个服务在启动时会加入servicegroup，以db后端为例，会在服务中启动定时器，更新service表中的`report_count`的值，同时也会刷新更新时间，后续会根据这个更新时间确定服务的死活；
 
 当然，查询service信息也支持过滤条件，比如：  
 1、查询某个host相关的service；  
