@@ -157,7 +157,7 @@ oslo.messaging的产生就不多说了，因为RPC的调用在各个项目中都
 method，接收端函数的名称；   
 args，接收端函数的参数，参数会做序列化处理；  
 namespace，就是target中的namespace属性；  
-version，target中的version，这个version要与之前的`version_cap`兼容，major要一致，minor要小于或等于`version_cap`，即：rpcapi中的函数版本不能大于该客户端`version_cap`指定的版本；
+version，target中的version，这个version要与之前的`version_cap`兼容，major要一致，minor要小于或等于`version_cap`，即：rpcapi中的函数版本不能大于该客户端`version_cap`指定的版本；这个version很大的作用是为了升级时版本兼容，具体可参见团队一个同事关于升级的一篇博客：[这里](http://kiwik.github.io/openstack/2015/04/04/Nova%E5%A6%82%E4%BD%95%E6%94%AF%E6%8C%81live-upgrade/)
 
 4、消息的发送。这里调用了上述TRANSPORT的方法：
 
