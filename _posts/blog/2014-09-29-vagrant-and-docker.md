@@ -147,6 +147,12 @@ project：使用镜像创建出的VM，类似于基于类创建对象；
 
     ssh vagrant@127.0.0.1 -p 2200 -i /root/.vagrant.d/insecure_private_key
 
+之前我一直尝试从远程主机ssh到vagrant虚拟机（并不是每个人都有权限登录到vagrant所在的host），但都失败了。于是我在网上看到这么一句解释：Since v1.2.3 Vagrant port forwarding by default binds with 127.0.0.1 so only local connections are allowed.
+
+又经过一番搜索和尝试，终于找到一个方法，如下：  
+1、在Vagrantfile文件中配置：`config.vm.network :forwarded_port, guest: 22, host: 2222, host_ip: "0.0.0.0", id: "ssh", auto_correct: true`  
+2、把虚拟机的私钥文件复制到远程主机，配置ssh客户端（我的是xShell）使用私钥登录。
+
 ### 安装ubuntu
 在/var/vagrant目录下clone vagrant安装devstack的工程，链接：<https://git.openstack.org/openstack-dev/devstack-vagrant>
 
