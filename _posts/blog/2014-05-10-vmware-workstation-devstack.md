@@ -77,14 +77,15 @@ vi /openstack/devstack/localrc #新建localrc文件
     LOG_COLOR=False
     SCREEN_LOGDIR=/opt/stack/logs
     
-    KEYSTONE_BRANCH=stable/kilo
-    NOVA_BRANCH=stable/kilo
-    NEUTRON_BRANCH=stable/kilo
-    GLANCE_BRANCH=stable/kilo
-    CINDER_BRANCH=stable/kilo
-    HEAT_BRANCH=stable/kilo
-    HORIZON_BRANCH=stable/kilo
-    CEILOMETER_BRANCH-stable/kilo
+    # Branch(stable/kilo)
+	KEYSTONE_BRANCH=proposed/kilo
+	NOVA_BRANCH=proposed/kilo
+	NEUTRON_BRANCH=proposed/kilo
+	GLANCE_BRANCH=proposed/kilo
+	CINDER_BRANCH=proposed/kilo
+	HEAT_BRANCH=proposed/kilo
+	HORIZON_BRANCH=proposed/kilo
+	CEILOMETER_BRANCH=proposed/kilo
 
     # Pre-requisite
     ENABLED_SERVICES=rabbit,mysql,key
