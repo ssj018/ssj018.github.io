@@ -275,6 +275,10 @@ container：类似于vagrant中的VM；
 
 查看container中的进程：`docker top $CONTAINER_ID`
 
+docker ps 只列出运行态的容器  
+docker ps -l 列出最近启动的容器  
+docker ps -a 列出所有容器
+
 容器的导出（文件）和（从文件）导入（镜像）：  
 `docker export CONTAINER_ID > file.tar`  
 `cat file.tar | docker import - kong/ubuntu:v1.0`  
@@ -302,7 +306,7 @@ Dockerfile创建镜像时会继承父镜像的开放端口，但不会继承启�
 #### docker网络
 /etc/hosts, /etc/hostname, /etc/resolve.conf只能临时编辑，容器终止或重启后并不会被保存，也不会被docker commit提交。
 
-绑定ports：`docker run -d -p 5000:5000 training/webapp python app.py`，在第一个5000前可以加本机的IP，同时可以指定协议（/udp）。使用-P时自动绑定，范围49153 to 65535。  
+绑定ports：`docker run -d -p 5000:5000 training/webapp python app.py`，在第一个5000前可以加本机的IP，同时可以指定协议（/udp）。使用-P（大写）时自动绑定，范围49153 to 65535。  
 
 可以通过`docker port $CONTAINER_ID 5000`查询container port 5000绑定的external port和绑定的地址，docker ps也能查到。
 
