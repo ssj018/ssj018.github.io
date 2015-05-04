@@ -37,8 +37,9 @@ category: blog
 配置pip国内源，新建`~/.pip/pip.conf`文件，输入如下内容：
 
     [global]  
-    index-url=http://mirrors.tuna.tsinghua.edu.cn/pypi/simple  
-    # 或者豆瓣的源：index-url = http://pypi.douban.com/simple/
+    trusted-host = pypi.douban.com
+    index-url=http://pypi.douban.com/simple/  
+    # 或者清华的源：index-url = http://mirrors.tuna.tsinghua.edu.cn/pypi/simple
 
 重新以root身份登录，以使pip源生效。
 
