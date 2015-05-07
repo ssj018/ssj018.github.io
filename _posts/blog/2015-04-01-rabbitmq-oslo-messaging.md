@@ -82,7 +82,7 @@ oslo.messaging的产生就不多说了，因为RPC的调用在各个项目中都
 关于oslo.messaging的代码相关的介绍，网上有很多现成的文章，我也不想再花费时间书面总结（其实代码本身就是文档，好好读读代码即可）。但代码本身是枯燥的，所以，这里我就举例说明oslo.messaging的流程。
 
 ### nova-compute重启虚拟机（cast调用）
-在nova-compute重启的时候，系统初始化过程中，如果判断到主机上有虚拟机需要reboot，nova-compute会有如下调用：
+在nova-compute重启的时候，系统初始化过程中，如果判断到主机上有虚拟机需要reboot，nova-compute会有如下调用(这个例子中的RPC调用方式其实是一个bug，已被我的同事修复，https://review.openstack.org/#/c/170110/)：
 
     self.compute_rpcapi.reboot_instance(context, instance, block_device_info=None, reboot_type=reboot_type)
 
