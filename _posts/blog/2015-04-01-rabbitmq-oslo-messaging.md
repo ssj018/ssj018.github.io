@@ -25,7 +25,7 @@ producer, exchange, queue, message, consumer
 **Producer**  
 RPC ways. In order to receive a response the client needs to send a 'callback' queue address with the request. e.g. specify `properties=pika.BasicProperties(reply_to = callback_queue_name)` when publishing messages. It will create a callback queue for every RPC request, which is not efficient, to solve the problem, we can use `correlation_id` to create a single callback queue per client.
 
-If producer needs to know if message reached at least one queue, it can set the mandatory flag on a basic.publish, ensuring that abasic.return will be sent back to the client if no queues were appropriately bound.
+If producer needs to know if message reached at least one queue, it can set the mandatory flag on a basic.publish, ensuring that a basic.return will be sent back to the client if no queues were appropriately bound.
 
 **Exchange**  
 In RabbitMQ a message can never be sent directly to the queue, Instead, the producer can only send messages to an exchange, There are a few exchange types available: *direct, topic, headers and fanout*, the routing-key's value is ignored for fanout exchanges.  
@@ -119,7 +119,7 @@ oslo.messaging的产生就不多说了，因为RPC的调用在各个项目中都
 这里有几个概念：  
 **target**：作为消息发送者，需要在target中指定消息要发送到的exchange, binding-key, consumer等信息（这些概念可能与target对象属性不一样）  
 **serializer**：负责消息的序列化处理。就是负责把Nova中的对象转换成可以在网络中传送的格式。  
-**TRANSPORT**：处理消息发送的抽象层。根据`rpc_backend`的配置确定真正处理消息发送的driver。一般我们会用到这个：`rabbit = oslo_messaging._drivers.impl_rabbit:RabbitDriver`。对于RabbitDriver，其相关平配置项都在`/oslo_messaging/_drivers/impl_rabbit.py`中，它内部会维护一个connection pool，管理Connection对象。
+**TRANSPORT**：处理消息发送的抽象层。根据`rpc_backend`的配置确定真正处理消息发送的driver。一般我们会用到这个：`rabbit = oslo_messaging._drivers.impl_rabbit:RabbitDriver`。对于RabbitDriver，其相关配置项都在`/oslo_messaging/_drivers/impl_rabbit.py`中，它内部会维护一个connection pool，管理Connection对象。
 
 此时，我们知道，一个messaging客户端的初始化，可以确定这么几个事情：消息发到哪？消息由谁来发？消息如何做序列化？……但是，我们还缺一个最重要的，消息在哪？
 
