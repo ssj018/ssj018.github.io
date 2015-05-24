@@ -37,7 +37,7 @@ subunit.run is expected to speak subunit back to testr so that testr can keep tr
 
 setUpClass按顺序包含如下步骤（可被测试类覆写）：
 
-- `skip_checks`：根据一些条件决定是否抛出skipException异常，以阻止整个测试类的执行，测试类一般都会覆写该函数。
+- `skip_checks`：根据一些条件决定是否抛出skipException异常，以**阻止整个测试类的执行**，测试类一般都会覆写该函数。
 - `setup_credentials`：初始化在每个测试类中使用到的调用各个project的客户端（primary/alt/admin或roles列表）。这里有一个credentials provider的概念，目前有三种实现方式：
 
 	IsolatedCreds，**适用于并发测试场景，为每个测试类创建不同的租户**。要求`allow_tenant_isolation`配置项为true或测试类的`force_tenant_isolation`属性为true，会自动到Keystone创建用户，并以该用户的身份执行用例。但能够创建用户的前提是有一个已知的admin用户，所以，其实还是会用到identity section中`admin_username`、`admin_tenant_name`、`admin_password`，以及auth section下的`tempest_roles`（指定普通用户的角色）等配置项。此外，如果系统使用Neutron（`service_available` section下neutron配置项为true），还会为租户创建network/subnet/router。
@@ -53,6 +53,9 @@ tearDownClass按顺序包含如下步骤（可被测试类覆写）：
 
 - `resource_cleanup`：清理`resource_setup`阶段创建的资源。
 - `clear_isolated_creds`：调用`credentials_provider`清理Tempest创建的租户资源和租户本身。
+
+## 异常测试用例
+早期的Tempest用例中，除了正常测试用例之外，还有对应的异常测试用例，现在的Tempest用例中还是遗留有异常测试用例的痕迹，比如`tempest/api/compute/servers/test_instance_actions_negative.py`。而且，异常测试用例特别好写，千篇一律，给个异常参数，期望API抛出异常。这种没有技术含量的事情，社区天才的工程师们怎么能忍呢，所以，QA团队引入异常测试框架解决这个问题。
 
 ## 一些关键的配置项
 Tempest配置项按照section划分：  
