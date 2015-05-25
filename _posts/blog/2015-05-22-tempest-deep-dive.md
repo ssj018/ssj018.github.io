@@ -54,8 +54,21 @@ tearDownClass按顺序包含如下步骤（可被测试类覆写）：
 - `resource_cleanup`：清理`resource_setup`阶段创建的资源。
 - `clear_isolated_creds`：调用`credentials_provider`清理Tempest创建的租户资源和租户本身。
 
-## 异常测试用例
-早期的Tempest用例中，除了正常测试用例之外，还有对应的异常测试用例，现在的Tempest用例中还是遗留有异常测试用例的痕迹，比如`tempest/api/compute/servers/test_instance_actions_negative.py`。而且，异常测试用例特别好写，千篇一律，给个异常参数，期望API抛出异常。这种没有技术含量的事情，社区天才的工程师们怎么能忍呢，所以，QA团队引入异常测试框架解决这个问题。
+## 异常测试框架
+早期的Tempest用例中，除了正常测试用例之外，还有对应的异常测试用例，现在的Tempest用例中还是遗留有异常测试用例的痕迹，比如`tempest/api/compute/servers/test_instance_actions_negative.py`。而且，异常测试用例特别好写，千篇一律，给个异常参数，期望API抛出异常即可。这种没有技术含量的事情，社区天才的工程师们怎么能忍呢，所以，QA团队引入异常测试框架解决这个问题。
+
+Tempest中异常测试用例可以参见`/tempest/api/compute/flavors/test_flavors_negative.py`，可以看到每个测试类除了继承自BaseTestCase外，还会继承NegativeAutoTest，并且有个类装饰器：SimpleNegativeAutoTest
+
+读懂装饰器SimpleNegativeAutoTest代码需要理解python高级正则表达式用法，用到了re的“肯定前向断言”(?=pattern)和“否定后向断言”(?<!pattern)。对于FlavorsListWithDetailsNegativeTestJSON测试类来说，该装饰器的作用是：
+
+* 取出类名字符串：FlavorsListWithDetailsNegativeTestJSON
+* 先把字符串中的JSON和TEST字符串去除：FlavorsListWithDetailsNegative；
+* 在字符串中大写字母且非首字母前加`_`符号：Flavors\_List\_With\_Details\_Negative
+* 把字符串中的大写字母全部转换成小写：flavors\_list\_with\_details\_negative
+* 字符串前添加`test_`：test\_flavors\_list\_with\_details\_negative
+* 将这个最终的字符串，作为FlavorsListWithDetailsNegativeTestJSON测试类的一个方法名，并且指定方法的实现函数execute()
+
+这个execute函数来自父类NegativeAutoTest，其作用是根据你的api-schena的定义，发送http请求，期望http error。
 
 ## 一些关键的配置项
 Tempest配置项按照section划分：  
