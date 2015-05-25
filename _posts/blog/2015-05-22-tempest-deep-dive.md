@@ -59,7 +59,7 @@ tearDownClass按顺序包含如下步骤（可被测试类覆写）：
 
 ## 一些关键的配置项
 Tempest配置项按照section划分：  
-![](/images/2015-05-22-tempest-deep-dive/1.png)
+![](images/2015-05-22-tempest-deep-dive/1.png)
 
 identity section下的`uri`或`uri_v3`是必不可少的配置项，是Tempest与你的OpenStack环境连接的桥梁。
 比如：uri=http://10.250.10.50:5000/v2.0
@@ -109,16 +109,16 @@ testr run tempest.api.compute.admin.test_agents.AgentsAdminTestJSON
 ironic = false
 
 在`/tempest/api/compute/admin/test_baremetal_nodes.py`中：  
-![](/images/2015-05-22-tempest-deep-dive/2.png)
+![](images/2015-05-22-tempest-deep-dive/2.png)
 
 ### 问题：上面直接skip一个测试类有点太狠了，我只想skip涉及某个服务的某个测试用例
-![](/images/2015-05-22-tempest-deep-dive/3.png)
+![](images/2015-05-22-tempest-deep-dive/3.png)
   
 这样，如果系统没有部署Cinder服务，该测试用例就会skip。
 
 ### 问题：我使用Tempest最新版测试老的OpenStack版本，可有些特性在老版本并不存在，怎么办？
 在compute-feature-enabled section的`api_extensions`配置项中配置Nova服务支持的extensions。  
-![](/images/2015-05-22-tempest-deep-dive/4.png)
+![](images/2015-05-22-tempest-deep-dive/4.png)
 
 可能你还会觉得直接skip一个测试类太狠，ok，也有函数级的skip方式：  
-![](/images/2015-05-22-tempest-deep-dive/5.png)
+![](images/2015-05-22-tempest-deep-dive/5.png)
