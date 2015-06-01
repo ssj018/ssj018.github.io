@@ -52,7 +52,7 @@ box： 基础镜像，类似于编程中的类；
 project：使用镜像创建出的VM，类似于基于类创建对象；  
 同一个box可以被不同的project使用。
 
-因为我们使用virtualBox作为vagrant的虚拟化实现工具（你也可以使用vmware），所以要先安装 virtualBox，参考文档<https://help.ubuntu.com/community/VirtualBox/Installation>。
+因为我们使用virtualBox作为vagrant的虚拟化实现工具（你也可以使用vmware），所以要先安装 virtualBox，参考文档见[这里](https://help.ubuntu.com/community/VirtualBox/Installation)和[这里](https://virtualbox.org/wiki/Linux_Downloads)。
 
     sudo sh -c "echo 'deb http://download.virtualbox.org/virtualbox/debian '$(lsb_release -cs)' contrib non-free' > /etc/apt/sources.list.d/virtualbox.list" && wget -q http://download.virtualbox.org/virtualbox/debian/oracle_vbox.asc -O- | sudo apt-key add - && sudo apt-get update && sudo apt-get install virtualbox-4.3 dkms
 
