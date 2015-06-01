@@ -81,7 +81,9 @@ identity section下的`uri`或`uri_v3`是必不可少的配置项，是Tempest�
 在DevStack环境中下载最新版本Tempest代码，拷贝配置文件，  
 cp etc/tempest.conf.sample etc/tempest.conf
 
-对配置文件进行修改，这里是以我的环境为例。
+> 之所以选择在DevStack环境中安装tempest，是因为DevStack的安装过程中已经安装了很多依赖包
+
+对配置文件进行修改，这里是以我的环境为例，请自行修改。
 
 	[auth]
 	tempest_roles = Member
@@ -106,14 +108,17 @@ cp etc/tempest.conf.sample etc/tempest.conf
 	swift = false
 	ceilometer = false
 
-安装Tempest。  
+安装Tempest和依赖，在tempest目录下：  
 python setup.py install
+
+> 如果不是在DevStack环境中安装，安装某个python库时提示“error: command 'x86_64-linux-gnu-gcc' failed”，则先安装：apt-get install -y python-dev
 
 在执行测试前，可以先验证自己的Tempest配置是否OK。  
 verify-tempest-config  
 这个脚本是随Tempest安装的，它会验证Tempest能否访问你环境上的Keystone，还会验证环境上各个服务与你的配置是否冲突，每个服务支持的extensions与你的配置是否冲突，服务支持的版本号与你的配置是否冲突等，保证你的Tempest配置基本正确。
 
 执行测试：  
+testr init  
 testr run tempest.api.compute.admin.test_agents.AgentsAdminTestJSON
 
 ## FAQ
