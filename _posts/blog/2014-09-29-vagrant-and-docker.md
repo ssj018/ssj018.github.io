@@ -153,6 +153,20 @@ project：使用镜像创建出的VM，类似于基于类创建对象；
 1、在Vagrantfile文件中配置：`config.vm.network :forwarded_port, guest: 22, host: 2222, host_ip: "0.0.0.0", id: "ssh", auto_correct: true`  
 2、把虚拟机的私钥文件复制到远程主机，配置ssh客户端（我的是xShell）使用私钥登录。
 
+#### FAQ
+1、我曾经遇到一个问题，重启了某个VM，但一直卡在下面的步骤：
+
+    ==> default: Waiting for machine to boot. This may take a few minutes...
+        default: SSH address: 127.0.0.1:2222
+        default: SSH username: vagrant
+        default: SSH auth method: private key
+        default: Warning: Connection timeout. Retrying...
+        default: Warning: Connection timeout. Retrying...
+      
+在stackoverflow上找到的答案是，虚拟机的启动需要键盘输入才能继续，执行：
+
+    vboxmanage controlvm <虚拟机名称> keyboardputscancode 1c
+
 ### 安装ubuntu
 在/var/vagrant目录下clone vagrant安装devstack的工程，链接：<https://git.openstack.org/openstack-dev/devstack-vagrant>
 
