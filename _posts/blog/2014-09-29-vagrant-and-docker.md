@@ -336,6 +336,9 @@ Dockerfile创建镜像时会继承父镜像的开放端口，但不会继承启�
 卷的共享参见[这里](http://docs.docker.com/userguide/dockervolumes/)。  
 注意，要删除数据卷，需要在删除最后一个挂载该卷的容器时指定-v参数。
 
+#### Dockerfile
+在dockerfile中只能出现一次CMD，CMD在build时会被忽略，只是在image创建容器时执行
+
 ### 安装Devstack
 与vagrant一样，装完docker，首先想到的是到docker image repo（官方叫docker hub）找与devstack相关的image。直接到<https://registry.hub.docker.com>，搜索“devstack”（或者通过命令行`docker search devstack`也能搜索出来），有三个结果：  
 ![](/images/2014-09-29-vagrant-docker/7.png)  
