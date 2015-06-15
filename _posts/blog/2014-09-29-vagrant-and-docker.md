@@ -337,7 +337,13 @@ Dockerfile创建镜像时会继承父镜像的开放端口，但不会继承启�
 注意，要删除数据卷，需要在删除最后一个挂载该卷的容器时指定-v参数。
 
 #### Dockerfile
-在dockerfile中只能出现一次CMD，CMD在build时会被忽略，只是在image创建容器时执行
+<http://docs.docker.com/reference/builder/>
+
+在dockerfile中只能出现一次CMD，CMD在build时会被忽略，只是在image创建容器时执行. CMD指定的命令可以被docker run传递的命令覆盖，而ENTRYPOINT会把docker run时容器名后面的所有内容都当成参数传递给其指定的命令（不会对命令覆盖）。所以，我的理解，ENTRYPOINT更像是将容器当做一个可执行命令，后面跟上命令参数。CMD可以为ENTRYPOINT提供参数，ENTRYPOINT本身也可以包含参数，但是你可以把那些可能需要变动的参数写到CMD里而把那些不需要变动的参数写到ENTRYPOINT里面。
+
+ENV定义image build时用到的环境变量（可以用docker inspect查看），并且会作用于容器，可通过`docker run --env <key>=<value>`修改。
+
+ADD功能比COPY强大，将context中的某个文件、context某个目录中的文件、URL文件、压缩包中的文件解压后拷贝到容器中目的文件或目录下。
 
 ### 安装Devstack
 与vagrant一样，装完docker，首先想到的是到docker image repo（官方叫docker hub）找与devstack相关的image。直接到<https://registry.hub.docker.com>，搜索“devstack”（或者通过命令行`docker search devstack`也能搜索出来），有三个结果：  
