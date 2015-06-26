@@ -284,7 +284,8 @@ container：类似于vagrant中的VM；
 	# 到目前为止的收集的输出，可以加-f达到类似于tail -f的效果
 	docker logs $CONTAINER_ID
 	# 或者连接上容器实时查看
-	docker attach $CONTAINER_ID
+	docker attach $CONTAINER_ID --sig-proxy=false
+  # --sig-proxy可以保证 Ctrl+D、Ctrl+C 不会退出
 	# attach命令有时并不方便，当多个窗口同时attach到一个容器时，所有窗口都会同步显示，其中一个窗口因命令阻塞时，其他窗口也无法执行操作。连接容器也可以用nsenter工具。
 
 查看container中的进程：`docker top $CONTAINER_ID`
