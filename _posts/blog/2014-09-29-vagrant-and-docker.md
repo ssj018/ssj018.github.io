@@ -56,6 +56,8 @@ project：使用镜像创建出的VM，类似于基于类创建对象；
 
     sudo sh -c "echo 'deb http://download.virtualbox.org/virtualbox/debian '$(lsb_release -cs)' contrib non-free' > /etc/apt/sources.list.d/virtualbox.list" && wget -q http://download.virtualbox.org/virtualbox/debian/oracle_vbox.asc -O- | sudo apt-key add - && sudo apt-get update && sudo apt-get install virtualbox-4.3 dkms
 
+当然，你也可以直接下载virtualbox的deb包，使用如下跟vagrant一样的方式安装。
+
 下载 ubuntu下的vagrant deb包（链接：<http://www.vagrantup.com/downloads>），放在某一目录下（比如`/var/kong/vagrant_1.6.5_x86_64.deb`）， 然后进行安装。   
 ![](/images/2014-09-29-vagrant-docker/2.png)
 
