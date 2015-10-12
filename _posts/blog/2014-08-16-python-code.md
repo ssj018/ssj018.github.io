@@ -307,7 +307,7 @@ ORM框架是元类一个很典型的使用场景。
     if __name__=="__main__":
         print _RunnerType.CONSTANT
         
-## 创建文件时指定权限
+## 创建文件时指定权限、测试权限
 代码来源，Nova
 
     import os
@@ -330,10 +330,17 @@ ORM框架是元类一个很典型的使用场景。
                 os.umask(saved_umask)
                 
     if __name__ == '__main__':
-        write_to_file('/home/kong/tmp', 'test', 31)
+        write_to_file('/opt/kong/tmp', 'test', 31)
         # Then you will see a file is created with permission 640.
         # Warning: If the file already exists, its permission will not be changed.
-        # Note：For file, default all permission is 666, and 777 for directory.
+
+首先，umask是linux下的命令，默认情况下的umask值是022，此时你建立的文件默认权限是644(6-0,6-2,6-2)，建立的目录的默认权限是755(7-0,7-2,7-2).
+程序中，31是十进制，对应的二进制是011111，文件都不可执行，因此对应的二进制是010110，转换成linux下权限是046，所以新的文件权限是640。
+
+NOTE：数字进制转换，二进制转成十进制int('011', 2), 十进制转成二进制bin(31), 十进制转成八进制oct(31), 十进制转成十六进制hex(31)
+
+测试路径权限：  
+os.access(path, mode), mode取值范围为`os.F_OK/os.R_OK/os.W_OK/os.X_OK`
         
 ## 多进程并发执行
 代码来源：Rally
