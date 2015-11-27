@@ -436,7 +436,8 @@ args是参数名称的列表；
 varargs和keywords是`*`号和`**`号的变量名称；  
 defaults是参数默认值的列表；
 
-inspect.getcallargs(func[, *args][, **kwds]) 绑定函数参数。返回绑定后函数的入参字典。
+inspect.getcallargs(func[, *args][, **kwds]) 绑定函数参数。返回绑定后函数的入参字典。  
+参见[这里](https://docs.python.org/2/library/inspect.html#inspect.getcallargs)。
 
 ## python中的私有属性和函数
 Python把以两个或以上下划线字符开头且没有以两个或以上下划线结尾的变量当作私有变量。私有变量会在代码生成之前被转换为长格式（变为公有），这个过程叫"Private name mangling"，如类A里的`__private`标识符将被转换为`_A__private`，但当类名全部以下划线命名的时候，Python就不再执行轧压。而且，虽然叫私有变量，仍然有可能被访问或修改(使用`_classname__membername`)，所以， 总结如下：
