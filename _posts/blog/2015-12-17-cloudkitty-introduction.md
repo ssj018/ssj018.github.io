@@ -16,8 +16,8 @@ CloudKitty wiki：[链接](https://wiki.openstack.org/wiki/CloudKitty)
 开发者文档：[链接](http://docs.openstack.org/developer/cloudkitty/installation.html)
 
 温哥华峰会视频：[链接](https://www.youtube.com/watch?v=OevlC4JkxTA)  
-东京峰会视频：[链接](https://www.youtube.com/watch?v=hou187R_G_E)  
 巴黎峰会视频：[链接](https://www.youtube.com/watch?v=KlagCqTUPco)  
+东京峰会视频(里面有我的身影！)：[链接](https://www.youtube.com/watch?v=hou187R_G_E)  
 
 目前，除了rest api外，CloudKitty提供有Horizon插件、DevStack插件和client客户端。
 
@@ -111,13 +111,16 @@ rating processor从db中加载的计费配置类似如下结构：
       }
     }
 
+## CloudKitty版本计划
+根据Christophe在东京峰会上的介绍，在M版本，CloudKitty会尝试与Gnocchi集成、优化存储后端以及丰富计费报告的呈现。
+
 ## 总结
-CloudKitty是2015下半年才进入的OpenStack big tent，能进入big tent的原因其实就是因为目前OpenStack在计费方面还是一片空白，CloudKitty的出现只是填补了这个空白，并不是CloudKitty这个项目做的有多好。相反，我把CloudKitty的源码通读了一下，代码逻辑写的很混乱。我也进了CloudKitty的IRC频道，通过几天的观察，目前的参与者和代码提交都不多，主要还是Objectif Libre公司那两个哥们在维护。比较有趣的是，国内几家startup公司，像Kylin Cloud、Awcloud、EasyStack在该项目都有代码[提交][4]，估计都是在计费方面对CloudKitty有过调研。
+CloudKitty是2015下半年才进入的OpenStack big tent，能进入big tent的原因其实就是因为目前OpenStack在计费方面还是一片空白，CloudKitty的出现只是填补了这个空白，并不是CloudKitty这个项目做的有多好。相反，我把CloudKitty的源码通读了一下，代码逻辑写的很混乱。我也进了CloudKitty的IRC频道，通过几天的观察，目前的参与者和代码提交都不多，主要还是Objectif Libre公司的Stéphane在维护。比较有趣的是，国内几家startup公司，像Kylin Cloud、Awcloud、EasyStack在该项目都有代码[提交][4]，估计都是在计费方面对CloudKitty有过调研。
 
-从架构设计实现上讲，CloudKitty做的还很初级，虽然利用stevedore尽可能的将各个功能模块都插件化（查询、计费等功能），但从我的分析来看，还是存在以下几个问题：
+从架构上讲，CloudKitty比较简单但也比较到位，利用stevedore尽可能的将各个功能模块都插件化（查询、计费等功能），但从实现上讲，还是存在以下几个问题：
 
-- cloudkitty-processor缺乏高可用设计。cloudkitty-api就不说了，前置一个haproxy就能够解决问题。
-- cloudkitty-processor的计费实时性差，并且在OpenStack大规模部署环境下，计费数据可能不准确。cloudkitty-processor的处理是在一个大循环中串行进行，对于一个租户的处理涉及访问DB（处理每个租户都会重新加载rating processor，processor的初始化会从DB读取计费配置）、访问Ceilometer（这里以ceilometer collector为例，每个meter至少访问一次）、每个processor串行处理、storage backend写DB，如果计费的租户比较多，一个循环下来可能耗时较长，就要相应的需要增加计费周期，但这样做，又导致计费存在严重的滞后性。
+- cloudkitty-processor缺乏高可用设计。cloudkitty-api就不说了，前置一个haproxy就能够解决问题。但cloudkitty-processor如果要支持HA，需要做不小的改动。
+- cloudkitty-processor的计费实时性差，并且在OpenStack大规模部署环境下，计费数据可能不准确（目前仅仅是从代码分析猜测，未作容量测试）。cloudkitty-processor的处理是在一个大循环中串行进行，对于一个租户的处理涉及访问DB（处理每个租户都会重新加载rating processor，processor的初始化会从DB读取计费配置）、访问Ceilometer（这里以ceilometer collector为例，每个meter至少访问一次）、每个processor串行处理、storage backend写DB，如果计费的租户比较多，一个循环下来可能耗时较长，就要相应的需要增加计费周期，但这样做，又会导致计费存在严重的滞后性。
 - 目前CloudKitty能计费的维度是基于Ceilometer中resource的metadata属性进行转换而来的（其实就是OpenStack各个组件中资源属性）。如果有些想计费的资源在Ceilometer中没有，就无法实现计费了。（可以通过新增collector + meta collector实现）
 - 目前，无论对一个资源是否计费，cloudkitty-processor都会collect该资源的信息，存在优化空间。
 
