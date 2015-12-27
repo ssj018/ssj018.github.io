@@ -87,7 +87,7 @@ category: blog
     Labels:
      provider=generic
 
-# 安装docker-swarm
+## 安装docker-swarm
 以下使用Docker Hub提供的服务发现功能配置swarm集群。
 
     $ docker pull swarm
