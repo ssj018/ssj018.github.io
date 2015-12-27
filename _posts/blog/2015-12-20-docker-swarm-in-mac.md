@@ -1,6 +1,6 @@
 ---
 layout: post
-title: 在mac上尝试docker-swarm(未完待续)
+title: 在mac上尝试docker-swarm
 description: 在mac上尝试docker-swarm
 category: blog
 ---
