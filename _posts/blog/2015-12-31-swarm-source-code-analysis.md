@@ -36,7 +36,7 @@ swarm使用了github上的<https://github.com/codegangsta/cli>项目，其实就
 swarm定义了两个命令行参数，debug和log-level，无关痛痒。同时提供了4个命令，create, list, manage, join，这四个命令我在创建swarm集群时都用到了。
 
 ## swarm join
-在使用docker hub提供的token机制做服务发现时（虽然没有成功），我用的第一个命令是join，将本节点加入swarm集群，命令见上。
+在使用docker hub提供的token机制做服务发现时（虽然没有成功），我用的第一个命令就是join，将本节点加入swarm集群，命令见上。
 
 join支持4个参数：
 
@@ -76,3 +76,92 @@ join支持4个参数：
 
 ## swarm manage
 manage是swarm最为重要的管理命令。一旦swarm manage命令在Swarm节点上被触发，则说明用户开始管理Docker集群了。manage命令的参数也比较多，我就不一一细说。主要的参数是容器[放置策略](https://docs.docker.com/swarm/scheduler/strategy/)、[过滤器](https://docs.docker.com/swarm/scheduler/filter/)、支持[HA](https://docs.docker.com/swarm/multi-manager-setup/)的参数、安全访问TLS等。
+
+在manage函数中，依次创建discovery、strategy、filters、scheduler（使用strategy、filter）、cluster（使用discovery, scheduler）对象，最终创建API服务，监听API请求。
+
+其中，**创建cluster对象时，同时启动了docker主机的刷新线程。一个线程定时查询集群中的增删主机，轮询时间由heartbeat参数决定，另一个线程根据查询的结果维护内存中的所有docker主机信息。cluster对象中维护了engines列表，即各个docker主机的信息**。
+
+	discoveryCh, errCh := cluster.discovery.Watch(nil)
+	go cluster.monitorDiscovery(discoveryCh, errCh)
+
+manage命令会启动HTTP server，接收API请求。swarm目前对外提供的API定义都在api/primary.go中：
+
+	var routes = map[string]map[string]handler{
+		"HEAD": {
+			"/containers/{name:.*}/archive": proxyContainer,
+		},
+		"GET": {
+			"/_ping":                          ping,
+			"/events":                         getEvents,
+			"/info":                           getInfo,
+			"/version":                        getVersion,
+			"/images/json":                    getImagesJSON,
+			"/images/viz":                     notImplementedHandler,
+			"/images/search":                  proxyRandom,
+			"/images/get":                     getImages,
+			"/images/{name:.*}/get":           proxyImageGet,
+			"/images/{name:.*}/history":       proxyImage,
+			"/images/{name:.*}/json":          proxyImage,
+			"/containers/ps":                  getContainersJSON,
+			"/containers/json":                getContainersJSON,
+			"/containers/{name:.*}/archive":   proxyContainer,
+			"/containers/{name:.*}/export":    proxyContainer,
+			"/containers/{name:.*}/changes":   proxyContainer,
+			"/containers/{name:.*}/json":      getContainerJSON,
+			"/containers/{name:.*}/top":       proxyContainer,
+			"/containers/{name:.*}/logs":      proxyContainer,
+			"/containers/{name:.*}/stats":     proxyContainer,
+			"/containers/{name:.*}/attach/ws": proxyHijack,
+			"/exec/{execid:.*}/json":          proxyContainer,
+			"/networks":                       getNetworks,
+			"/networks/{networkid:.*}":        proxyNetwork,
+			"/volumes":                        getVolumes,
+			"/volumes/{volumename:.*}":        proxyVolume,
+		},
+		"POST": {
+			"/auth":                               proxyRandom,
+			"/commit":                             postCommit,
+			"/build":                              postBuild,
+			"/images/create":                      postImagesCreate,
+			"/images/load":                        postImagesLoad,
+			"/images/{name:.*}/push":              proxyImagePush,
+			"/images/{name:.*}/tag":               postTagImage,
+			"/containers/create":                  postContainersCreate,
+			"/containers/{name:.*}/kill":          proxyContainerAndForceRefresh,
+			"/containers/{name:.*}/pause":         proxyContainerAndForceRefresh,
+			"/containers/{name:.*}/unpause":       proxyContainerAndForceRefresh,
+			"/containers/{name:.*}/rename":        postRenameContainer,
+			"/containers/{name:.*}/restart":       proxyContainerAndForceRefresh,
+			"/containers/{name:.*}/start":         proxyContainerAndForceRefresh,
+			"/containers/{name:.*}/stop":          proxyContainerAndForceRefresh,
+			"/containers/{name:.*}/wait":          proxyContainerAndForceRefresh,
+			"/containers/{name:.*}/resize":        proxyContainer,
+			"/containers/{name:.*}/attach":        proxyHijack,
+			"/containers/{name:.*}/copy":          proxyContainer,
+			"/containers/{name:.*}/exec":          postContainersExec,
+			"/exec/{execid:.*}/start":             postExecStart,
+			"/exec/{execid:.*}/resize":            proxyContainer,
+			"/networks/create":                    postNetworksCreate,
+			"/networks/{networkid:.*}/connect":    proxyNetworkContainerOperation,
+			"/networks/{networkid:.*}/disconnect": proxyNetworkContainerOperation,
+			"/volumes/create":                     postVolumesCreate,
+		},
+		"PUT": {
+			"/containers/{name:.*}/archive": proxyContainer,
+		},
+		"DELETE": {
+			"/containers/{name:.*}":    deleteContainers,
+			"/images/{name:.*}":        deleteImages,
+			"/networks/{networkid:.*}": deleteNetworks,
+			"/volumes/{name:.*}":       deleteVolumes,
+		},
+	}
+
+## 创建container
+就跟在openstack中创建虚拟机一样，跟踪一下swarm中创建container的流程，几乎就可以了解swarm中全部的运行机制了。但读完创建容器的代码，发现相比openstack，swarm中的逻辑还是比较简单，可能还是个新项目，并且在生产环境中使用的还不多，并没有考虑openstack中早已碰到的并发效率等问题，而且调度模块也不像openstack那样是一个独立的服务。但如果真的是弄成独立的服务了，又会失去轻量的优势。
+
+根据上面的URL路由，创建虚拟机由postContainersCreate函数处理，并最终走到cluster对象的createContainer方法处理。
+
+容器名称唯一性判断、生成SwarmID、选取docker主机等操作都是在scheduler的锁中进行，然后调用engine对象的Create方法创建容器，最后在锁中删除cluster对象pendingContainers中对应的中间态容器。
+
+选取docker主机时，新建了一个列表对象nodes，其实是跟engines对应，基本信息都是从engines而来，但会考虑所有正在创建中的容器（计算可用的cpu和memory）。
