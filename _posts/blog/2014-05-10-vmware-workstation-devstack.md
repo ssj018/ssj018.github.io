@@ -61,15 +61,14 @@ vi /openstack/devstack/localrc #新建localrc文件
     # Misc
     # modify the IP address according to your own
     HOST_IP=192.168.70.132
-    DATABASE_PASSWORD=password
-    ADMIN_PASSWORD=password
-    SERVICE_PASSWORD=password
-    SERVICE_TOKEN=password
-    RABBIT_PASSWORD=password
+	ADMIN_PASSWORD=Galax8800
+	DATABASE_PASSWORD=$ADMIN_PASSWORD
+	RABBIT_PASSWORD=$ADMIN_PASSWORD
+	SERVICE_PASSWORD=$ADMIN_PASSWORD
+	SERVICE_TOKEN=$ADMIN_PASSWORD
 
     RECLONE=no
     SERVICE_TIMEOUT=600
-    GIT_BASE=https://github.com
     LOGDAYS=1
 
     # Enable Logging
@@ -78,16 +77,6 @@ vi /openstack/devstack/localrc #新建localrc文件
     LOG_COLOR=False
     SCREEN_LOGDIR=/opt/stack/logs
     
-    # Branch(stable/kilo)
-	KEYSTONE_BRANCH=proposed/kilo
-	NOVA_BRANCH=proposed/kilo
-	NEUTRON_BRANCH=proposed/kilo
-	GLANCE_BRANCH=proposed/kilo
-	CINDER_BRANCH=proposed/kilo
-	HEAT_BRANCH=proposed/kilo
-	HORIZON_BRANCH=proposed/kilo
-	CEILOMETER_BRANCH=proposed/kilo
-
     # Pre-requisite
     ENABLED_SERVICES=rabbit,mysql,key
     KEYSTONE_TOKEN_FORMAT=UUID
@@ -106,8 +95,8 @@ vi /openstack/devstack/localrc #新建localrc文件
     # Neutron
     ENABLED_SERVICES+=,q-svc,q-agt,q-dhcp,q-l3,q-meta,neutron
     # VLAN configuration
-    #Q_PLUGIN=ml2
-    #ENABLE_TENANT_VLANS=True
+    Q_PLUGIN=ml2
+    ENABLE_TENANT_VLANS=True
     # GRE tunnel configuration
     #Q_PLUGIN=ml2
     #ENABLE_TENANT_TUNNELS=True
@@ -126,6 +115,8 @@ vi /openstack/devstack/localrc #新建localrc文件
     CEILOMETER_BACKEND=mysql
     ENABLED_SERVICES+=,ceilometer-acompute,ceilometer-acentral,ceilometer-collector,ceilometer-api
     ENABLED_SERVICES+=,ceilometer-alarm-notifier,ceilometer-alarm-evaluator
+
+	INSTALL_TEMPEST=False
 
 保存文件，切换到/openstack/devstack目录下执行`./stack.sh`，根据本机网速，自动安装all-in-one的devstack环境.  
 看到下面这句话时，证明安装成功：  
