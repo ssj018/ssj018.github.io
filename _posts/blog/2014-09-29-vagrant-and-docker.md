@@ -245,6 +245,7 @@ project：使用镜像创建出的VM，类似于基于类创建对象；
 > 挂载光盘镜像 ISO. vboxmanage openmedium dvd /full/path/to/iso.iso   
 > 将光盘镜像 ISO 和虚拟机关联. vboxmanage modifyvm "winxp" -dvd /full/path/to/iso.iso   
 > 创建虚拟机. vboxmanage createvm -name "SUSE 10.2" -register
+> 删除虚拟机. vboxmanage unregistervm <id> --delete
 
 通过vagrant ssh命令登录虚拟机，切换root账户， 查看系统挂载目录，新建文件，然后在宿主机上验证一下，最后，再确定一下网络是否OK。  
 ![](/images/2014-09-29-vagrant-docker/5.png)
