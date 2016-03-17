@@ -69,7 +69,7 @@ Note: the notify() and notifyAll() methods don’t release the lock; this means 
     cv.release()
     
 ## 计算运行时间
-代码来源：rally
+代码来源：rally(还可以参考oslo.utils)
 
     class Timer(object):
         def __enter__(self):
@@ -517,3 +517,13 @@ new实现单例类：
                                   *refresh_args, **refresh_kwargs),
             block_device_mapping)
         return block_device_mapping
+
+## 时间转换
+
+### UTC转换成本地时间
+
+    from datetime import datetime
+    def utc2local(utc_datetime):
+        epoch = time.mktime(utc_datetime.timetuple())
+        offset = datetime.fromtimestamp(epoch) - datetime.utcfromtimestamp(epoch)
+        return utc_datetime + offset
