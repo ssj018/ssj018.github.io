@@ -2,19 +2,12 @@
 layout: post
 title: (转)为何大量中国精英纷纷选择移民海外
 category: opinion
-description: 为何大量中国精英纷纷选择移民海外
+description: (转)为何大量中国精英纷纷选择移民海外
 ---
 
-**声明：  
-本博客欢迎转发，但请保留原作者信息!  
-新浪微博：[@Lingxian_Kong](http://weibo.com/lingxiankong)   
-博客地址：<http://lingxiankong.github.io/>  
-联系邮箱：<anlin.kong@gmail.com>  
-内容系本人学习、研究和总结，如有雷同，实属荣幸！**
+微信上一篇文章，觉得说的很有道理，转载以示赞同。文章链接[在此](http://mp.weixin.qq.com/s?__biz=MzA4Mzk3OTkxOQ==&mid=402690985&idx=1&sn=bc5c030b5b8018feeb3eacdb3ecf332b)。
 
-微信上一篇文章，觉得说的很有道理，转载以示赞同。文章链接[在此](http://mp.weixin.qq.com/s?__biz=MzA4Mzk3OTkxOQ==&mid=402690985&idx=1&sn=bc5c030b5b8018feeb3eacdb3ecf332b&scene=0#wechat_redirect)
-
-原文声明：文章来源：同舟共进，尊重原创，版权归原作者所有，由移民家园网综合整理
+原文声明：文章来源：同舟共进，尊重原创，版权归原作者所有，由移民家园网综合整理。
 
 大约在最近10年，国内越来越多社会精英移居海外，成为媒体、政府和公众关注与讨论的话题。
  
