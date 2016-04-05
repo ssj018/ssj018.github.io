@@ -122,6 +122,7 @@ testr init
 testr run tempest.api.compute.admin.test_agents.AgentsAdminTestJSON
 
 ## FAQ
+
 ### 问题：我的环境中没有安装Ironic，有些用例跑不过怎么办？
 在`service_available` section下面配置：  
 ironic = false
