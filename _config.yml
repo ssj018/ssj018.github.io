@@ -10,3 +10,5 @@ title: 技术人生
 url: http://lingxiankong.github.io
 feed: /atom.xml
 author_info: <a href="http://lingxiankong.github.io/">Lingxian Kong</a>
+
+highlighter: rouge
