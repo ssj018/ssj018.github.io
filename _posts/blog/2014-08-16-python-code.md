@@ -339,6 +339,10 @@ ORM框架是元类一个很典型的使用场景。
 
 NOTE：数字进制转换，二进制转成十进制int('011', 2), 十进制转成二进制bin(31), 十进制转成八进制oct(31), 十进制转成十六进制hex(31)
 
+上述代码对于已经存在的文件不会修改权限。程序中，如果要确保按照权限要求新建文件(确保文件不存在)，可以参考openstack security guide:  
+<https://security.openstack.org/guidelines/dg_apply-restrictive-file-permissions.html>  
+关于文中提到的`O_EXCL`的作用，可以参考：<http://bbs.csdn.net/topics/350001997>
+
 测试路径权限：  
 os.access(path, mode), mode取值范围为`os.F_OK/os.R_OK/os.W_OK/os.X_OK`
         
