@@ -38,13 +38,13 @@ subunit.run is expected to speak subunit back to testr so that testr can keep tr
 setUpClass按顺序包含如下步骤（可被测试类覆写）：
 
 - `skip_checks`：根据一些条件决定是否抛出skipException异常，以**阻止整个测试类的执行**，测试类一般都会覆写该函数。
-- `setup_credentials`：初始化在每个测试类中使用到的调用各个project的客户端（primary/alt/admin或roles列表）。这里有一个credentials provider的概念，目前有三种实现方式：
+- `setup_credentials`：初始化在每个测试类中使用到的调用各个project的客户端（primary/alt/admin或roles列表）。这里有一个credentials provider的概念，目前有两种实现方式：
 
-	IsolatedCreds，**适用于并发测试场景，为每个测试类创建不同的租户**。要求`allow_tenant_isolation`配置项为true或测试类的`force_tenant_isolation`属性为true，会自动到Keystone创建用户，并以该用户的身份执行用例。但能够创建用户的前提是有一个已知的admin用户，所以，其实还是会用到identity section中`admin_username`、`admin_tenant_name`、`admin_password`，以及auth section下的`tempest_roles`（指定普通用户的角色）等配置项。此外，如果系统使用Neutron（`service_available` section下neutron配置项为true），还会为租户创建network/subnet/router。
+	DynamicCredentialProvider，**适用于并发测试场景，为每个测试类创建不同的租户**。要求`CONF.auth.use_dynamic_credentials`配置项为true或测试类的`force_tenant_isolation`属性为true，会自动到Keystone创建用户，并以该用户的身份执行用例。但能够创建用户的前提是有一个已知的admin用户，所以，其实还是会用到identity section中`admin_username`、`admin_tenant_name`、`admin_password`，以及auth section下的`tempest_roles`（指定普通用户的角色）等配置项。此外，如果系统使用Neutron（`service_available` section下neutron配置项为true），还会为租户创建network/subnet/router。
 	
-	Accounts，**适用于并发测试场景，且不需要admin信息**。通过读取`test_accounts_file`配置项指向的文件信息来获取用户信息。
+	PreProvisionedCredentialProvider，**适用于并发测试场景，且不需要admin信息**。通过读取`CONF.auth.test_accounts_file`配置项指向的文件信息来获取用户信息。
 	
-	NotLockingAccounts，**适用于非并发测试场景**。根据identity section中的配置项确定用户信息。
+	LegacyCredentialProvider，这个类就是从配置文件中读取静态用户信息，不推荐使用。
 
 - `setup_clients`：基类中啥也没做，测试类中会根据需要拿到发送REST API的clients
 - `resource_setup`：创建测试类可能使用的辅助资源（validation resources），比如keypair、security group、floating ip，这些都是为了自动登录虚拟机需要使用的。
