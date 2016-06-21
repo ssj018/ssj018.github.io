@@ -118,8 +118,10 @@ verify-tempest-config
 这个脚本是随Tempest安装的，它会验证Tempest能否访问你环境上的Keystone，还会验证环境上各个服务与你的配置是否冲突，每个服务支持的extensions与你的配置是否冲突，服务支持的版本号与你的配置是否冲突等，保证你的Tempest配置基本正确。
 
 执行测试：  
-testr init  
-testr run tempest.api.compute.admin.test_agents.AgentsAdminTestJSON
+
+	testr init  
+	testr run tempest.api.compute.admin.test_agents.AgentsAdminTestJSON  
+	testr --load-list <test-cases-file>
 
 ## FAQ
 
