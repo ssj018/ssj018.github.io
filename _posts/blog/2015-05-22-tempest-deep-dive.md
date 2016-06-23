@@ -121,7 +121,7 @@ verify-tempest-config
 
 	testr init  
 	testr run tempest.api.compute.admin.test_agents.AgentsAdminTestJSON  
-	testr --load-list <test-cases-file>
+	testr run --load-list <test-cases-file>
 
 ## FAQ
 
