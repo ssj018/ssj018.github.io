@@ -7,9 +7,11 @@ category: blog
 
 声明：  
 本博客欢迎转发，但请保留原作者信息!  
-新浪微博：[@孔令贤HW](http://weibo.com/lingxiankong)；   
+新浪微博：[@Lingxian_Kong](http://weibo.com/lingxiankong)；   
 博客地址：<http://lingxiankong.github.io/>  
 内容系本人学习、研究和总结，如有雷同，实属荣幸！
+
+更新日期：2016.10.31
 
 本文的目的是你已经有了一套devstack环境，想进行mistral的开发，安装过程需要访问网络。
 
@@ -37,7 +39,7 @@ vagrant虚拟机创建成功后，可以修改apt源，pip源等配置，使之�
 
     curl -O https://bootstrap.pypa.io/get-pip.py
     python get-pip.py
-    
+
 > 安装完成后，可能会出现pip路径不对，建个软连接或者指定alias搞定。  
 > 注意，本文所有的密码均为password
 
@@ -45,18 +47,18 @@ vagrant虚拟机创建成功后，可以修改apt源，pip源等配置，使之�
 
     apt-get -y install rabbitmq-server
     rabbitmqctl change_password guest password
-
+    
     cat <<MYSQL_PRESEED | debconf-set-selections
     mysql-server-5.5 mysql-server/root_password password password
     mysql-server-5.5 mysql-server/root_password_again password password
     mysql-server-5.5 mysql-server/start_on_boot boolean true
     MYSQL_PRESEED
-
+    
     apt-get -y install mysql-server python-mysqldb
     sed -i 's/127.0.0.1/0.0.0.0/g' /etc/mysql/my.cnf
     sed -i '44 i skip-name-resolve' /etc/mysql/my.cnf
     service mysql restart
-    
+
 初始化mistral数据库：
 
     mysql -uroot -ppassword    
@@ -65,11 +67,11 @@ vagrant虚拟机创建成功后，可以修改apt源，pip源等配置，使之�
     GRANT ALL ON mistral.* TO 'root'@'%';
 
 > 其实你也可以使用SQLite
-    
+
 ### 安装mistral（部分）依赖库
 
     apt-get install -y python-dev python-setuptools libffi-dev libxslt1-dev libxml2-dev libyaml-dev libssl-dev httpie
-    
+
 ### 安装mistral
 1、假设你的pycharm中已经有mistral工程，请先把mistral工程文件夹中的内容拷贝到远程服务器`<mistral_vagrant_path>/mistral_dev`路径下，并在pycharm中作如下配置。
 
@@ -89,8 +91,8 @@ vagrant虚拟机创建成功后，可以修改apt源，pip源等配置，使之�
 
 安装mistral依赖库：
 
-    pip install -r requirements.txt -r test-requirements.txt
-    
+    pip install -r requirements.txt
+
 创建配置文件：
 
     mkdir -p /var/log/mistral/ 
@@ -106,44 +108,56 @@ vagrant虚拟机创建成功后，可以修改apt源，pip源等配置，使之�
     [database]
     connection=mysql://root:password@localhost:3306/mistral
     [keystone_authtoken]
-    auth_uri = http://10.250.10.5:5000/v3
-    identity_uri = http://10.250.10.5:35357/
-    auth_version = v3
-    admin_user = admin
-    admin_password = password
-    admin_tenant_name = admin
+    auth_plugin = password
+    auth_url = https://api.cloud.catalyst.net.nz:35357/v3
+    auth_uri = https://api.cloud.catalyst.net.nz:35357/v3
+    username = <your username>
+    user_domain_id = default
+    password = <your password>
+    project_name = <your project name>
+    project_domain_id = default
     [pecan]
-    auth_enable = false
+    auth_enable = true
     EOF
 
 安装mistral，develop模式的作用是，当mistral_dev中有代码变更时，不用重新部署就能使最新代码实时生效：
 
     python setup.py develop
-    
+
 初始化mistral数据库数据：
 
     mistral-db-manage --config-file etc/mistral.conf upgrade head
-	python tools/sync_db.py --config-file etc/mistral.conf
+    python tools/sync_db.py --config-file etc/mistral.conf
 
 > 注意，如果使用SQLite，请忽略mistral-db-manage命令
 
-启动mistral进程（all in one模式，会默认启动3个进程）：
+启动mistral进程（all in one模式）：
 
-    # python mistral/cmd/launch.py --server all --config-file etc/mistral.conf
+    # python mistral/cmd/launch.py --server api,engine,executor --config-file etc/mistral.conf
     |\\    //| //   // |||||| |||\\       /\      ||
     ||\\  //||    //     ||   ||  ||     //\\     ||
     || \\// || || ||     ||   || //     //  \\    ||
     ||  \/  || ||  \\    ||   || \\    //-||-\\   ||
     ||      || ||   ||   ||   ||  ||  //      \\  ||
     ||      || || _//    ||   ||  || //        \\ |||||
-
+    
     Mistral Workflow Service, version 2015.2.0
-
+    
     Launching server components [engine,api,executor]...
     Server started.
-    
-> 安装完mistral后，建议也装一下python-mistralclient，方便使用。但要想直接调用API，则需要使用curl或httpie（可能你已经注意到前面我已经默认安装了httpie）
-    
+
+> 安装完mistral后，建议也装一下python-mistralclient（见下个章节），方便使用。但要想直接调用API，则需要使用curl或httpie（可能你已经注意到前面我已经默认安装了httpie）
+
+### 安装mistral cli
+安装cli很简单：
+
+    git clone git://github.com/openstack/python-mistralclient.git
+    cd python-mistralclient
+    pip install -r requirements.txt
+    python setup.py develop
+    cp tools/mistral.bash_completion /etc/bash_completion.d/
+    . /etc/bash_completion.d/mistral.bash_completion
+
 ### 如何开发
 做完了前面繁琐的步骤后，后面的开发过程就很easy了。
 
