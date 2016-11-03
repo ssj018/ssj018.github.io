@@ -76,7 +76,7 @@ project：使用镜像创建出的VM，类似于基于类创建对象；
 
 如果修改了Vagrantfile，对于正在运行的vm，可以使用vagrant reload --provision使配置生效。
 
-配置虚拟机hostname：config.vm.hostname = ubuntu  
+配置虚拟机hostname：config.vm.hostname = "ubuntu"  
 显示GUI窗口：在config.vm.provider中配置vb.gui = true
 
 #### vagrant网络
