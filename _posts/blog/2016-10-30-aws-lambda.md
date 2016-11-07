@@ -52,6 +52,7 @@ AWS的官方文档是我一直以来比较钦佩的，详细、易懂、持续�
   1. deployment package是一个zip包或jar（如果是Java）包。以Python为例，所有的py文件都在一个根目录下，安装依赖时执行`pip install module-name -t /path/to/project-dir`，默认支持AWS SDK库
   2. 创建Python deployment package另一种方式，在virtualenv中安装lib，先打包code到zip，然后再把virtualenv中site-packages目录下的libs打包到zip
 
+- 依赖管理：在线编辑代码只支持python内建的lib，如果要使用其他的lib，需要自己上传包含依赖包的zip。
 - 函数在container中运行，Lambda会管理container的生命周期，会复用container。比如你的函数中如果连接了db，复用container时不会再去重新连接；你的code可以使用/tmp目录作为缓存。当然，对于Lambda的用户来说，container是不可见的。
 - 关于Lambda的API，比较核心的只有两个：[CreateFunction](http://docs.aws.amazon.com/lambda/latest/dg/API_CreateFunction.html?shortFooter=true)和[Invoke](http://docs.aws.amazon.com/lambda/latest/dg/API_Invoke.html?shortFooter=true)。CreateEventSourceMapping操作只能在pull模式下与Kinesis或DynamoDB配合使用。这么一点API操作再次印证了Lambda自身的功能其实很弱。
 
@@ -59,6 +60,6 @@ AWS的官方文档是我一直以来比较钦佩的，详细、易懂、持续�
 
 ### IBM OpenWhisk
 
-OpenWhisk是目前在serverless computing领域唯一的"开源"实现，并且已经集成在IBM的[Bluemix](https://ibm.biz/openwhisk)云服务中。之所以对开源加个引号，是因为它的核心代码并没有开源，github上的代码仅仅是一部分。搭建完OpenWhisk的开发环境后，可以看到OpenWhisk的功能基本上全由容器实现，核心代码都在容器镜像中不可见。
+OpenWhisk是目前在serverless computing领域唯一的"开源"实现，并且已经集成在IBM的[Bluemix](https://ibm.biz/openwhisk)云服务中。之所以对开源加个引号，是因为它的核心代码（目前）并没有开源，github上的代码仅仅是一部分。搭建完OpenWhisk的开发环境后，可以看到OpenWhisk的功能基本上全由容器实现，核心代码都在容器镜像中不可见。
 
 (未完待续)
