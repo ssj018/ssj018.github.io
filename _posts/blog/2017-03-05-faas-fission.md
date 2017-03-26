@@ -13,34 +13,36 @@ category: blog
 
 > 这篇博客需要你懂Kubernetes和Docker
 
-之前就一直关注FaaS，简单分析过[AWS Lambda][]和其他几个FaaS项目。我最初关注FaaS是因为我想在Mistral（OpenStack项目）中引入执行自定义代码的能力，来增强Mistral的可用性。[AWS Lambda][]是Amazon在2016年对外发布的项目，发布之后就一直是serverless领域的标杆，后来的的FaaS项目基本都是参照[AWS Lambda][]设计和实现。
+之前就一直关注FaaS，简单分析过[AWS Lambda][]和其他几个FaaS项目。我最初关注FaaS是因为我想在Mistral（OpenStack项目）中引入执行自定义代码的能力，来增强Mistral的可用性。AWS Lambda是Amazon在2016年对外发布的项目，发布之后就一直是serverless领域的标杆，后来的的FaaS项目基本都是参照AWS Lambda设计和实现。
 
-恰逢我在学习Golang语言，就一点一点的把[iron-functions][]的代码啃完了，发现iron.io对于开源FaaS还是不太有诚意，至少从他开源的这部分代码看，跟他们的商业软件还是差的很远，他们开源也许仅仅是为了吸引更多的注意力而已，毕竟他们仅靠FaaS活着。时间进入2017年，Planform9也对外开源了一个项目：[fission][]，是基于Kubernetes平台实现的FaaS。又恰逢我在阅读Kubernetes的文档，而且[fission][]也是Go语言实现，所以我就又读了一下它的源代码。作为一个新项目，[fission][]的实现还是比较简单，但代码看着却比[iron-functions][]清爽许多。所以还是秉承做笔记的态度，介绍一下[fission][]的架构和实现。
+恰逢我在学习Golang语言，就一点一点的把[iron-functions][]的代码啃完了，发现iron.io对于开源FaaS还是不太有诚意，至少从他开源的这部分代码看，跟他们的商业软件还是差的很远，他们开源也许仅仅是为了吸引更多的注意力而已，毕竟他们仅靠FaaS活着。时间进入2017年，Planform9也对外开源了一个项目：[fission][]，是基于Kubernetes平台实现的FaaS。又恰逢我在阅读Kubernetes的文档，而且fission也是Go语言实现，所以我就又读了一下它的源代码。作为一个新项目，fission的实现还是比较简单，但代码看着却比[iron-functions][]清爽许多。所以还是秉承做笔记的态度，介绍一下fission的架构和实现。
 
-目前只能从[fission][]的代码库中找到一点相关的文档，我也是读完代码才做出如下总结。
+目前只能从fission的代码库中找到一点相关的文档，我也是读完代码才做出如下总结。
 
 ## Fission Services
 
-[fission][]基于Kubernetes平台，它的安装很简单，就是使用kubectl命令创建一系列fission管理资源，所有的资源都创建在名为`fission`的namespace中（而通过fission创建的资源都在`fission-function`命名空间中）。其中包含4个service：
+fission基于Kubernetes平台，它的安装很简单，就是使用kubectl命令创建一系列fission管理资源，所有的资源都创建在名为`fission`的namespace中（而通过fission创建的资源都在`fission-function`命名空间中）。其中包含4个service：
 
 - etcd
 
-- controller，是[fission][]对外提供管理API的组件。除了用户创建function时需要存储代码文件之外，其他的操作都只在etcd中存储数据结构。
+- controller，是fission对外提供管理API的组件。除了用户创建function时需要存储代码文件之外，其他的操作都只在etcd中存储数据结构。
 
-- router，[fission][]通过router这一个独立的service来实现真正FaaS，router实现了根据用户的http请求运行code的能力。
+- router，fission通过router这一个独立的service来实现真正FaaS，router实现了根据用户的http请求运行code的能力。
   router会与controller和poolmgr打交道。router定期从controller获取最新的triggers和functions列表，动态的更新web service的route定义。router内部以缓存的形式维护了一个从function到一个url的映射，这样对于调用过的function，router会很快的拿到返回值。
 
 - poolmgr，维护environment与Kubernetes中deployment的映射关系。poolmgr与controller和kubernetes打交道，同时对外（主要是对router）提供API。
 
-  对于用户创建的environment，poolmgr会自动在kubernetes中根据env的镜像创建包含三副本pod的deployment，每个pod中有两个container，一个使用env的镜像创建，另一个是[fission][]中的辅助container，镜像是fission/fetcher。两个container共享一个volume。因为env是定义基础镜像，而一个env可能会关联许多function，所以需要fetcher根据具体的function在通用的container里运行不同的code。
+  对于用户创建的environment，poolmgr中有循环的线程自动在kubernetes中根据env的镜像创建包含三副本pod的deployment，每个pod中有两个container，一个使用env的镜像创建，另一个是fission中的辅助container，镜像是fission/fetcher。两个container共享一个volume。因为env是定义基础镜像，而一个env可能会关联许多function，所以需要fetcher根据具体的function在通用的container里运行不同的code。
 
-  poolmgr会维护function到env，function到service的映射。
+  poolmgr会维护几个映射缓存：function到service，function到environment，environment到pool(也就是deployment)。
 
   poolmgr还会定期清理“不活跃”的deployment，比如env被删了。还会定期删除不活跃的pod，让kubernetes自动创建新的、干净的pod供其他function使用。
 
-  poolmgr提供的API只有两个，一个是根据function获取对应的url，另一个是类似心跳API帮助维护缓存。因为router里也维护有function到service url的缓存，所以当function被调用时，router会通知poolmgr更新一下对应service的时间，避免被误删。
+  poolmgr提供的API只有两个，一个是根据function获取对应的service url，另一个是类似心跳API帮助维护缓存。因为router里也维护有function到service url的缓存，所以当function被调用时，router会通知poolmgr更新一下对应service对象的时间，避免被误删。
 
-通过命令查看安装完后[fission][]命名空间的服务：
+所以，在fission中，不同的function可能对应同一个environment，这个environment对应kubernetes中的一个deployment，deployment中有一些pod，每一个pod会服务于某一个function。为了快速响应，一个function被调用后，pod并不会立即被清理。如果某个function长时间没有被调用，它对应的pod就会被自动清理掉。
+
+通过命令查看安装完后fission命名空间的服务：
 
     $ kubectl --namespace fission get services
     NAME         CLUSTER-IP   EXTERNAL-IP   PORT(S)        AGE
@@ -64,7 +66,7 @@ category: blog
 
 ## Fission Resources
 
-[fission][]中的对象也很简单，包括：
+fission中的对象也很简单，包括：
 
 - environment，定义一个镜像，目前仅支持dockerhub
 - function，定义基于env的代码
@@ -73,7 +75,7 @@ category: blog
 
 ## Call Functions
 
-FaaS的主要功能，其实就是一个http调用，运行用户定义的函数，拿到返回结果。所以对于[fission][]来说，核心的代码逻辑就是根据用户的HTTP请求，找到一个container运行用户自定义的代码，这部分功能由router服务实现。这里有几个映射关系需要理清楚：
+FaaS的主要功能，其实就是一个http调用，运行用户定义的函数，拿到返回结果。所以对于fission来说，核心的代码逻辑就是根据用户的HTTP请求，找到一个container运行用户自定义的代码，这部分功能由router服务实现。这里有几个映射关系需要理清楚：
 
 - function与service url。router服务需要快速的根据function获取一个url，调用并返回给用户结果。
 - env与deployment。poolmgr需要快速根据env中定义的镜像获取一个可用的container来运行用户的代码。
@@ -83,9 +85,19 @@ router服务启动时，就会根据系统所有的trigger建立web service路�
 - 如果router的缓存中找到了function对应的service url，那么router会直接将请求消息转发到该url，并代理消息的返回。相当于是kubernetes内部一个pod访问另一个pod的service。
 - 如果缓存中没有，router就会调用poolmgr的API获取这个url，poolmgr会根据function找到它的env对应的deployment，进而找到一个空闲的pod，打上label。pod里有两个container，那个fetcher会从controller获取function的代码。最终返回pod的地址。
 
+## 如何初始化Function Pod
+
+默认情况，deployment创建好之后，里面的pod都是generic的，只有两个container而已。
+
+当function被调用时，poolmgr获取到空闲的、可用的pod，就会向pod发送一个HTTP请求，请求参数中包含function的代码获取地址和要创建的代码文件名（默认是user），该请求由fetcher container处理，将代码下载到共享路径。
+
+然后向pod发送第二个HTTP请求，该请求由function container处理（在制作镜像时，需要做前置工作），（以python为例）加载code的main函数（但不调用），这里使用了imp.load_source方法加载代码module。
+
+最终返回pod的IP地址。
+
 ## 实战
 
-根据[fission][]的文档，使用fission一系列简单的命令行操作如下（这里我已经创建了一系列资源）：
+根据fission的文档，使用fission一系列简单的命令行操作如下（这里我已经创建了一系列资源）：
 
     $ export FISSION_URL=http://$(minikube ip):31313
     There is a newer version of minikube available (v0.17.1).  Download it here:
@@ -105,7 +117,7 @@ router服务启动时，就会根据系统所有的trigger建立web service路�
     $ curl http://$FISSION_ROUTER/hello
     Hello, world!
 
-根据之前的讲解，此时，kubernetes中应该有对应于nodejs的deployment：
+根据之前的讲解，此时，kubernetes在fission-function namespace中应该有对应于nodejs的deployment：
 
     $ kubectl --namespace fission-function get deployments
     NAME                                                   DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
@@ -182,7 +194,7 @@ router服务启动时，就会根据系统所有的trigger建立web service路�
       10m   10m   1 {kubelet minikube}  spec.containers{fetcher}  Normal    Created   Created container with docker id d32139bd0c8b; Security:[seccomp=unconfined]
       10m   10m   1 {kubelet minikube}  spec.containers{fetcher}  Normal    Started   Started container with docker id d32139bd0c8b
 
-因为是通过minikube安装的kubernetes，所以可以通过minikube ssh登录到kubernetes的controller node上使用docker命令验证这一切，留着当作业吧 :)
+因为是通过minikube安装的kubernetes，所以可以通过`minikube ssh`登录到kubernetes的controller node上使用docker命令验证这一切，留着当作业吧 :)
 
 ## 开发
 
@@ -292,7 +304,7 @@ router服务启动时，就会根据系统所有的trigger建立web service路�
     # 登录kubernetes node，重启container
     $ minikube ssh
     $ docker ps | grep lingxiankong/fission-bundle:v0.1
-    2e5bb80b212e        lingxiankong/fission-bundle:v0.1                             "/fission-bundle --co"   2 hours ago         Up 2 hours                              k8s_controller.250d2e0b_controller-708033449-tt7zj_fission_2ec6ddc8-052d-11e7-8089-080027626135_6315d2ef
+    2e5bb80b212e  lingxiankong/fission-bundle:v0.1  "/fission-bundle --co"  2 hours ago  Up 2 hours  k8s_controller.250d2e0b_controller-708033449-tt7zj_fission_2ec6ddc8-052d-11e7-8089-080027626135_6315d2ef
     $ docker stop 2e5bb80b212e; docker start 2e5bb80b212e
     2e5bb80b212e
     2e5bb80b212e
