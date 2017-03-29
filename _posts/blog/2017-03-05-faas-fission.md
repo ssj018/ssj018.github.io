@@ -44,19 +44,21 @@ fission基于Kubernetes平台，它的安装很简单，就是使用kubectl命�
 
 通过命令查看安装完后fission命名空间的服务：
 
-    $ kubectl --namespace fission get services
-    NAME         CLUSTER-IP   EXTERNAL-IP   PORT(S)        AGE
-    controller   10.0.0.99    <nodes>       80:31313/TCP   11d
-    etcd         10.0.0.229   <none>        2379/TCP       11d
-    poolmgr      10.0.0.83    <none>        80/TCP         11d
-    router       10.0.0.63    <nodes>       80:31314/TCP   11d
-    $ kubectl --namespace fission get deployments
-    NAME          DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
-    controller    1         1         1            1           11d
-    etcd          1         1         1            1           11d
-    kubewatcher   1         1         1            1           11d
-    poolmgr       1         1         1            1           11d
-    router        1         1         1            1           11d
+```shell
+$ kubectl --namespace fission get services
+NAME         CLUSTER-IP   EXTERNAL-IP   PORT(S)        AGE
+controller   10.0.0.99    <nodes>       80:31313/TCP   11d
+etcd         10.0.0.229   <none>        2379/TCP       11d
+poolmgr      10.0.0.83    <none>        80/TCP         11d
+router       10.0.0.63    <nodes>       80:31314/TCP   11d
+$ kubectl --namespace fission get deployments
+NAME          DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
+controller    1         1         1            1           11d
+etcd          1         1         1            1           11d
+kubewatcher   1         1         1            1           11d
+poolmgr       1         1         1            1           11d
+router        1         1         1            1           11d
+```
 
 > 下面的命令行基本都是在'fission' namespace下工作，我是后来才知可以设置默认的namespace，这样就不用在每个命令里都指定了，方法如下。
 
