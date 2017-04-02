@@ -242,6 +242,12 @@ dest - 解析后的参数名称，默认情况下，对于可选参数选取最�
 
 但个人感觉[clize][]与[argparse][]和[docopt][]比起来，支持的功能相对还比较少，而且不容易上手（因为要熟悉相关的各种装饰器及其参数的使用），要支持高级解析功能，代码写起来比较费劲。
 
+## Google开源的库，Fire
+Google出手，必是精品，强烈推荐。废话不多说，可以直接看github上的介绍。
+
+Github地址：<https://github.com/google/python-fire>  
+如何使用：<https://github.com/google/python-fire/blob/master/doc/using-cli.md>
+
 ## argparse在OpenStack中的使用
 OpenStack各个组件都有相应的命令行工具，以novaclient为例，就充分利用了[argparse][]来实现命令行的解析。
 
