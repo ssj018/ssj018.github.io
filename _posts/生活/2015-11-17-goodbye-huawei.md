@@ -23,6 +23,6 @@ description: 再见，华为
 
 最后，感谢各位耐着性子，在紧张的交付压力下，读完我的骚情。青山绿水，后会有期，真心希望大家在努力赚钱的同时，身体健康，生活幸福！
 
-我的联系方式：
-新浪微博：@Lingxian_kong
-邮箱：anlin.kong@gmail.com
+我的联系方式：  
+新浪微博：@Lingxian_Kong  
+邮箱：larrykong2016@gmail.com
