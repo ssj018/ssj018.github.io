@@ -6,12 +6,6 @@ description: 在大陆活着是那么的艰难
 tags: github, goagent
 ---
 
-声明：  
-本博客欢迎转发，但请保留原作者信息!  
-博客地址：<http://lingxiankong.github.io/>  
-内容系本人及本人团队学习、研究和总结，如有雷同，实属荣幸！  
-Author：华为云计算工程师 [孔令贤](http://weibo.com/lingxiankong)  
-
 预置环境：  
 - 操作系统：Win7
 

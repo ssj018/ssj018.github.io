@@ -5,12 +5,6 @@ description: 来自华为OpenStack社区团队出品的周报
 category: 技术
 ---
 
-声明：  
-本博客由华为OpenStack团队出品，欢迎转发，但请保留原作者信息!  
-新浪微博：[@孔令贤HW](http://weibo.com/lingxiankong)；  
-博客地址：<http://lingxiankong.github.io/>  
-内容系本人及本人团队学习、研究和总结，如有雷同，实属荣幸！
-
 ## 业界动态
 欧洲最大的Openstack会议----action! [conference](http://www.eventbrite.com/e/openstack-in-action-4-tickets-7645801799)于12.5召开，
 

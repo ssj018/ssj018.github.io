@@ -5,11 +5,6 @@ description: OpenStack社区动态第十六期(0616-0701)
 category: 技术
 ---
 
-声明：  
-本系列由华为OpenStack团队出品，由孔令贤整理，欢迎转发，但请保留原作者信息!  
-新浪微博：[@孔令贤HW](http://weibo.com/lingxiankong)；  
-博客地址：<http://lingxiankong.github.io/>
-
 ## 业界动态
 提起Symantec，大家都认为它是一个防病毒的公司，而正是这个防病毒的公司也跟云扯上了关系，看一下Symantec对于云安全的思考：  
 <http://www.symantec.com/connect/blogs/building-symantec-s-cloud-platform-openstack>

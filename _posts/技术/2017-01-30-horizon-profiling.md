@@ -5,12 +5,6 @@ description: 使用OpenStack Profiler查看Horizon性能数据
 category: 技术
 ---
 
-声明：  
-本博客欢迎转发，但请保留原作者信息!  
-新浪微博：[@Lingxian_kong](http://weibo.com/lingxiankong)；   
-博客地址：<http://lingxiankong.github.io/>  
-内容系本人学习、研究和总结，如有雷同，实属荣幸！
-
 从Ocata版本开始，Horizon在‘Developer’标签下新增了一个panel--‘OpenStack Profiler’，给开发者提供了一种方式查看Horizon页面加载时的API调用情况，如下图所示：  
 ![](/images/2017-01-30-horizon-profiling/1.png)
 

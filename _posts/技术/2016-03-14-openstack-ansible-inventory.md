@@ -5,12 +5,6 @@ description: OpenStack Ansible Inventory机制
 category: 技术
 ---
 
-声明：  
-本博客欢迎转发，但请保留原作者信息!  
-新浪微博：[@Lingxian_kong](http://weibo.com/lingxiankong)   
-博客地址：<http://lingxiankong.github.io/>  
-内容系本人学习、研究和总结，如有雷同，实属荣幸！
-
 openstack ansible所用到的主机文件(inventory)是动态生成的，关于openstack ansible inventory的机制可以参见[这里](http://docs.openstack.org/developer/openstack-ansible/developer-docs/inventory.html#developer-inventory)，该文档中也同时提到了ansible本身的dynamic inventory functionality。
 
 如果需要加一个新的服务，使用openstack-ansible部署，首先碰到的问题是：我需要把该服务部署到哪个host上？服务需要部署到container上么？

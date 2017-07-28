@@ -5,14 +5,6 @@ description: Nova中的image-create示例
 category: 技术
 ---
 
-声明：  
-本博客欢迎转发，但请保留原作者信息!  
-新浪微博：[@孔令贤HW](http://weibo.com/lingxiankong)；   
-博客地址：<http://lingxiankong.github.io/>  
-内容系本人学习、研究和总结，如有雷同，实属荣幸！
-
----
-
 之前在CSDN写博客时有过对image-create的[讲解](http://blog.csdn.net/lynn_kong/article/details/8722679)，这几天在解决问题时，有了一些操作，记录在此，以备后查。
 
 code version: havana

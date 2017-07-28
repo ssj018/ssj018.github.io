@@ -5,12 +5,6 @@ description: Heat Class Cheat Sheet
 category: 技术
 ---
 
-声明：  
-本博客欢迎转发，但请保留原作者信息!  
-新浪微博：[@孔令贤HW](http://weibo.com/lingxiankong)；   
-博客地址：<http://lingxiankong.github.io/>  
-内容系本人学习、研究和总结，如有雷同，实属荣幸！
-
 从F版本就开始熟悉OpenStack的代码，到现在几大核心模块的代码基本都精读过，但不得不说，目前Heat的代码编写，应该是用到Python高级语法最多的模块，各种对象建模也比其他几个模块复杂一些，初学时比较吃力。这里记录下来，给自己和感兴趣的人参考。
 
 版本：Icehouse

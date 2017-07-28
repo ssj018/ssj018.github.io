@@ -5,14 +5,6 @@ description: cURL和HTTPie
 category: 技术
 ---
 
-声明：  
-本博客欢迎转发，但请保留原作者信息!  
-新浪微博：[@孔令贤HW](http://weibo.com/lingxiankong)；   
-博客地址：<http://lingxiankong.github.io/>  
-内容系本人学习、研究和总结，如有雷同，实属荣幸！
-
----
-
 前两天在网上看到一个号称比cURL更牛逼的命令行工具[HTTPie][]，提供命令行交互方式来访问HTTP服务。其实我本人平常用cURL就比较少(因为喜欢GUI界面)，但还是经受不住好奇心的驱使，晚上回家连上VPN，在服务器上简单试了一下--HTTPie果然强大。
 
 ## cURL

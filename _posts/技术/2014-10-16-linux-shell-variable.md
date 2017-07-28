@@ -5,14 +5,6 @@ description: linux shell编程--变量
 category: 技术
 ---
 
-声明：  
-本博客欢迎转发，但请保留原作者信息!  
-新浪微博：[@孔令贤HW](http://weibo.com/lingxiankong)；   
-博客地址：<http://lingxiankong.github.io/>  
-内容系本人及本人团队学习、研究和总结，如有雷同，实属荣幸！
-
----
-
 ## 变量引用
 用set命令可以查看所有的变量  
 unset var命令可以清除变量var，var相当于没有定义过  

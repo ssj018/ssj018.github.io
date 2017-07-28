@@ -5,14 +5,6 @@ description: Tempest Deep Dive
 category: 技术
 ---
 
-声明：  
-本博客欢迎转发，但请保留原作者信息!  
-新浪微博：[@孔令贤HW](http://weibo.com/lingxiankong)；   
-博客地址：<http://lingxiankong.github.io/>  
-内容系本人学习、研究和总结，如有雷同，实属荣幸！
-
----
-
 以前写过一篇简单介绍Tempest的[文章](http://lingxiankong.github.io/blog/2014/03/12/tempest/)，但当时偏重于讲解配置的生成，时至今日，当时生成配置文件的方式已不复存在，取而代之的是tox -egenconfig，可见社区果然是“变化太快”。
 
 什么是Tempest我就不多说，如果连Tempest是什么都木有听说过，建议您绕行吧。

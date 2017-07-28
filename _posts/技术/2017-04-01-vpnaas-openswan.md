@@ -5,12 +5,6 @@ description: OpenSwan如何实现VPNaaS
 category: 技术
 ---
 
-声明：  
-本博客欢迎转发，但请保留原作者信息!  
-新浪微博：[@Lingxian_kong](http://weibo.com/lingxiankong)；   
-博客地址：<http://lingxiankong.github.io/>  
-内容系本人学习、研究和总结，如有雷同，实属荣幸！
-
 同样的事情我刚接触Neutron的时候也做过。其实你说Neutron的实现吧挺复杂的，但毕竟到最后还是要依靠底层的网络软件去实现具体的网络能力，所以如果让一个懂网络的人来看Neutron，视角肯定是自底向上。而对于我这种一开始是网络文盲的人，只有乖乖的从API入口开始，一直到底层的一系列网络命令，Neutron只是做了逻辑管理而已。VPNaaS也一样，底层常见的实现是OpenSwan和StrongSwan，两个都是开源实现，StrongSwan要比OpenSwan在能力上略胜一筹。因为我们的公有云里仍然使用OpenSwan（别问我为啥），但我们有迁移到StrongSwan的需求，迁移之前我需要做些调研，所以就有了本篇博客，在此做个记录，以供后续查阅。
 
 > 阅读本篇博客要求你熟悉Neutron

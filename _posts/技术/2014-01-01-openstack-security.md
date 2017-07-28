@@ -8,12 +8,6 @@ tags:
 - security
 ---
 
-声明：  
-本博客欢迎转发，但请保留原作者信息!  
-博客地址：<http://lingxiankong.github.io/>  
-内容系本人及本人团队学习、研究和总结，如有雷同，实属荣幸！  
-Author：华为云计算工程师 [孔令贤](http://weibo.com/lingxiankong)  
-
 ## OpenStack Vulnerability Management Team
 OpenStack Vulnerability Management Team([VMT](https://launchpad.net/~openstack-vuln-mgmt))是负责处理OpenStack安全问题的组织，负责处理漏洞的修复和发布过程。为了防止漏洞的扩散，该组织最多只能有三个成员。该组织目前提供OpenStack前两个版本的漏洞补丁，下一版本正在开发中。
 

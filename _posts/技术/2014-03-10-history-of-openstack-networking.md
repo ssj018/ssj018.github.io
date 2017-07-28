@@ -5,7 +5,6 @@ description: OpenStack网络的前世今生
 category: 技术
 ---
 
-声明：  
 本文转自OpenStack中国社区，原文链接：<http://www.openstack.cn/p353.html>，作者[Joshua](http://www.openstack.cn/pauthor/joshua)，转载请注明。
 
 在OpenStack世界中，网络组件最初叫nova-network，它混迹于计算节点nova的代码库中。nova-network可以单独部署在一台机器上，为了高性能HA也可以和nova-compute一样部署在计算节点上（这也就是所谓的multi-host功能）。nova-network实现简单，bug少，但性能可不弱哦，直接采用基于Linux内核的Linux网桥少了很多层抽象应该算强大的。不足之处是支持的插件少（只支持Linux网桥），支持的网络拓扑少（只支持flat, vlan)。

@@ -5,14 +5,6 @@ description: OpenStack中的扩展--以Nova为例
 category: 技术
 ---
 
-声明：  
-本博客欢迎转发，但请保留原作者信息!  
-新浪微博：[@孔令贤HW](http://weibo.com/lingxiankong)；   
-博客地址：<http://lingxiankong.github.io/>  
-内容系本人学习、研究和总结，如有雷同，实属荣幸！
-
----
-
 本篇是纯粹的技术贴，废话不多说。
 
 OpenStack Version: Juno stable 2014.2

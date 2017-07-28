@@ -5,14 +5,6 @@ description: OpenStack中的Oslo.config笔记
 category: 技术
 ---
 
-声明：  
-本博客欢迎转发，但请保留原作者信息!  
-新浪微博：[@孔令贤HW](http://weibo.com/lingxiankong)；   
-博客地址：<http://lingxiankong.github.io/>  
-内容系本人学习、研究和总结，如有雷同，实属荣幸！
-
----
-
 其实关于oslo.config的使用，在它代码库的oslo.config.cfg.py文件中有很详细的注释说明。但为了避免每次都去阅读一遍(而且有的用法确实不经常用)，还是有选择的做一下笔记，以便查询使用。这个笔记不是关于oslo.config方法的全集，因为有些东西我认为没必要记录的就略去了。
 
 因为oslo.config用了iniparser和argparse，所以最好是对它们有一些理解和掌握。

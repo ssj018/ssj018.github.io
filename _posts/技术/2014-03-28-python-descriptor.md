@@ -5,7 +5,6 @@ description: Python描述符（descriptor）解密
 category: 技术
 ---
 
-声明：  
 本文转载自[极客范](http://www.geekfan.net/)，原文链接：<http://www.geekfan.net/7862/>，转载请注明。
 
 Python中包含了许多内建的语言特性，它们使得代码简洁且易于理解。这些特性包括列表/集合/字典推导式，属性（property）、以及装饰器（decorator）。对于大部分特性来说，这些“中级”的语言特性有着完善的文档，并且易于学习。

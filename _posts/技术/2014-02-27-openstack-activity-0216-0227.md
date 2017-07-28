@@ -5,11 +5,6 @@ description: OpenStack社区动态第九期(02.15-02.27)
 category: 技术
 ---
 
-声明：  
-本周报由华为OpenStack团队出品，由孔令贤整理，欢迎转发，但请保留原作者信息!  
-新浪微博：[@孔令贤HW](http://weibo.com/lingxiankong)；  
-博客地址：<http://lingxiankong.github.io/>  
-
 ## 业界动态
 2.10号，大数据公司Hortonworks和Red Hat建立战略合作伙伴关系，Red Hat会将Hortonworks Data Platform (HDP) 接入自己的存储产品，并且HDP也会与Red Hat Enterprise Linux OpenStack Platform整合以降低成本。  
 <http://www.redhat.com/about/news/press-archive/2014/2/hortonworks-and-red-hat-deepen-strategic-alliance>

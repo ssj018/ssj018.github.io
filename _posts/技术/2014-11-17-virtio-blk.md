@@ -1,16 +1,8 @@
 ---
 layout: post
-title: virtio-blk简介[转]
+title: virtio-blk简介
 description: virtio-blk简介
 category: 技术
----
-
-声明：  
-本博客欢迎转发，但请保留原作者信息!  
-新浪微博：[@孔令贤HW](http://weibo.com/lingxiankong)；   
-博客地址：<http://lingxiankong.github.io/>  
-内容系本人学习、研究和总结，如有雷同，实属荣幸！
-
 ---
 
 virtio-blk是虚拟化KVM平台下虚拟磁盘的一种实现方式，也是存储虚拟化所研究的主要对象之一。在KVM平台下，qemu程序负责模拟一台PC的整个工作过程，是虚拟化技术的精髓所在。大家知道，在物理PC中，磁盘是必不可少的设备，系统、应用程序的安装和数据的存放都离不开磁盘。在虚拟化场景下，qemu自然也需要提供对磁盘的模拟。那qemu到底是如何模拟磁盘的？virtio-blk又是一种什么样的虚拟磁盘呢？

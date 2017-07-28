@@ -5,12 +5,6 @@ description: SSL是一种安全协议，在Netscape推出首版Web浏览器的�
 category: 技术
 ---
 
-声明：  
-本博客欢迎转发，但请保留原作者信息!  
-新浪微博：[@孔令贤HW](http://weibo.com/lingxiankong)；   
-博客地址：<http://lingxiankong.github.io/>  
-内容系本人及本人团队学习、研究和总结，如有雷同，实属荣幸！
-
 ## 什么是SSL
 安全套接层（Secure Sockets Layer，SSL）是一种安全协议，在网景公司（Netscape）推出首版Web浏览器的同时提出，目的是为网络通信提供安全及数据完整性保障，SSL在传输层中对网络通信进行加密。
 

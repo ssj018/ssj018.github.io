@@ -5,12 +5,6 @@ description: Icehouse Release Notes
 category: 技术
 ---
 
-声明：  
-本博客欢迎转发，但请保留原作者信息!  
-新浪微博：[@孔令贤HW](http://weibo.com/lingxiankong)；   
-博客地址：<http://lingxiankong.github.io/>  
-内容系本人学习、研究和总结，如有雷同，实属荣幸！
-
 OpenStack Icehouse于4.17正式发布，release notes也在第一时间发布。但毕竟是开源项目，release notes在质量上无法与大公司的版本发布时相比较，至少没有我司看着规整。罢了，没有参与没有发言权，还是感谢来自全球的开发者的努力。
 
 这里，我就我自己比较关心的几个模块做一个简单翻译，英文能力强的童鞋可以无视。

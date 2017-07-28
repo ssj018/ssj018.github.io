@@ -5,11 +5,6 @@ description: OpenStack社区动态第二十期(0917-1015)
 category: 技术
 ---
 
-声明：  
-本系列由孔令贤整理，欢迎转发，但请保留原作者信息!  
-新浪微博：[@孔令贤HW](http://weibo.com/lingxiankong)；  
-博客地址：<http://lingxiankong.github.io/>
-
 ## Common
 Juno版本马上就要发布了，但很多在Juno版本未合入的feature该怎么办呢？社区有人针对Neutron提议，保留这些未合入的specs，方便在Kilo中其他人能继续未完成的工作。虽然遭到了Neutron PTL Kyle的反对，但得到了其他人的赞成。最终结果如何未知，等待社区有个一致的结论。
 

@@ -5,12 +5,6 @@ description: Ceilometer/Aodh操作notification简介
 category: 技术
 ---
 
-声明：  
-本博客欢迎转发，但请保留原作者信息!  
-新浪微博：[@Lingxian_kong](http://weibo.com/lingxiankong)；   
-博客地址：<http://lingxiankong.github.io/>  
-内容系本人学习、研究和总结，如有雷同，实属荣幸！
-
 OpenStack 大多数项目中都依赖消息队列（默认是 RabbitMQ ）在服务内部传递消息，同时，大多数关键项目（Nova、Cinder、Glance 等）也会将用户操作资源的动作以及资源的状态变化这些信息发送到消息队列，这些消息被称为 notification。任何对 notification 感兴趣的服务或组件都可以在消息队列上监听特定的 topic（默认是‘notifications’），从而获取这些 notification 并进行处理。OpenStack 官方推荐的获取 notification 的角色是 Ceilometer，其子项目 Panko 实现了对 notification 的查询，Aodh 中也实现了基于 notification 的监控告警。当然，很多其他项目不想依赖 Ceilometer，都在自己的代码库中实现了对消息队列的监听和处理，虽然有些重复造轮子的意思，但很多项目觉得与安装部署维护另一个服务所花费的时间精力相比，可能自己写代码来的更加方便快捷。比如 Mistral 中就实现了基于 notification 的工作流触发，而 [Monasca](http://monasca.io/) 更是直接取代 Ceilometer 自成一派。这也是因为 Ceilometer 项目前几年做的比较差，性能不好，所以几乎没人在生产环境使用，它本身的部署率低也就导致对它有潜在依赖需求的项目不得不寻求别的方案来替代它。
 
 > 所以，你可以认为 Ceilometer 的作用仅仅是数据收集和转换，Gnocchi 提供数据存储，Panko 提供事件查询，Aodh 提供基于事件告警。

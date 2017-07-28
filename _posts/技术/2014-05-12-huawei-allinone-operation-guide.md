@@ -5,14 +5,6 @@ description: Huawei Icehouse All in One Operation Guide
 category: 技术
 ---
 
-声明：  
-本博客欢迎转发，但请保留原作者信息!  
-新浪微博：[@孔令贤HW](http://weibo.com/lingxiankong)；   
-博客地址：<http://lingxiankong.github.io/>  
-内容系本人及本人团队学习、研究和总结，如有雷同，实属荣幸！
-
-----------------
-
 之前一篇[博客](http://lingxiankong.github.io/blog/2014/04/29/openstack-icehouse-allinone/)介绍了华为发布的针对Icehouse版本的all in one安装镜像，因为OpenStack安装后还需要进行一系列的初始配置(大家的环境和需求各异，因此没有直接集成在自动化中)。对于小白用户来说，可能还不能满足需求，今天我就一步一步教大家入门。
 
 ## 准备和注册镜像、Keypair  

@@ -5,12 +5,6 @@ description: Heat中更新stack
 category: 技术
 ---
 
-声明：  
-本博客欢迎转发，但请保留原作者信息!  
-新浪微博：[@孔令贤HW](http://weibo.com/lingxiankong)；   
-博客地址：<http://lingxiankong.github.io/>  
-内容系本人学习、研究和总结，如有雷同，实属荣幸！
-
 Heat中的更新stack行为，基本就是参照CloudFormation设计和实现的。所以，这里的主要参考来源就是CloudFormation的官方文档，另外就是Heat Icehouse版本的实现代码。
 
 ## 一个示例

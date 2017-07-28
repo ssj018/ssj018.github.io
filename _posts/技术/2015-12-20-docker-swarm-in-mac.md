@@ -5,12 +5,6 @@ description: 在mac上尝试docker-swarm
 category: 技术
 ---
 
-声明：  
-本博客欢迎转发，但请保留原作者信息!  
-新浪微博：[@Lingxian_kong](http://weibo.com/lingxiankong)；   
-博客地址：<http://lingxiankong.github.io/>  
-内容系本人学习、研究和总结，如有雷同，实属荣幸！
-
 ## 安装docker-machine
 我的安装环境是mac，之前在mac上安装有vagrant和virtualbox，所以我没有直接安装官方推荐的Docker Toolbox。其实我可以手动创建几台vagrant虚拟机，然后手动配置这三台虚拟机为一个swarm集群。但看了swarm官网的资料，都推荐使用docker-machine，之前不怎么熟悉，所以也借此机会熟悉一下，先在mac上安装docker-machine命令行工具。
 

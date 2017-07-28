@@ -5,12 +5,6 @@ description: 从零安装Mistral开发环境最佳实践
 category: 技术
 ---
 
-声明：  
-本博客欢迎转发，但请保留原作者信息!  
-新浪微博：[@Lingxian_Kong](http://weibo.com/lingxiankong)；   
-博客地址：<http://lingxiankong.github.io/>  
-内容系本人学习、研究和总结，如有雷同，实属荣幸！
-
 更新日期：2016.10.31
 
 本文的目的是你已经有了一套devstack环境，想进行mistral的开发，安装过程需要访问网络。

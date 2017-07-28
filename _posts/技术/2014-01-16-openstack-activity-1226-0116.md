@@ -5,12 +5,6 @@ description: 来自华为OpenStack社区团队出品的周报
 category: 技术
 ---
 
-声明：  
-本博客由华为OpenStack团队出品，欢迎转发，但请保留原作者信息!  
-新浪微博：[@孔令贤HW](http://weibo.com/lingxiankong)；  
-博客地址：<http://lingxiankong.github.io/>  
-内容系本人及本人团队学习、研究和总结，如有雷同，实属荣幸！
-
 ## 业界动态
 VMWare加入OpenStack社区的意图是什么？（What Is VMware Up To With OpenStack?）
 OpenStack被看做是在私有云领域对VMware的挑战者，人们期待她重演在操作系统领域Linux对微软Windows对抗的故事。因此，自从VMWare打算加入OpenStack社区并随后曲折地被批准以来，各种猜测、分析VMWare公司意图的文章和评论一直是OpenStack世界的热门话题之一。本周OpenStack官方blog分享了一篇从技术视角分析的文章，作者是OpenStack架构师 Kenneth Hui，前VMWare vSphere工程师。以Dan Wendlandt为首的VMWare技术团队自从加入社区以来在通过各种方式融入开源社区，也包括他们在香港openstack summit的一些技术活动。从Grizzly版本开始，VMWare开始推动OpenStack对vSphere的支持，从Grizzly到Havana，无论是从代码数量和功能覆盖，VMWare的贡献可以说是稳定和持续，而且会有更多的功能会在Icehouse加入。 Kenneth Hui的看法基于他对VMWare这些一线社区人员的社区贡献、动向的观察，而且可以说没有私心，因为他已经不是VMWare员工了。主要观点见中国社区中文意译<http://www.openstack.cn/p709.html>，详细内容请看英文  <http://cloudarchitectmusings.com/2013/12/18/what-is-vmware-up-to-with-openstack/>

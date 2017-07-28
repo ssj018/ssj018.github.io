@@ -5,14 +5,6 @@ description: Heat中的AutoScaling(2)
 category: 技术
 ---
 
-声明：  
-本博客欢迎转发，但请保留原作者信息!  
-新浪微博：[@孔令贤HW](http://weibo.com/lingxiankong)；   
-博客地址：<http://lingxiankong.github.io/>  
-内容系本人学习、研究和总结，如有雷同，实属荣幸！
-
----
-
 之前的一篇[博客](http://lingxiankong.github.io/blog/2014/04/03/heat-autoscaling-1/)讲了AWS和Heat中AutoScaling的机制和大概的实现，本篇是上一篇的姊妹篇，主要讲autoscaling在heat中的简单使用。
 
 ## 环境准备

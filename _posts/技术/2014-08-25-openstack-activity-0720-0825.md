@@ -5,11 +5,6 @@ description: OpenStack社区动态第十八期(0720-0825)
 category: 技术
 ---
 
-声明：  
-本系列由华为OpenStack团队出品，由孔令贤整理，欢迎转发，但请保留原作者信息!  
-新浪微博：[@孔令贤HW](http://weibo.com/lingxiankong)；  
-博客地址：<http://lingxiankong.github.io/>
-
 因为工作的原因，这一期的动态憋了好久，但还是憋出来了。确实需要耗费大量的时间和精力去阅读和理解，一方面是给自己做笔记，另一方面也算了为了提高因为的阅读吧。
 
 ## 业界动态

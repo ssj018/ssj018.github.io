@@ -5,11 +5,6 @@ description: OpenStack社区动态第十四期(0508-0528)
 category: 技术
 ---
 
-声明：  
-本动态跟踪系列由华为OpenStack团队出品，由孔令贤整理，欢迎转发，但请保留原作者信息!  
-新浪微博：[@孔令贤HW](http://weibo.com/lingxiankong)；  
-博客地址：<http://lingxiankong.github.io/> 
-
 ## 业界动态
 OpenStack私有云服务商Metacloud近日完成B轮1500万美元融资，推动企业自建和Metacloud托管私有云服务开发和营销推广。目前Metacloud已经累计融资2700万美元。
 

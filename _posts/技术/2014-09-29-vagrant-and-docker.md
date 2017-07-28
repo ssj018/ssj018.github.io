@@ -5,14 +5,6 @@ description: 浅析vagrant和docker
 category: 技术
 ---
 
-声明：  
-本博客欢迎转发，但请保留原作者信息!  
-新浪微博：[@孔令贤HW](http://weibo.com/lingxiankong)；   
-博客地址：<http://lingxiankong.github.io/>  
-内容系本人学习、研究和总结，如有雷同，实属荣幸！
-
----
-
 什么是 vagrant ? Vagrant 是一个跨平台的虚拟机构建工具，能够通过 vagrantfile 描述虚拟机并将其部署到 hypervisor 上（VirtualBox, VMWare, AWS, etc）。
 
 什么是 docker ? Docker 是一个 linux 上的 linux container 构建工具，能够通过 dockerfile 来定义一个 container ，并将其部署到任何运行 docker 的主机上。

@@ -5,13 +5,6 @@ description: Octavia中service虚拟机服务介绍
 category: 技术
 ---
 
-**声明：  
-本博客欢迎转发，但请保留原作者信息!  
-新浪微博：[@Lingxian_Kong](http://weibo.com/lingxiankong)   
-博客地址：<http://lingxiankong.github.io/>  
-联系邮箱：<anlin.kong@gmail.com>  
-内容系本人学习、研究和总结，如有雷同，实属荣幸！**
-
 在octavia中，实际的loadbalancer服务是由虚拟机提供，所以在虚拟机中需要运行服务与octavia通信，接收octavia发来的操作指令，配置网卡、路由以及haproxy和keepalived软件。
 
 实际上，虚拟机里面会运行amphora-agent进程，对外提供REST API访问，如下所示：

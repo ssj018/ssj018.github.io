@@ -5,12 +5,6 @@ description: AWS Lambda
 category: 技术
 ---
 
-声明：  
-本博客欢迎转发，但请保留原作者信息!  
-新浪微博：[@Lingxian_Kong](http://weibo.com/lingxiankong)；   
-博客地址：<http://lingxiankong.github.io/>  
-内容系本人学习、研究和总结，如有雷同，实属荣幸！
-
 不知道从什么时候起，“无服务器架构”的概念突然被炒的火热，有通篇的理论，也有直接的示例演示，我想业界开始关注serverless computing（或者叫Function-as-a-Service，FaaS）应该是通过[这篇文章](http://martinfowler.com/articles/serverless.html)，以AWS Lambda产品为例探讨了FaaS的特点、什么是serverless及实现serverless需要考虑的其他相关问题。本篇博客不是技术论文，就不做前期铺垫了，想深入了解serverless的童鞋，可以先通读一下那篇文章。
 
 因为AWS在云计算领域的领导地位，他发布的FaaS自然就成了大家讨论和模仿的对象。刚好我也在关注serverless，所以就通读了AWS Lambda的官方文档加上自己的一些实践，做个总结。

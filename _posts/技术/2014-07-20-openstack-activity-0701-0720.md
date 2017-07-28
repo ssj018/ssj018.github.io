@@ -5,11 +5,6 @@ description: OpenStack社区动态第十七期(0701-0720)
 category: 技术
 ---
 
-声明：  
-本系列由华为OpenStack团队出品，由孔令贤整理，欢迎转发，但请保留原作者信息!  
-新浪微博：[@孔令贤HW](http://weibo.com/lingxiankong)；  
-博客地址：<http://lingxiankong.github.io/>
-
 ## 业界动态
 2014.6.30，IBM公司[宣布](http://www-03.ibm.com/press/us/en/pressrelease/44239.wss)：开放的云开发平台Bluemix正式上线。Bluemix运行在SoftLayer上面，基于 Cloud Foundry，拥有超过50项服务，客户和系统集成商等都可以在云计算环境中快速部署基于云的移动应用程序或web服务
 

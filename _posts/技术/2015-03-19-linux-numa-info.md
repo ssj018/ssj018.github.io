@@ -5,12 +5,6 @@ description: Linux中查看NUMA信息
 category: 技术
 ---
 
-声明：  
-本博客欢迎转发，但请保留原作者信息!  
-新浪微博：[@孔令贤HW](http://weibo.com/lingxiankong)；   
-博客地址：<http://lingxiankong.github.io/>  
-内容系本人学习、研究和总结，如有雷同，实属荣幸！
-
 Nova在NFV场景下会提供NUMA相关高级特性，这里提供一个脚本查看计算节点的NUMA相关信息。
 
 	#!/bin/bash

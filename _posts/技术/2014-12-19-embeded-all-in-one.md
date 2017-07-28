@@ -5,14 +5,6 @@ description: 在华为Juno all-in-one中安装all-in-one
 category: 技术
 ---
 
-声明：  
-本博客欢迎转发，但请保留原作者信息!  
-新浪微博：[@孔令贤HW](http://weibo.com/lingxiankong)；   
-博客地址：<http://lingxiankong.github.io/>  
-内容系本人学习、研究和总结，如有雷同，实属荣幸！
-
----
-
 之前团队对外推出了Juno all-in-one离线傻瓜式安装镜像和镜像的使用方法（传送门：[这里](http://lingxiankong.github.io/blog/2014/10/16/openstack-juno-allinone/)和[这里](http://lingxiankong.github.io/blog/2014/05/12/huawei-allinone-operation-guide/)）。相信很多基于Juno版本学习和开发的童鞋会有这样的需求：对很多东西尚不精通的你，对OpenStack代码一通修改，然后发现自己的环境凌乱了，多了iscsi链接，以及一些你自己暂时弄不明白的虚拟网络设备……。于是，你的第一个想法肯定是重装，反正ISO很方便。今天，孔老湿告诉你：**ISO是很方便，但是，还有更方便的方式**！
 
 原理其实很简单，就是在你成功安装Juno后，创建虚拟机，然后再用all-in-one ISO启动虚拟机，将虚拟机数据再导出为镜像。以后，直接用镜像创建虚拟机即可，不用再等待ISO的安装了。

@@ -5,11 +5,6 @@ description: OpenStack社区动态第十五期(0528-0616)
 category: 技术
 ---
 
-声明：  
-本系列由华为OpenStack团队出品，由孔令贤整理，欢迎转发，但请保留原作者信息!  
-新浪微博：[@孔令贤HW](http://weibo.com/lingxiankong)；  
-博客地址：<http://lingxiankong.github.io/> 
-
 ## 业界动态
 5.27号，Oracle发布了[MySQL Fabric](http://www.oracle.com/us/corporate/press/2208808?rssid=rss_ocom_pr)，为MySQL提供了HA和可扩展性的支持。这对于OpenStack来说是无疑是件好事。 
 

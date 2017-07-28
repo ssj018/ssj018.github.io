@@ -5,12 +5,6 @@ description: Swarm源码分析
 category: 技术
 ---
 
-声明：  
-本博客欢迎转发，但请保留原作者信息!  
-新浪微博：[@Lingxian_kong](http://weibo.com/lingxiankong)   
-博客地址：<http://lingxiankong.github.io/>  
-内容系本人学习、研究和总结，如有雷同，实属荣幸！
-
 > 本文适合Go语言和Swarm的初学者
 
 在我之前的一篇[博客](http://lingxiankong.github.io/blog/2015/12/20/docker-swarm-in-mac/)中，我在本地mac机器上搭建了swarm。前两天刚刚看完了Go的基础教程，所以，我就顺着swarm搭建的步骤，来尝试阅读swarm的源码。

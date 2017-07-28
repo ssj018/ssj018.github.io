@@ -5,14 +5,6 @@ description: 如何开始使用OpenStack命令行和API
 category: 技术
 ---
 
-声明：  
-本博客欢迎转发，但请保留原作者信息!  
-新浪微博：[@孔令贤HW](http://weibo.com/lingxiankong)；   
-博客地址：<http://lingxiankong.github.io/>  
-内容系本人学习、研究和总结，如有雷同，实属荣幸！
-
----
-
 当你开始使用OpenStack，基本上都是从一个已搭建好的环境入手，别人(operator)会告诉你horizon登录的租户名、用户名和密码。  
 ![horizon登陆页](/images/2014-08-02-openstack-client-api/1.png)
 

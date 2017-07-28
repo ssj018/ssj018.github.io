@@ -1,15 +1,9 @@
-ng .---
+---
 layout: post
 title: OpenStack中虚拟机信息注入
 description: 虚拟机上如果跑业务，启动时不可避免的要从外界获取一些信息，在OpenStack中，这些信息通常是，密钥信息， 网络信息，metadata， root密码，自定义文件等
 category: 技术
 ---
-
-声明：  
-本博客欢迎转发，但请保留原作者信息!  
-新浪微博：[@孔令贤HW](http://weibo.com/lingxiankong)；   
-博客地址：<http://lingxiankong.github.io/>  
-内容系本人及本人团队学习、研究和总结，如有雷同，实属荣幸！
 
 虚拟机上如果跑业务，启动时不可避免的要从外界获取一些信息，在OpenStack中，这些信息通常是，密钥信息， 网络信息，metadata， root密码，自定义文件等。这些信息获取来源有如下几种。
 

@@ -5,11 +5,6 @@ description: OpenStack社区动态第十一期(0320-0410)
 category: 技术
 ---
 
-声明：  
-本动态跟踪系列由华为OpenStack团队出品，由孔令贤整理，欢迎转发，但请保留原作者信息!  
-新浪微博：[@孔令贤HW](http://weibo.com/lingxiankong)；  
-博客地址：<http://lingxiankong.github.io/>  
-
 ## 业界动态
 tonido公司发布了一个网络文件夹共享和同步工具，[FileCloud 5.0](http://www.tonido.com/blog/index.php/2014/03/19/filecloud-5-0-network-folder-sync-endpoint-backup-openstack-and-more)，实现了与Swift的对接。
 

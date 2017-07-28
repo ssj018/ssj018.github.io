@@ -5,12 +5,6 @@ description: OpenStack中tooz介绍及实践
 category: 技术
 ---
 
-声明：  
-本博客欢迎转发，但请保留原作者信息!  
-新浪微博：[@孔令贤HW](http://weibo.com/lingxiankong)；   
-博客地址：<http://lingxiankong.github.io/>  
-内容系本人学习、研究和总结，如有雷同，实属荣幸！
-
 ## 什么是tooz
 啥是tooz，Google一把就出来。简单的说，tooz是一个python库，是一个实现分布式环境下成员管理、分布式锁、leader选举的**框架**。tooz最初是eNovance几个工程师编写的，关于tooz产生的背景可以阅读[这里](https://julien.danjou.info/blog/2014/python-distributed-membership-lock-with-tooz)。
 

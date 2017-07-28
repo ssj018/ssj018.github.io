@@ -6,14 +6,6 @@ description: 简单分析mirantis的openstack社区版都做了什么
 tags: openstack, mirantis
 ---
 
-声明：  
-本博客欢迎转发，但请保留原作者信息!  
-博客地址：<http://lingxiankong.github.io/>  
-内容系本人及本人团队学习、研究和总结，如有雷同，实属荣幸！  
-Author：华为云计算工程师 [孔令贤](http://weibo.com/lingxiankong) 
-
-# Mirantis OpenStack #
-
 ## About mirantis
 mirantis，一家很牛逼的openstack服务集成商，他是社区贡献排名前5名中唯一一个靠软件和服务吃饭的公司（其他分别是Red Hat, HP, IBM, Rackspace）。相对于其他几个社区发行版，mirantis openstack的版本节奏很快，平均每两个月就能提供一个相对稳定的社区版。
 

@@ -5,12 +5,6 @@ description: python-mistralclient与python-openstackclient的集成
 category: 技术
 ---
 
-声明：  
-本博客欢迎转发，但请保留原作者信息!  
-新浪微博：[@孔令贤HW](http://weibo.com/lingxiankong)；   
-博客地址：<http://lingxiankong.github.io/>  
-内容系本人学习、研究和总结，如有雷同，实属荣幸！
-
 目标：将mistral CLI client与官方openstack client集成，bp链接在[这里](https://blueprints.launchpad.net/mistral/+spec/mistral-osc-plugin)。
 
 首先，openstack client是用[cliff](http://docs.openstack.org/developer/cliff/)实现，所以建议先熟读cliff的官方文档，知道cliff的实现机制，这样才能对openstack client的机制有了解，这是熟悉openstack client的基础。从OSC 2.4.0版本以后，从openstack client又提取出一个叫osc-lib的可重用的库，新的plugin可以继承这个osc-lib来集成openstack命令，但是plugin的加载还是由openstack client来完成。从设计层次上讲，osc-lib继承自cliff，而openstack client和其他的extension其实是平级结构，都继承自osc-lib，只是由openstack client入口而已。

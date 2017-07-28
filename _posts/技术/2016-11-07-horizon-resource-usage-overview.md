@@ -5,12 +5,6 @@ description: Resource Usage Summary in Horizon
 category: 技术
 ---
 
-声明：  
-本博客欢迎转发，但请保留原作者信息!  
-新浪微博：[@Lingxian_Kong](http://weibo.com/lingxiankong)；   
-博客地址：<http://lingxiankong.github.io/>  
-内容系本人学习、研究和总结，如有雷同，实属荣幸！
-
 In 'Project'->'Compute'->'Overview' pannel of Horizon, a common user can see some OpenStack resources usage information in 'Limit Summary' table in pie chart. By default, that includes 'Instances', 'VCPUs', 'RAM', 'Floating IPs', 'Security Groups', 'Volumes' and 'Volume Storage'. Horizon will get usage of those resources from Nova, Cinder, Neutron respectively.
 
 An sample picture of resource overview in Horizon:  

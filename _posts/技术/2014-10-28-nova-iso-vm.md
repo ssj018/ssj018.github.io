@@ -5,8 +5,6 @@ description: Nova中ISO虚拟机使用场景及验证笔记
 category: 技术
 ---
 
-声明：  
-本博客欢迎转发，但请保留原作者信息!  
 原作者：[kiwik](http://kiwik.github.io/)
 
 ---

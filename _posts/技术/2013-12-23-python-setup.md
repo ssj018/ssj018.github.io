@@ -6,13 +6,6 @@ description: 关于打包和分发，我其实也不是特别的清楚整个流�
 tags: python, setup, setuptools
 ---
 
-声明：  
-本博客欢迎转发，但请保留原作者信息!  
-博客地址：<http://lingxiankong.github.io/>  
-内容系本人及本人团队学习、研究和总结，如有雷同，实属荣幸！  
-Author：华为云计算工程师 [孔令贤](http://weibo.com/lingxiankong)  
-Date: 2013-12-23
-
 版本：2013.2
 
 ## 前言

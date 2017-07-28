@@ -5,12 +5,6 @@ description: 从Ceph Object Storage到Swift的数据迁移
 category: 技术
 ---
 
-声明：  
-本博客欢迎转发，但请保留原作者信息!  
-新浪微博：[@Lingxian_Kong](http://weibo.com/lingxiankong)；   
-博客地址：<http://lingxiankong.github.io/>  
-内容系本人学习、研究和总结，如有雷同，实属荣幸！
-
 前段时间一直在忙team的项目，在我们基于OpenStack的公有云（Catalyst Cloud）上部署Swift服务。由于历史原因，我们的公有云之前提供的对象存储是基于[*Ceph Object Gateway*](http://docs.ceph.com/docs/jewel/radosgw/)（RGW），所以我们已经有大量的用户在Ceph上存储的数据，并且每天都会有更新，总容量有十几个T。我在这个项目中的任务就是完成数据迁移。在Ceph集群之外，我们部署了独立的Swift集群，所以准确的说，我们需要做的是数据拷贝，而并非数据迁移。
 
 这个工作看似简单，就是把数据从RGW获取到，再上传到Swift，因为RGW同时支持S3和Swift API，所以我选择了在迁移代码中全程使用swiftclient。根据swiftclient的开发者文档，同时提供一个low-level和一个high-level api，分别叫swift connection和swift service。最初我使用connect，但后面转而使用service client。

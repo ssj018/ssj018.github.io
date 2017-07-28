@@ -5,12 +5,6 @@ description: Heat服务简介
 category: 技术
 ---
 
-声明：  
-本博客欢迎转发，但请保留原作者信息!  
-新浪微博：[@孔令贤HW](http://weibo.com/lingxiankong)；   
-博客地址：<http://lingxiankong.github.io/>  
-内容系本人学习、研究和总结，如有雷同，实属荣幸！
-
 Heat中对外提供服务的进程有：heat-api, heat-api-cfn, heat-api-cloudwatch，内部进程只有一个heat-engine。这些进程都支持灵活部署。
 
 访问heat-api时，在keystone鉴权时可以提供用户token，或者用户名和密码（此时不需要在系统中提供管理员token），需要配置：  

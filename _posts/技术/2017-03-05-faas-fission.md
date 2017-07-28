@@ -5,12 +5,6 @@ description: 来自Planform9的开源项目
 category: 技术
 ---
 
-声明：  
-本博客欢迎转发，但请保留原作者信息!  
-新浪微博：[@Lingxian_kong](http://weibo.com/lingxiankong)；   
-博客地址：<http://lingxiankong.github.io/>  
-内容系本人学习、研究和总结，如有雷同，实属荣幸！
-
 > 这篇博客需要你懂Kubernetes和Docker
 
 之前就一直关注FaaS，简单分析过[AWS Lambda][]和其他几个FaaS项目。我最初关注FaaS是因为我想在Mistral（OpenStack项目）中引入执行自定义代码的能力，来增强Mistral的可用性。AWS Lambda是Amazon在2016年对外发布的项目，发布之后就一直是serverless领域的标杆，后来的的FaaS项目基本都是参照AWS Lambda设计和实现。

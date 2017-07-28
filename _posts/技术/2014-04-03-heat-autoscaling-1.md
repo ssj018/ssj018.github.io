@@ -5,12 +5,6 @@ description: Heat中的AutoScaling(1)
 category: 技术
 ---
 
-声明：  
-本博客欢迎转发，但请保留原作者信息!  
-新浪微博：[@孔令贤HW](http://weibo.com/lingxiankong)；   
-博客地址：<http://lingxiankong.github.io/>  
-内容系本人学习、研究和总结，如有雷同，实属荣幸！
-
 本文主要讲AutoScaling，关于CloudFormation和Heat，之前的[博客](http://lingxiankong.github.io/blog/2013/12/02/heat/)已经有讲过，本文不做赘述。
 
 ## AutoScaling in AWS

@@ -5,12 +5,6 @@ description: 如何从零创建一个 openstack project
 category: 技术
 ---
 
-声明：  
-本博客欢迎转发，但请保留原作者信息!  
-新浪微博：[@Lingxian_kong](http://weibo.com/lingxiankong)；   
-博客地址：<http://lingxiankong.github.io/>  
-内容系本人学习、研究和总结，如有雷同，实属荣幸！
-
 前段时间自己写了个 FaaS 项目（借鉴了 Fission 里的一些想法），因为目前为止 OpenStack 领域里还没有一个很好的替代品。仅有的一个 Picasso 自从repo 创建之后就再没有更新过，那个公司只是为了卖自己的 serverless 产品而已，所以搞开源做好事的动机不强。
 
 这篇博客不是具体讲我的 project 怎么实现的，而是我完成基本的框架和功能之后，总结一下创建一个新的 project 都需要注意哪些方面，以备后用。
