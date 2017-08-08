@@ -5,7 +5,7 @@ description: linux下使用expect示例
 category: 技术
 ---
 
-expect是一种自动交互语言，能实现在shell脚本中为scp和ssh等自动输入密码自动登录。一个例子：
+expect是一种自动交互语言，能实现在shell脚本中为scp和ssh等自动输入密码自动登录，它本身是由 Tcl 语言实现的，所以下面脚本中的语法可以参考 Tcl 语言。一个例子：
     
     #!/usr/bin/expect -f  
     set ip [lindex $argv 0 ]     //接收第一个参数,并设置IP  
@@ -24,3 +24,26 @@ expect是一种自动交互语言，能实现在shell脚本中为scp和ssh等自
     spawn ssh root@192.168.1.130  
     Last login: Fri Sep  7 10:47:43 2012 from 192.168.1.142  
     [root@linux ~]#  
+
+我工作中用到的一个比较简单的场景，自动登录远程主机并自动输入`su -`的密码：
+```
+#!/usr/bin/expect -f
+dict set nodemapping por-bill1 my-por-bill1.os.co.nz
+dict set nodemapping por-bill2 my-por-bill2.os.co.nz
+dict set nodemapping por-bill3 my-por-bill3.os.co.nz
+
+dict set passmapping por-bill1 pass1
+dict set passmapping por-bill2 pass2
+dict set passmapping por-bill3 pass3
+
+set nodename [lindex $argv 0 ]
+set password [dict get $passmapping $nodename]
+set nodefullname [dict get $nodemapping $nodename]
+
+spawn ssh $nodefullname
+expect {
+    "*yes/no" { send "yes\r"; exp_continue}
+    "*password*" { send "$password\r" }
+}
+interact
+```
