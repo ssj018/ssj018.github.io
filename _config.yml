@@ -3,7 +3,7 @@ title: 孔令贤的个人博客
 email: larrykong2016@gmail.com
 description: > #孔令贤的个人博客
 baseurl: "" # the subpath of your site, e.g. /blog/
-url: "http://lingxiankong.github.io" # the base hostname & protocol for your site
+url: "http://lingxiankong.github.io/index.html" # the base hostname & protocol for your site
 
 # Paginate（分页）
 #gems: [jekyll-paginate]
