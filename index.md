@@ -1,7 +1,7 @@
 ---
 layout: page
 title: 技术改变世界 - 孔令贤的个人博客
-permalink: /1986-08-29-about-me.html
+---
 ---
 
 ![](/images/1986-08-29-about-me/head.jpg)
