@@ -13,13 +13,15 @@ https://git.openstack.org/cgit/openstack-infra/devstack-gate/tree/README.rst#n95
 搭建 devstack gate 测试环境：
 
 1. 准备镜像
-sudo apt-get install debootstrap qemu-utils -y
+sudo apt-get install debootstrap kpartx qemu-utils -y
 git clone git://git.openstack.org/openstack-infra/project-config
 cd project-config
 workon openstack
 pip install diskimage-builder
 ./tools/build-image.sh
 如果是以非 root 用户执行，中间会提示几次输入 root 密码
+
+
 
 ## 几个角色
 - Gerrit
