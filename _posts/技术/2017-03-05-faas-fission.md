@@ -13,16 +13,21 @@ category: 技术
 
 目前只能从fission的代码库中找到一点相关的文档，我也是读完代码才做出如下总结。
 
-## Fission Services
+## Fission Services的部署
 
-fission基于Kubernetes平台，它的安装很简单，就是使用kubectl命令创建一系列fission管理资源，所有的资源都创建在名为`fission`的namespace中（而通过fission创建的资源都在`fission-function`命名空间中）。其中包含4个service：
+fission基于Kubernetes平台，它的安装很简单，就是使用kubectl命令创建一系列fission管理资源，所有的资源都创建在名为`fission`的namespace中（而通过fission创建的资源都在`fission-function`命名空间中）。在代码库中有fission-bundle文件夹，根据 Dockerfile 创建出 fission service 的 docker image，就可以容器化部署 fission 了。在 fission 容器中，通过 import fission 的 github repo 来获取 fission 的代码从而启动各个服务进程。
+
+其中包含4个service：
 
 - etcd
 
 - controller，是fission对外提供管理API的组件。除了用户创建function时需要存储代码文件之外，其他的操作都只在etcd中存储数据结构。
 
-- router，fission通过router这一个独立的service来实现真正FaaS，router实现了根据用户的http请求运行code的能力。
-  router会与controller和poolmgr打交道。router定期从controller获取最新的triggers和functions列表，动态的更新web service的route定义。router内部以缓存的形式维护了一个从function到一个url的映射，这样对于调用过的function，router会很快的拿到返回值。
+- router，fission通过router这一个独立的service来实现真正FaaS，router实现了根据用户的http请求运行code的能力。 router 是类似于 AWS 中的 API Gateway 的作用。
+
+  router会与controller和poolmgr打交道，会监听 controller 中triggers的更新，动态的更新web service的route定义。router内部以缓存的形式维护了一个从function到一个url的映射，这样对于调用过的function，router会很快的拿到返回值。
+  
+  当用户第一次发送 HTTP 请求调用一个 function 时，消息的接受者是router，router 会调用 poolmgr API 获取function 对应的 service URL
 
 - poolmgr，维护environment与Kubernetes中deployment的映射关系。poolmgr与controller和kubernetes打交道，同时对外（主要是对router）提供API。
 
@@ -55,10 +60,11 @@ router        1         1         1            1           11d
 ```
 
 > 下面的命令行基本都是在'fission' namespace下工作，我是后来才知可以设置默认的namespace，这样就不用在每个命令里都指定了，方法如下。
-
-    export CONTEXT=$(kubectl config view | awk '/current-context/ {print $2}')
-    kubectl config set-context $CONTEXT --namespace=fission
-    kubectl config view | grep namespace:
+```shell
+export CONTEXT=$(kubectl config view | awk '/current-context/ {print $2}')
+kubectl config set-context $CONTEXT --namespace=fission
+kubectl config view | grep namespace:
+```
 
 ## Fission Resources
 
@@ -276,7 +282,7 @@ router服务启动时，就会根据系统所有的trigger建立web service路�
 
 升级结束，你可以验证修改的代码了。顺便说一句，Kubernetes提供的auto-update太他妈方便了！关于Kubernetes中的Deployment的update，可以参见[这里](https://kubernetes.io/docs/user-guide/deployments/#updating-a-deployment)
 
-## 但是……
+## 但是…
 
 上面的过程还是比较复杂，不能每次修改代码都要做这么多操作，太麻烦。看看python的调试，代码改完、替换、重启服务，一气呵成。于是就有了如下方法：
 
@@ -305,6 +311,6 @@ router服务启动时，就会根据系统所有的trigger建立web service路�
     2e5bb80b212e
     2e5bb80b212e
 
-[fission]: https://github.com/fission/fission  
-[AWS Lambda]: http://lingxiankong.github.io/blog/2016/10/30/aws-lambda/  
-[iron-functions]: https://github.com/iron-io/functions  
+[fission]: https://github.com/fission/fission
+[AWS Lambda]: http://lingxiankong.github.io/blog/2016/10/30/aws-lambda/
+[iron-functions]: https://github.com/iron-io/functions
