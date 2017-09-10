@@ -5,6 +5,8 @@ description: how to run tempest in devstack within vmware workstation
 category: 技术
 ---
 
+> (2017.09.11) 截止 Pike 版本，最新的 devstack 默认已经使用systemd管理各个服务，而不再使用 linux screen，而且大部分服务也都使用 uwsgi 的启动。关于 Systemd 的详细介绍，可以参加[这里](http://www.ruanyifeng.com/blog/2016/03/systemd-tutorial-commands.html)。所以要启动一个 openstack 进程，要经过`systemd-->uwsgi-->wsgi application(in codebase)-->codebase`
+
 ## 安装vmware workstation
 
 ## 创建ubuntu虚拟机
