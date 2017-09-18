@@ -102,7 +102,7 @@ function afterPjax() {
   toc.empty().append('<li class="post__toc-li post__toc-h1"><a href="#post__title" class="js-anchor-link">' + title + '</a></li>');
 
   // Generate entries for h1 and h2
-  $('#post__content').children('h1,h2').each(function() {
+  $('#post__content').children('h1,h2,h3').each(function() {
     // Skip post title
     if ($(this).attr('id') == 'post__title') {
       return;
@@ -120,9 +120,9 @@ function afterPjax() {
     });
 
     // Add each chapter to TOC
-    if ($(this).prop("tagName") == 'H1') {
+    if ($(this).prop("tagName") == 'H2') {
       toc.append('<li class="post__toc-li post__toc-h2"><a href="#' + $(this).attr('id') + '" class="js-anchor-link">' + $(this).text() + '</a></li>');
-    } else {
+    } else if ($(this).prop("tagName") == 'H3') {
       toc.append('<li class="post__toc-li post__toc-h3"><a href="#' + $(this).attr('id') + '" class="js-anchor-link">' + $(this).text() + '</a></li>');
     }
   });
