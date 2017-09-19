@@ -139,29 +139,29 @@ function afterPjax() {
 
   // Lazy Loading Disqus
   // http://jsfiddle.net/dragoncrew/SHGwe/1/
-  var ds_loaded = false,
-      top = $('#disqus_thread').offset().top;
-  window.disqus_shortname = $('#disqus_thread').attr('name');
-  function check() {
-    var currentScrollTop = document.documentElement.scrollTop || window.pageYOffset || document.body.scrollTop;
-    currentScrollTop = container.scrollTop();
-    if ( !ds_loaded && currentScrollTop + container.height() > top ) {
-      $.ajax({
-        type: 'GET',
-        url: 'http://' + disqus_shortname + '.disqus.com/embed.js',
-        dataType: 'script',
-        cache: true
-      });
-      ds_loaded = true;
-    }
-    if (currentScrollTop > 400) {
-      $('#scroll-top').fadeIn(200);
-    } else {
-      $('#scroll-top').fadeOut(200);
-    }
-  }
-  check();
-  container.scroll(check);
+  // var ds_loaded = false,
+  //     top = $('#disqus_thread').offset().top;
+  // window.disqus_shortname = $('#disqus_thread').attr('name');
+  // function check() {
+  //   var currentScrollTop = document.documentElement.scrollTop || window.pageYOffset || document.body.scrollTop;
+  //   currentScrollTop = container.scrollTop();
+  //   if ( !ds_loaded && currentScrollTop + container.height() > top ) {
+  //     $.ajax({
+  //       type: 'GET',
+  //       url: 'http://' + disqus_shortname + '.disqus.com/embed.js',
+  //       dataType: 'script',
+  //       cache: true
+  //     });
+  //     ds_loaded = true;
+  //   }
+  //   if (currentScrollTop > 400) {
+  //     $('#scroll-top').fadeIn(200);
+  //   } else {
+  //     $('#scroll-top').fadeOut(200);
+  //   }
+  // }
+  // check();
+  // container.scroll(check);
 
   if (sidebar.hasClass('mobile')) {
     $('#sidebar, #pjax, #icon-arrow').addClass('fullscreen');

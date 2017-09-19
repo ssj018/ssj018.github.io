@@ -5,6 +5,11 @@ description: 使用OpenStack Profiler查看Horizon性能数据
 category: 技术
 ---
 
+更新历史：
+
+- 2017.01 初稿完成
+- 2017.09 更新格式和高亮
+
 从Ocata版本开始，Horizon在‘Developer’标签下新增了一个panel--‘OpenStack Profiler’，给开发者提供了一种方式查看Horizon页面加载时的API调用情况，如下图所示：  
 ![](/images/2017-01-30-horizon-profiling/1.png)
 
@@ -19,7 +24,7 @@ category: 技术
 
 - 安装mongodb。Horizon会将API调用过程的数据都保存到mongodb中，mongodb可以安装在本机，也可以在本机能够访问的任意一台机器上。我选择的是后者，在我按照mongodb的[官方文档](https://docs.mongodb.com/manual/tutorial/install-mongodb-on-ubuntu/#install-mongodb-community-edition)安装完成后，在本机远程连接mongodb总是失败。最后通过如下方式解决：
 
-```
+```console
 $ sudo rm -f /var/lib/mongodb/mongod.lock
 $ sudo service mongod status
 (同时注释掉/etc/mongod.conf中bindIp)
@@ -27,17 +32,17 @@ $ sudo service mongod status
 
 - 配置Horizon。
 
-```
-$ cd horizon
-$ cp openstack_dashboard/contrib/developer/enabled/_9001_developer.py openstack_dashboard/local/enabled/
-$ cp openstack_dashboard/contrib/developer/enabled/_9030_profiler.py openstack_dashboard/local/enabled/
-$ cp openstack_dashboard/contrib/developer/enabled/_9010_preview.py openstack_dashboard/local/enabled/
-$ cp openstack_dashboard/local/local_settings.d/_9030_profiler_settings.py.example openstack_dashboard/local/local_settings.d/_9030_profiler_settings.py
+```bash
+cd horizon
+cp openstack_dashboard/contrib/developer/enabled/_9001_developer.py openstack_dashboard/local/enabled/
+cp openstack_dashboard/contrib/developer/enabled/_9030_profiler.py openstack_dashboard/local/enabled/
+cp openstack_dashboard/contrib/developer/enabled/_9010_preview.py openstack_dashboard/local/enabled/
+cp openstack_dashboard/local/local_settings.d/_9030_profiler_settings.py.example openstack_dashboard/local/local_settings.d/_9030_profiler_settings.py
 ```
 
   编辑`_9030_profiler_settings.py`，修改mongodb相关配置，我的配置如下：
 
-```
+```python
 OPENSTACK_PROFILER.update({
     'enabled': True,
     'keys': ['SECRET_KEY'],
@@ -47,12 +52,14 @@ OPENSTACK_PROFILER.update({
 ```
 
 - 重启Horizon。登录Horizon，会发现页面的右上方会有一个’Profile‘下拉菜单，如下图:  
-  ![](/images/2017-01-30-horizon-profiling/2.png)
+
+  ![](/images/2017-01-30-horizon-profiling/2.png)  
   如果要获取当前页面的API调用数据，点击’Profile Current Page‘会重新刷新页面，加载完成后，到’Developer‘下面的’OpenStack Profiler‘页面就会看到页面加载过程的详细数据。
 
 ---
 
 ## 参考连接
-<https://blueprints.launchpad.net/horizon/+spec/openstack-profiler-at-developer-dashboard>  
-<http://docs.openstack.org/developer/horizon/contributing.html#profiling-pages>  
-<http://docs.openstack.org/developer/horizon/topics/settings.html#openstack-profiler>
+
+- <https://blueprints.launchpad.net/horizon/+spec/openstack-profiler-at-developer-dashboard>  
+- <http://docs.openstack.org/developer/horizon/contributing.html#profiling-pages>  
+- <http://docs.openstack.org/developer/horizon/topics/settings.html#openstack-profiler>
