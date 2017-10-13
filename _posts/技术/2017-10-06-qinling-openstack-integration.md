@@ -69,7 +69,14 @@ IMAGE_URLS+=",http://download.cirros-cloud.net/0.3.4/cirros-0.3.4-x86_64-disk.im
 
 既然要接收 swift 的 notification，首先 swift 得支持对象上传成功后发送 notification，swift 默认没有这个能力，需要额外的 middleware 的支持。社区中有一个 [CeilometerMiddleware](https://github.com/openstack/ceilometermiddleware)，但该项目基本已停止更新，而且它的功能并不能满足实验需求。所以我对其中的 swift.py 文件做了少许改动，参见[这里](https://github.com/LingxianKong/qinling_utils/blob/master/swift_ceilometermiddleware.py)。
 
-使用该文件内容替换 devstack 环境中的 `/usr/local/lib/python2.7/dist-packages/ceilometermiddleware/swift.py`，然后修改`/etc/swift/proxy-server.conf`，配置 ceilometer middleware：
+因为在 swift.py 中需要引入 swift 包中的模块，会有命名冲突导致引入失败，所以需要做如下操作：
+
+```bash
+rm -f /usr/local/lib/python2.7/dist-packages/ceilometermiddleware/swift.pyc
+mv /usr/local/lib/python2.7/dist-packages/ceilometermiddleware/swift.py /usr/local/lib/python2.7/dist-packages/ceilometermiddleware/notify.py
+```
+
+使用我修改过的文件内容替换 `/usr/local/lib/python2.7/dist-packages/ceilometermiddleware/notify.py`，然后修改`/etc/swift/proxy-server.conf`，配置 ceilometer middleware：
 
 ```ini
 [pipeline:main]
@@ -80,7 +87,7 @@ topic = notifications
 driver = messagingv2
 url = rabbit://stackrabbit:password@10.0.19.65:5672/
 control_exchange = swift
-paste.filter_factory = ceilometermiddleware.swift:filter_factory
+paste.filter_factory = ceilometermiddleware.notify:filter_factory
 set log_level = DEBUG
 ```
 
@@ -166,6 +173,7 @@ pip install -e .
 
 ```bash
 systemctl restart devstack@aodh-*
+systemctl restart apache2.service
 ```
 
 ## 实验步骤
