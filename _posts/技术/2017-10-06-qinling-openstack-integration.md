@@ -176,6 +176,46 @@ systemctl restart devstack@aodh-*
 systemctl restart apache2.service
 ```
 
+## all-in-one
+前面这么多手工步骤只是为了了解具体的修改细节，为了以后部署方便，我也写了一个简单的脚本：
+```bash
+rm -f /usr/local/lib/python2.7/dist-packages/ceilometermiddleware/swift.py* /usr/local/lib/python2.7/dist-packages/ceilometermiddleware/notify.py*
+curl -s -S -L -o /usr/local/lib/python2.7/dist-packages/ceilometermiddleware/notify.py https://raw.githubusercontent.com/LingxianKong/qinling_utils/master/swift_ceilometermiddleware.py
+sed -i '/driver = messaging/c driver = messagingv2' /etc/swift/proxy-server.conf
+sed -i '/ceilometermiddleware/c paste.filter_factory = ceilometermiddleware.notify:filter_factory' /etc/swift/proxy-server.conf
+systemctl restart devstack@s-proxy.service
+
+cat <<EOF >> /etc/ceilometer/event_definitions.yaml
+- event_type: objectstorage.object.upload
+  traits: &objectstore_upload
+    tenant_id:
+      fields: payload.tenant_id
+    container:
+      fields: payload.container
+    object:
+      fields: payload.object
+EOF
+echo '          - notifier://?topic=alarm.all' >> /etc/ceilometer/event_pipeline.yaml
+cat <<EOF >> /etc/ceilometer/ceilometer.conf
+[publisher_notifier]
+event_topic=event
+EOF
+systemctl restart devstack@ceilometer-anotification.service
+
+cat <<EOF >> /etc/aodh/aodh.conf
+[listener]
+event_alarm_topic=alarm.all
+EOF
+curl -s -S -L -o /opt/stack/aodh/aodh/notifier/qinling.py https://raw.githubusercontent.com/LingxianKong/qinling_utils/master/aodh_qinlingnotifier.py
+qinling_notifier='    trust+qinling = aodh.notifier.qinling:TrustQinlingFunctionNotifier'
+sed -i "/trust+zaqar/ s/.*/&\n${qinling_notifier}/" /opt/stack/aodh/setup.cfg
+pushd /opt/stack/aodh
+pip install -e .
+popd
+systemctl restart devstack@aodh-*
+systemctl restart apache2.service
+```
+
 ## 实验步骤
 
 配置好上述服务，具体的实验就很简单了。
