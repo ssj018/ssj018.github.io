@@ -10,7 +10,7 @@ category: 技术
 
     def itersubclasses(cls, _seen=None):
         """Generator over all subclasses of a given class in depth first order."""
-
+    
         if not isinstance(cls, type):
             raise TypeError(_('itersubclasses must be called with '
                               'new-style classes, not %.100r') % cls)
@@ -25,12 +25,12 @@ category: 技术
                 yield sub
                 for sub in itersubclasses(sub, _seen):
                     yield sub
-                    
+
 ## 简单的线程配合
 代码来源：rally
 
     import threading
-    
+
     is_done = threading.Event()
     consumer = threading.Thread(
         target=self.consume_results,
@@ -44,8 +44,8 @@ category: 技术
 多说一点，threading.Event()也可以被替换为threading.Condition()，condition有notify(), wait(), notifyAll()。解释如下：
 
 > The wait() method releases the lock, and then blocks until it is awakened by a notify() or notifyAll() call for the same condition variable in another thread. Once awakened, it re-acquires the lock and returns. It is also possible to specify a timeout.  
-The notify() method wakes up one of the threads waiting for the condition variable, if any are waiting. The notifyAll() method wakes up all threads waiting for the condition variable.  
-Note: the notify() and notifyAll() methods don’t release the lock; this means that the thread or threads awakened will not return from their wait() call immediately, but only when the thread that called notify() or notifyAll() finally relinquishes ownership of the lock.
+> The notify() method wakes up one of the threads waiting for the condition variable, if any are waiting. The notifyAll() method wakes up all threads waiting for the condition variable.  
+> Note: the notify() and notifyAll() methods don’t release the lock; this means that the thread or threads awakened will not return from their wait() call immediately, but only when the thread that called notify() or notifyAll() finally relinquishes ownership of the lock.
 
     # Consume one item
     cv.acquire()
@@ -53,13 +53,13 @@ Note: the notify() and notifyAll() methods don’t release the lock; this means 
         cv.wait()
     get_an_available_item()
     cv.release()
-
+    
     # Produce one item
     cv.acquire()
     make_an_item_available()
     cv.notify()
     cv.release()
-    
+
 ## 计算运行时间
 代码来源：rally(还可以参考oslo.utils)
 
@@ -68,19 +68,19 @@ Note: the notify() and notifyAll() methods don’t release the lock; this means 
             self.error = None
             self.start = time.time()
             return self
-
+    
         def __exit__(self, type, value, tb):
             self.finish = time.time()
             if type:
                 self.error = (type, value, tb)
-
+    
         def duration(self):
             return self.finish - self.start
-
+    
     with Timer() as timer:
         func()
     return timer.duration()
-    
+
 ## 元类（动态创建、修改类）
 type()函数既可以返回一个对象的类型，又可以创建出新的类型：
 
@@ -116,19 +116,19 @@ ORM框架是元类一个很典型的使用场景。
             
     class Model(dict):
         __metaclass__ = ModelMetaclass
-
+    
         def __init__(self, **kw):
             super(Model, self).__init__(**kw)
-
+    
         def __getattr__(self, key):
             try:
                 return self[key]
             except KeyError:
                 raise AttributeError(r"'Model' object has no attribute '%s'" % key)
-
+    
         def __setattr__(self, key, value):
             self[key] = value
-
+    
         def save(self):
             fields = []
             params = []
@@ -151,7 +151,7 @@ ORM框架是元类一个很典型的使用场景。
     class StringField(Field):
         def __init__(self, name):
             super(StringField, self).__init__(name, 'varchar(100)')
-
+    
     class IntegerField(Field):
         def __init__(self, name):
             super(IntegerField, self).__init__(name, 'bigint')
@@ -162,14 +162,14 @@ ORM框架是元类一个很典型的使用场景。
         name = StringField('username')
         email = StringField('email')
         password = StringField('password')
-
+    
     # 创建一个实例：
     u = User(id=12345, name='Michael', email='test@orm.org', password='my-pwd')
     # 保存到数据库：
     u.save()
-    
+
 输出如下：
-    
+​    
     Found model: User
     Found mapping: email ==> <StringField:email>
     Found mapping: password ==> <StringField:password>
@@ -177,26 +177,26 @@ ORM框架是元类一个很典型的使用场景。
     Found mapping: name ==> <StringField:username>
     SQL: insert into User (password,email,username,uid) values (?,?,?,?)
     ARGS: ['my-pwd', 'test@orm.org', 'Michael', 12345]
-    
+
 ## SQLAlchemy简单使用
 
     # 导入:
     from sqlalchemy import Column, String, create_engine
     from sqlalchemy.orm import sessionmaker
     from sqlalchemy.ext.declarative import declarative_base
-
+    
     # 创建对象的基类:
     Base = declarative_base()
-
+    
     # 定义User对象:
     class User(Base):
         # 表的名字:
         __tablename__ = 'user'
-
+    
         # 表的结构:
         id = Column(String(20), primary_key=True)
         name = Column(String(20))
-
+    
     # 初始化数据库连接:
     engine = create_engine('mysql+mysqlconnector://root:password@localhost:3306/test') # '数据库类型+数据库驱动名称://用户名:口令@机器地址:端口号/数据库名'
     # 创建DBSession类型:
@@ -211,7 +211,7 @@ ORM框架是元类一个很典型的使用场景。
     user = session.query(User).filter(User.id=='5').one()
     # 关闭session:
     session.close()
-    
+
 ## WSGI简单使用和Web框架Flask的简单使用
 
     from wsgiref.simple_server import make_server
@@ -219,7 +219,7 @@ ORM框架是元类一个很典型的使用场景。
     def application(environ, start_response):
         start_response('200 OK', [('Content-Type', 'text/html')])
         return '<h1>Hello, web!</h1>'
-
+    
     # 创建一个服务器，IP地址为空，端口是8000，处理函数是application:
     httpd = make_server('', 8000, application)
     print "Serving HTTP on port 8000..."
@@ -229,16 +229,16 @@ ORM框架是元类一个很典型的使用场景。
 了解了WSGI框架，我们发现：其实一个Web App，就是写一个WSGI的处理函数，针对每个HTTP请求进行响应。  
 但是如何处理HTTP请求不是问题，问题是如何处理100个不同的URL。  
 一个最简单和最土的想法是从environ变量里取出HTTP请求的信息，然后逐个判断。
-    
+​    
     from flask import Flask
     from flask import request
-
+    
     app = Flask(__name__)
-
+    
     @app.route('/', methods=['GET', 'POST'])
     def home():
         return '<h1>Home</h1>'
-
+    
     @app.route('/signin', methods=['GET'])
     def signin_form():
         return '''<form action="/signin" method="post">
@@ -246,17 +246,17 @@ ORM框架是元类一个很典型的使用场景。
                   <p><input name="password" type="password"></p>
                   <p><button type="submit">Sign In</button></p>
                   </form>'''
-
+    
     @app.route('/signin', methods=['POST'])
     def signin():
         # 需要从request对象读取表单内容：
         if request.form['username']=='admin' and request.form['password']=='password':
             return '<h3>Hello, admin!</h3>'
         return '<h3>Bad username or password.</h3>'
-
+    
     if __name__ == '__main__':
         app.run()
-        
+
 ## 格式化显示json
 
     print(json.dumps(data, indent=4))
@@ -269,36 +269,36 @@ ORM框架是元类一个很典型的使用场景。
 
     #!/usr/bin/env python
     # -*- coding: utf-8 -*-
-
+    
     import itertools
     import sys
-
+    
     class ImmutableMixin(object):
         _inited = False
-
+    
         def __init__(self):
             self._inited = True
-
+    
         def __setattr__(self, key, value):
             if self._inited:
                 raise Exception("unsupported action")
             super(ImmutableMixin, self).__setattr__(key, value)
-
+    
     class EnumMixin(object):
         def __iter__(self):
             for k, v in itertools.imap(lambda x: (x, getattr(self, x)), dir(self)):
                 if not k.startswith('_'):
                     yield v
-
+    
     class _RunnerType(ImmutableMixin, EnumMixin):
         SERIAL = "serial"
         CONSTANT = "constant"
         CONSTANT_FOR_DURATION = "constant_for_duration"
         RPS = "rps"
-
+    
     if __name__=="__main__":
         print _RunnerType.CONSTANT
-        
+
 ## 创建文件时指定权限、测试权限
 代码来源，Nova
 
@@ -306,14 +306,14 @@ ORM框架是元类一个很典型的使用场景。
 
     def write_to_file(path, contents, umask=None):
         """Write the given contents to a file
-
+    
         :param path: Destination file
         :param contents: Desired contents of the file
         :param umask: Umask to set when creating this file (will be reset)
         """
         if umask:
             saved_umask = os.umask(umask)
-
+    
         try:
             with open(path, 'w') as f:
                 f.write(contents)
@@ -337,14 +337,14 @@ NOTE：数字进制转换，二进制转成十进制int('011', 2), 十进制转�
 
 测试路径权限：  
 os.access(path, mode), mode取值范围为`os.F_OK/os.R_OK/os.W_OK/os.X_OK`
-        
+​        
 ## 多进程并发执行
 代码来源：Rally
 
     import multiprocessing
     import time
     import os
-
+    
     def run(flag):
         print "flag: %s, sleep 2s in run" % flag
         time.sleep(2)
@@ -366,12 +366,12 @@ os.access(path, mode), mode取值范围为`os.F_OK/os.R_OK/os.W_OK/os.X_OK`
                 
         pool.close()
         pool.join()
-		
+
 ## 运行时自动填充函数参数
 代码来源：Rally
 
 	import decorator
-	
+
 	def default_from_global(arg_name, env_name):
 	    def default_from_global(f, *args, **kwargs):
 	        id_arg_index = f.func_code.co_varnames.index(arg_name)
@@ -383,28 +383,28 @@ os.access(path, mode), mode取值范围为`os.F_OK/os.R_OK/os.W_OK/os.X_OK`
 	                return(1)
 	        return f(*args, **kwargs)
 	    return decorator.decorator(default_from_global)
-
+	
 	# 如下是一个装饰器，可以用在需要自动填充参数的函数上。功能是：
 	# 如果没有传递函数的deploy_id参数，那么就从环境变量中获取（调用自定义的get_global函数）
 	with_default_deploy_id = default_from_global('deploy_id', ENV_DEPLOYMENT)    
-    
+
 ## 嵌套装饰器
 代码来源：Rally  
 
     validator函数装饰func1，func1使用时接收参数(*arg, **kwargs)，而func1又装饰func2（其实就是Rally中的scenario函数），给func2增加validators属性，是一个函数的列表，函数的接收参数config, clients, task。这些函数最终调用func1，传入参数（config, clients, task, *args, **kwargs），所以func1定义时参数是（config, clients, task, *arg, **kwargs）  
     最终实现的效果是，func2有很多装饰器，每个都会接收自己的参数，做一些校验工作。
-
+    
     def validator(fn):
         """Decorator that constructs a scenario validator from given function.
-
+    
         Decorated function should return ValidationResult on error.
-
+    
         :param fn: function that performs validation
         :returns: rally scenario validator
         """
         def wrap_given(*args, **kwargs):
             """Dynamic validation decorator for scenario.
-
+    
             :param args: the arguments of the decorator of the benchmark scenario
             ex. @my_decorator("arg1"), then args = ('arg1',)
             :param kwargs: the keyword arguments of the decorator of the scenario
@@ -413,7 +413,7 @@ os.access(path, mode), mode取值范围为`os.F_OK/os.R_OK/os.W_OK/os.X_OK`
             def wrap_validator(config, clients, task):
                 return (fn(config, clients, task, *args, **kwargs) or
                         ValidationResult())
-
+    
             def wrap_scenario(scenario):
                 wrap_validator.permission = getattr(fn, "permission",
                                                     consts.EndpointPermission.USER)
@@ -421,11 +421,11 @@ os.access(path, mode), mode取值范围为`os.F_OK/os.R_OK/os.W_OK/os.X_OK`
                     scenario.validators = []
                 scenario.validators.append(wrap_validator)
                 return scenario
-
+    
             return wrap_scenario
-
+    
         return wrap_given
-        
+
 ## inspect库的一些常见用法
 inspect.getargspec(func) 获取函数参数的名称和默认值，返回一个四元组(args, varargs, keywords, defaults)，其中：  
 args是参数名称的列表；  
@@ -441,6 +441,8 @@ Python把以两个或以上下划线字符开头且没有以两个或以上下�
 无论是单下划线还是双下划线开头的成员，都是希望外部程序开发者不要直接使用这些成员变量和这些成员函数，只是双下划线从语法上能够更直接的避免错误的使用，但是如果按照`_类名__成员名`则依然可以访问到。单下划线的在动态调试时可能会方便一些，只要项目组的人都遵守下划线开头的成员不直接使用，那使用单下划线或许会更好。
 
 ## 单例类的实现
+单例模式（Singleton Pattern）是一种常用的软件设计模式，该模式的主要目的是确保某一个类只有一个实例存在。当你希望在整个系统中，某个类只能出现一个实例时，单例对象就能派上用场。python 中有不同的方式可以实现单例类。
+
 先记录一下类的`__new__`方法的使用。这个跟在元类部分的new方法有些区别。
 
 `__new__(cls, [...)` new方法是在实例化一个类的时候调用的第一个方法。它的第一个参数是这个类，其他的参数是用来直接传递给 `__init__` 方法。通常来说，新式类开始实例化时，`__new__()`方法会返回cls（cls指代当前类）的实例，然后该类的`__init__()`方法作为构造方法会接收这个实例（即self）作为自己的第一个参数，然后依次传入`__new__()`方法中接收的位置参数和命名参数。如果`__new__()`没有返回cls（即当前类）的实例，那么当前类的`__init__()`方法是不会被调用的。如果`__new__()`返回其他类（新式类或经典类均可）的实例，那么只会调用被返回的那个类的构造方法。
@@ -450,60 +452,83 @@ Python把以两个或以上下划线字符开头且没有以两个或以上下�
             ...
         def __new__(cls, *args, **kwargs):
             return object.__new__(Stranger, *args, **kwargs)  
-
+    
     class Stranger(object):
         ...
-
+    
     foo = Foo()
     print type(foo) 
     # 打印的结果显示foo其实是Stranger类的实例。
 
-new实现单例类：
+`__new__` 实现单例类：
 
     class Singleton(object):  
         def __new__(cls, *args, **kw):  
             if not hasattr(cls, '_instance'):  
-                orig = super(Singleton, cls)  
-                cls._instance = orig.__new__(cls, *args, **kw)  
-                
+                cls._instance = super(Singleton, cls).__new__(cls, *args, **kw)  
             return cls._instance
-
+    
     class MyClass(Singleton): 
         pass
 
 装饰器实现单例类：
 
-    def singleton(cls, *args, **kw):
+    import functools
+    
+    def singleton(cls):
         """Ensures single instance of a particular class."""
         instances = {}
-
-        def _singleton():
+        
+        @functools.wraps(cls)
+        def _singleton(*args, **kw):
             if cls not in instances:
                 instances[cls] = cls(*args, **kw)
-
             return instances[cls]
-
         return _singleton
-
+    
     @singleton
     class MyClass(BaseClass):
       pass
- 
+
 使用元类实现单例类：
 
     class Singleton(type):  
         def __init__(cls, name, bases, dict):  
-            super(Singleton2, cls).__init__(name, bases, dict)  
+            super(Singleton, cls).__init__(name, bases, dict)  
             cls._instance = None  
         def __call__(cls, *args, **kw):  
             if cls._instance is None:  
-                cls._instance = super(Singleton2, cls).__call__(*args, **kw)  
+                cls._instance = super(Singleton, cls).__call__(*args, **kw)  
             return cls._instance  
       
     class MyClass(object):  
         __metaclass__ = Singleton
 
+oslo.service 中实现单例类（使用元类的方式）：
+
+```python
+import six
+from oslo_concurrency import lockutils
+
+class Singleton(type):
+    _instances = {}
+    _semaphores = lockutils.Semaphores()
+
+    def __call__(cls, *args, **kwargs):
+        with lockutils.lock('singleton_lock', semaphores=cls._semaphores):
+            if cls not in cls._instances:
+                cls._instances[cls] = super(Singleton, cls).__call__(*args, **kwargs)
+        return cls._instances[cls]
+
+@six.add_metaclass(Singleton)
+class SignalHandler(object):
+    pass
+```
+
+
+
 ## 同时调用多个对象的同一个方法
+
 如果使用for循环，是串行的，效率不高。  
 如果直接使用map，则需要新写一个函数，调用对象的某个方法，如下的方式不需要新增这个函数。
 
