@@ -89,94 +89,108 @@ type()函数既可以返回一个对象的类型，又可以创建出新的类�
     ...
     >>> Hello = type('Hello', (object,), dict(hello=fn)) # 创建Hello class
 
-除了使用type()动态创建类以外，要控制类的创建行为，就会用到这里讲的元类。先定义metaclass，就可以创建类，最后创建实例。所以，metaclass允许你创建类或者修改类，按照默认习惯，metaclass的类名总是以Metaclass结尾
+除了使用type()动态创建类以外，要控制类的创建行为，就会用到这里讲的元类。先定义metaclass，按照默认习惯，metaclass的类名总是以Metaclass结尾，然后类中引用这个元类，`__metaclass__ = MyMetaclass`，metaclass 定义：
+
+```python
+class MyMetaclass(type):
+    def __new__(cls, clsname, bases, dct):
+        my_attr = {}
+        for name, val in dct.items():
+            if not name.startswith('__'):
+                my_attr["my_"+name] = val
+            else:
+                my_attr[name] = val
+        return type.__new__(cls, clsname, bases, my_attr)
+```
 
 `__new__()`方法接收到的参数依次是：  
 当前准备创建的类的对象；  
 类的名字；  
 类继承的父类集合；  
-类的方法集合；
+类的属性集合；
 
 ORM框架是元类一个很典型的使用场景。
-
-    class ModelMetaclass(type):
-        def __new__(cls, name, bases, attrs):
-            if name=='Model':
-                return type.__new__(cls, name, bases, attrs)
-            mappings = dict()
-            for k, v in attrs.iteritems():
-                if isinstance(v, Field):
-                    print('Found mapping: %s==>%s' % (k, v))
-                    mappings[k] = v
-            for k in mappings.iterkeys():
-                attrs.pop(k)
-            attrs['__table__'] = name # 假设表名和类名一致
-            attrs['__mappings__'] = mappings # 保存属性和列的映射关系
+```python
+class ModelMetaclass(type):
+    def __new__(cls, name, bases, attrs):
+        if name=='Model':
             return type.__new__(cls, name, bases, attrs)
-            
-    class Model(dict):
-        __metaclass__ = ModelMetaclass
-    
-        def __init__(self, **kw):
-            super(Model, self).__init__(**kw)
-    
-        def __getattr__(self, key):
-            try:
-                return self[key]
-            except KeyError:
-                raise AttributeError(r"'Model' object has no attribute '%s'" % key)
-    
-        def __setattr__(self, key, value):
-            self[key] = value
-    
-        def save(self):
-            fields = []
-            params = []
-            args = []
-            for k, v in self.__mappings__.iteritems():
-                fields.append(v.name)
-                params.append('?')
-                args.append(getattr(self, k, None))
-            sql = 'insert into %s (%s) values (%s)' % (self.__table__, ','.join(fields), ','.join(params))
-            print('SQL: %s' % sql)
-            print('ARGS: %s' % str(args))
-            
-    class Field(object):
-        def __init__(self, name, column_type):
-            self.name = name
-            self.column_type = column_type
-        def __str__(self):
-            return '<%s:%s>' % (self.__class__.__name__, self.name)
-            
-    class StringField(Field):
-        def __init__(self, name):
-            super(StringField, self).__init__(name, 'varchar(100)')
-    
-    class IntegerField(Field):
-        def __init__(self, name):
-            super(IntegerField, self).__init__(name, 'bigint')
-            
-    class User(Model):
-        # 定义类的属性到列的映射：
-        id = IntegerField('id')
-        name = StringField('username')
-        email = StringField('email')
-        password = StringField('password')
-    
-    # 创建一个实例：
-    u = User(id=12345, name='Michael', email='test@orm.org', password='my-pwd')
-    # 保存到数据库：
-    u.save()
+        mappings = dict()
+        for k, v in attrs.iteritems():
+            if isinstance(v, Field):
+                print('Found mapping: %s==>%s' % (k, v))
+                mappings[k] = v
+        for k in mappings.iterkeys():
+            attrs.pop(k)
+        attrs['__table__'] = name # 假设表名和类名一致
+        attrs['__mappings__'] = mappings # 保存属性和列的映射关系
+        return type.__new__(cls, name, bases, attrs)
+        
+class Model(dict):
+    __metaclass__ = ModelMetaclass
+
+    def __init__(self, **kw):
+        super(Model, self).__init__(**kw)
+
+    def __getattr__(self, key):
+        try:
+            return self[key]
+        except KeyError:
+            raise AttributeError(r"'Model' object has no attribute '%s'" % key)
+
+    def __setattr__(self, key, value):
+        self[key] = value
+
+    def save(self):
+        fields = []
+        params = []
+        args = []
+        for k, v in self.__mappings__.iteritems():
+            fields.append(v.name)
+            params.append('?')
+            args.append(getattr(self, k, None))
+        sql = 'insert into %s (%s) values (%s)' % (self.__table__, ','.join(fields), ','.join(params))
+        print('SQL: %s' % sql)
+        print('ARGS: %s' % str(args))
+        
+class Field(object):
+    def __init__(self, name, column_type):
+        self.name = name
+        self.column_type = column_type
+    def __str__(self):
+        return '<%s:%s>' % (self.__class__.__name__, self.name)
+        
+class StringField(Field):
+    def __init__(self, name):
+        super(StringField, self).__init__(name, 'varchar(100)')
+
+class IntegerField(Field):
+    def __init__(self, name):
+        super(IntegerField, self).__init__(name, 'bigint')
+        
+class User(Model):
+    # 定义类的属性到列的映射：
+    id = IntegerField('id')
+    name = StringField('username')
+    email = StringField('email')
+    password = StringField('password')
+
+# 创建一个实例：
+u = User(id=12345, name='Michael', email='test@orm.org', password='my-pwd')
+# 保存到数据库：
+u.save()
+```
 
 输出如下：
-​    
-    Found model: User
-    Found mapping: email ==> <StringField:email>
-    Found mapping: password ==> <StringField:password>
-    Found mapping: id ==> <IntegerField:uid>
-    Found mapping: name ==> <StringField:username>
-    SQL: insert into User (password,email,username,uid) values (?,?,?,?)
-    ARGS: ['my-pwd', 'test@orm.org', 'Michael', 12345]
+```shell
+Found model: User
+Found mapping: email ==> <StringField:email>
+Found mapping: password ==> <StringField:password>
+Found mapping: id ==> <IntegerField:uid>
+Found mapping: name ==> <StringField:username>
+SQL: insert into User (password,email,username,uid) values (?,?,?,?)
+ARGS: ['my-pwd', 'test@orm.org', 'Michael', 12345]
+```
 
 ## SQLAlchemy简单使用
 
@@ -474,7 +488,7 @@ Python把以两个或以上下划线字符开头且没有以两个或以上下�
 装饰器实现单例类：
 
     import functools
-    
+
     def singleton(cls):
         """Ensures single instance of a particular class."""
         instances = {}
