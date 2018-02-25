@@ -5,6 +5,11 @@ description: 如何为 OpenStack Project 创建 Gate Job
 category: 技术
 ---
 
+更新历史：
+
+- 2017.09，初稿完成
+- 2018.02，更新 zuul3 介绍
+
 写这篇博客的起因是我要为自己的项目（Qinling）在 OpenStack 社区 CI 里增加 devstack gate job，也就是跑功能测试，这样后续的代码修改以及新增特性时自己心里也有底气，功能测试本来就是为了保障代码质量。
 
 以前挺怵 openstack infra 这套东西的，但当硬着头皮研究完之后，发现这坨东西的设计思路还是挺有价值的，毕竟 openstack 曾经的风风火火，能够支撑起这么多项目的正常运转，openstack infra team 功不可没，他们在实践中摸索出的这套基础框架，好好学学，走到哪里都是一个牛逼的运维。这就是开源的魅力。
@@ -19,11 +24,9 @@ category: 技术
 
 - Zuul
 
-  这个是 openstack 社区专门为 openstack 开发的，因为传统的 Jenkins 不能满足 openstack 如此多的项目需求，Zuul 解决了并行运行测试以及高并发下 patch 的依赖问题。
+  这个是 openstack 社区专门为 openstack 开发的，因为传统的 Jenkins 不能满足 openstack 如此多的项目需求，Zuul 解决了并行运行测试以及高并发下 patch 合入冲突的问题。比如在传统方式下，两个开发人员同时向 repo 中提交了代码，他们各自的代码都没问题，但两份代码有冲突，如果用传统的 CI 系统，先执行第一份代码的测试，合入，然后测试第二份代码，这样一个一个的测试、合入导致效率低下。所以 zuul 设计了 `gate` pipeline，默认情况下，被 approved 的 patch （但还没有 merge）都在一个队列中，运行 gate 测试时，一个 patch 会假设它前面的所有 patch 都已经 merge，这样避免了 regression，如果测试失败，zuul 才会重新对这个 patch 单独测试。
 
   Zuul 也监听来自 Gerrit 的 event stream，与自己的 pipelines （在`zuul/layout.yaml`定义）匹配，如果匹配到 pipeline，就根据相应 project 对该 pipeline 的定义，生成 Jenkins job 配置并运行，然后监听来自 Jenkins 的运行结果。
-
-  其中 `gate` pipeline的设计值得一提，默认情况下，被 approved 的 patch （但还没有 merge）都在一个队列中，运行 gate 测试时，一个 patch 会假设它前面的所有 patch 都已经 merge，这样避免了 regression，如果测试失败，zuul 才会重新对这个 patch 单独测试。
 
 - Jenkins Job Builder
 
@@ -52,13 +55,12 @@ category: 技术
 
 ![](/images/2017-09-04-add-jenkins-job/gerrit_process.png)
 
-当开发者向一个 project 提交一个 patch 后：
+当开发者向一个 project 提交一个 patch 后(已经针对新的 zuul 版本做了修正)：
 
 1. Gerrit 发出 event(patchset-created) 给所有注册 event stream 的组件，Zuul 就是其中之一
-2. Zuul 根据`layout.yaml`文件中不同 pipeline 的 trigger 定义来匹配 pipeline(比如得到 check、gate 等)
-3. 匹配到 pipeline 后(比如是 check)，根据`layout.yaml`文件中`projects` section 中对应 project 的 check 定义（在 template 中引用的模板是在project-templates中定义，可能也有 check 定义，比如那个最常见的python-jobs），调用 JJB 生成 Jenkins job 配置。
-4. JJB 对各个 project 的配置文件在`jenkins/jobs/projects.yaml`中，里面每一个具体的 job 要么是定义在一个公共文件中，要么是在各个 project 各自的配置文件中。Jenkins 会从 Nodepool 选择一个 jenkins slave，触发 Jenkins 任务
-5. 不同 Jenkins 任务中就是调用不同的脚本执行任务，那些 builder 是在`jenkins/jobs/macros.yaml`文件中定义。
+2. Zuul 根据`project-config/zuul.d/pipelines.yaml`文件中不同 pipeline 的 trigger 定义来匹配 pipeline(比如得到 check、gate、tag、experimental 等)
+3. 匹配到 pipeline 后(比如是 check)，根据`project-config/zuul.d/projects.yaml`文件中对应 project 的 check 定义（在 template 中引用的模板是在 `openstack-zuul-jobs/zuul.d/project-templates.yaml` 中定义，模板里可能也有 check 定义），同时 `openstack-zuul-jobs/zuul.d/jobs.yaml` 和 `project-config/zuul.d/jobs.yaml` 以及 `zuul-jobs/zuul.yaml` 中也 都有一些定义好的通用的 job，比如 openstack-tox-cover
+4. 每个 job 基本就是调用 ansible 运行 playbook
 
 ## 如何为 Qinling 添加 devstack gate
 理解了上述的流程，实际中为一个项目增加一个 gate job 就很简单了。如下是我对 Qinling 所做的大致更改。
@@ -68,3 +70,33 @@ category: 技术
 - 实现 tempest plugin
 
 具体可以参见项目源码。
+
+## Zuul 更新
+在 2017 年，openstack社区的工程师重新写了 Zuul，使其更通用，架构更灵活，并且提供了比较详细的[官方文档](https://docs.openstack.org/infra/zuul/user/concepts.html)，在其文档中也基本介绍了 Zuul 在 openstack review 系统中的位置和功能，以及相关的概念、流程介绍。
+
+Zuul 定义了 pipeline，而不同的 openstack projects 与不同的 pipeline 关联，zuul 仍然监听来自 gerrit 的 event(当然，zuul 也提供了 driver 机制可以监听 github 等事件源)。
+
+> Pipeline associates jobs for a given project with triggering and reporting events.
+
+比如 check 和 gate pipeline，注意 manager 的区别，因为 gate 假定要 merge 的 patch 之间是有依赖的：
+```yaml
+- pipeline:
+    name: check
+    manager: independent
+    ...
+- pipeline:
+    name: gate
+    manager: dependent
+```
+
+pipeline 中 job 的内容就是 ansible playbook。因为 job 之间有继承关系，所以 playbook 的执行顺序是：
+
+- parent pre-run playbook
+- child pre-run playbook
+- child playbook
+- child post-run playbook
+- parent post-run playbook
+
+之前提到过 gate pipeline 的设计，zuul 能够并行运行测试而且能降低合入 patch 时冲突的概率，同时新的 zuul 版本支持跨 project 的测试，zuul [文档](https://docs.openstack.org/infra/zuul/user/gating.html#testing-in-parallel)里有详细的介绍。
+
+zuul 配置文件查找路径，zuul.yaml 或 zuul.d 目录，然后`.zuul.yaml`或`.zuul.d`目录

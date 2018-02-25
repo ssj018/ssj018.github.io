@@ -1,12 +1,21 @@
 ---
 layout: post
-title: OpenStack + K8S 环境 LoadBalancer 类型 service 测试过程
+title: OpenStack + K8S 环境集成测试
 category: 技术
 ---
 
+更新历史：
+
+- 2018.02，初稿完成
+- 2018.02，添加对 persistent volume 的测试过程以及与 keystone 的集成，修改文件名
+
 ## 测试目的
+
 - 验证 k8s 上 LoadBalancer 类型 service 的创建和使用，使用 openstack 作为 cloud provider
+- 验证 k8s 上 persistent volume 的创建和使用，使用 openstack 作为 cloud provider
 - 验证 k8s 如何与 octavia 服务交互
+- 验证 k8s 如何与 cinder 服务交互
+- 验证 k8s 如何与 keystone 集成
 - 摸索如何在 ubuntu 16.04上启用嵌套虚拟化搭建 devstack
 - 练习使用 ansible
 
@@ -83,6 +92,9 @@ net.ipv6.conf.all.disable_ipv6 = 0
 net.ipv6.conf.default.disable_ipv6 = 0
 net.ipv6.conf.lo.disable_ipv6 = 0
 $ sysctl -p
+# clone devstack repo
+$ git clone https://git.openstack.org/openstack-dev/devstack
+$ sudo mkdir -p /opt/stack && sudo chown -R vagrant.vagrant /opt/stack && cd ~/devstack
 # 然后到了 neutron 为 demo 用户创建网络资源时又会出错，解决方法还是重启服务，但不像 glance-api，devstack 在执行过程中没有给我们重启 neutron 服务的机会，所以这里要改 devstack 的脚本，改完再重新执行 stack.sh
 $ git diff lib/neutron_plugins/services/l3
 diff --git a/lib/neutron_plugins/services/l3 b/lib/neutron_plugins/services/l3
@@ -97,10 +109,8 @@ index 41a467d..3192624 100644
      local project_id
      project_id=$(openstack project list | grep " demo " | get_field 1)
      die_if_not_set $LINENO project_id "Failure retrieving project_id for demo"
-# 然后是执行 stack.sh
-git clone https://git.openstack.org/openstack-dev/devstack
-sudo mkdir -p /opt/stack && sudo chown -R vagrant.vagrant /opt/stack && cd ~/devstack
-curl -sS https://gist.githubusercontent.com/LingxianKong/3728526c8df9ecba0106f713fbe50c38/raw/8636775a40f33046b2ae94b79cf5bf47c6f3a2d5/k8s_openstack.ini -o ~/devstack/local.conf
+# 执行 stack.sh
+curl -sS https://gist.githubusercontent.com/LingxianKong/3728526c8df9ecba0106f713fbe50c38/raw/0efb8c9c3fd989210e674ad4de609f7b75033153/k8s_openstack.ini -o ~/devstack/local.conf
 sed -i "/HOST_IP=/d"  ~/devstack/local.conf
 sed -i "/MULTI_HOST/d"  ~/devstack/local.conf
 ./stack.sh
@@ -111,42 +121,77 @@ sudo systemctl restart devstack@g-api.service
 ### 安装 k8s
 现在有了一个 openstack 环境，接下了为 demo 用户创建一些资源，为安装 k8s 做准备：
 ```shell
-# 如下设置纯粹是为了执行 cli 的便利
-echo 'alias source_adm="cd ~/devstack; source openrc admin admin; cd -"' >> ~/.bashrc
-echo 'alias source_demo="cd ~/devstack; source openrc demo demo; cd -"' >> ~/.bashrc
-echo 'alias source_altdemo="cd ~/devstack; source openrc alt_demo alt_demo; cd -"' >> ~/.bashrc
-echo 'alias os="openstack"' >> ~/.bashrc
-echo 'export PYTHONWARNINGS="ignore"' >> ~/.bashrc
-sed -i "/alias ll/c alias ll='ls -l'" ~/.bashrc
-source ~/.bashrc
-export PS1='\[\033[1;34m\]devstack\[\033[00m\]\\$ '
+cat << EOF >> ~/.bashrc
+alias source_adm="cd ~/devstack; source openrc admin admin; cd -"
+alias source_demo="cd ~/devstack; source openrc demo demo; cd -"
+alias source_altdemo="cd ~/devstack; source openrc alt_demo alt_demo; cd -"
+alias os="openstack"
+alias ll='ls -l'
+EOF
+
+cat << EOF > pre.sh
+set -e
+pushd /home/vagrant/devstack
 # 创建一个新的 flavor
-devstack$ source_adm
-devstack$ openstack flavor create --id 6 --ram 2048 --disk 7 --vcpus 1 --public k8s
+source openrc admin admin
+openstack flavor create --id 6 --ram 2048 --disk 7 --vcpus 1 --public k8s
 # 创建 keypair 和设置必要的安全组规则
-devstack$ source_demo
-devstack$ ssh-keygen -t rsa -b 4096 -N "" -f ~/.ssh/id_rsa
-devstack$ os keypair create --public-key ~/.ssh/id_rsa.pub testkey
-devstack$ openstack security group rule create --proto icmp default
-devstack$ openstack security group rule create --protocol tcp --dst-port 22 default
+source openrc demo demo
+ssh-keygen -t rsa -b 4096 -N "" -f ~/.ssh/id_rsa
+openstack keypair create --public-key ~/.ssh/id_rsa.pub testkey
+openstack security group rule create --proto icmp default
+openstack security group rule create --protocol tcp --dst-port 22 default
 # 注册 ubuntu 16.04 镜像
-devstack$ source_adm
-devstack$ curl -SO http://cloud-images.ubuntu.com/xenial/current/xenial-server-cloudimg-amd64-disk1.img
-devstack$ glance image-create --name ubuntu-xenial \
+source openrc admin admin
+curl -SO http://cloud-images.ubuntu.com/xenial/current/xenial-server-cloudimg-amd64-disk1.img
+glance image-create --name ubuntu-xenial \
             --visibility public \
             --container-format bare \
             --disk-format qcow2 \
             --file xenial-server-cloudimg-amd64-disk1.img
+rm -f xenial-server-cloudimg-amd64-disk1.img
+popd
+EOF
+
+$ bash pre.sh
 ```
 
 资源准备就绪，接下来安装 k8s，我还是使用 kubeadm 工具。但这次与以前不同，在运行 `kubeadm init` 时要用配置文件的方式，因为不能通过命令行指定 cloud provider 参数。另外，还要对 cloud provider 做一些配置，所以我修改了之前安装 k8s 的 ansible 脚本，新增了针对 openstack 作为 cloud provider 的[新版本](https://github.com/LingxianKong/kubernetes_study/tree/master/installation/ansible/version_3)，并调试通过。
 
-### 创建 service
+```bash
+git clone https://github.com/LingxianKong/kubernetes_study.git
+pushd ~/kubernetes_study/installation/ansible/version_3/
+sudo pip install ansible shade
+pushd ~/devstack && source openrc demo demo && popd
+image=$(openstack image list --name ubuntu-xenial -c ID -f value)
+network=$(openstack network list --name private -c ID -f value)
+subnet_id=$(openstack subnet list --network private -c ID -f value)
+auth_url=$(export | grep OS_AUTH_URL | awk -F '"' '{print $2}')
+pushd ~/devstack && source openrc admin admin && popd
+user_id=$(openstack user show demo -c id -f value)
+tenant_id=$(openstack project show demo -c id -f value)
+# 我这里直接把变量写死
+cat << EOF > roles/kube_master/defaults/main.yml
+auth_url: $auth_url
+user_id: $user_id
+password: password
+tenant_id: $tenant_id
+region: RegionOne
+subnet_id: $subnet_id
+EOF
+cp roles/kube_master/defaults/main.yml roles/kube_node/defaults/main.yml
+
+pushd ~/devstack && source openrc demo demo && popd
+ansible-playbook site.yml -e "rebuild=false flavor=6 image=$image network=$network key_name=testkey private_key=/home/vagrant/.ssh/id_rsa node_prefix=test"
+popd
+```
+
+### 验证 service
 
 默认安装完 k8s，demo 用户已经有两个虚拟机，并且都绑定了 floatingip：
 
 ```shell
-devstack$ nova list
+$ nova list
 +--------------------------------------+---------------------+--------+------------+-------------+---------------------------------------------------------------------+
 | ID                                   | Name                | Status | Task State | Power State | Networks                                                            |
 +--------------------------------------+---------------------+--------+------------+-------------+---------------------------------------------------------------------+
@@ -177,7 +222,6 @@ bs-version=v2
 # 看一眼system pod 是否都正常
 k8stest$ kprompt
 kube-prompt v1.0.3 (rev-ba1a338)
-Please use `exit` or `Ctrl-D` to exit this program..
 >>> get pod --all-namespaces
 NAMESPACE     NAME                                          READY     STATUS    RESTARTS   AGE
 kube-system   calico-etcd-2pvw7                             1/1       Running   0          11h
@@ -205,66 +249,318 @@ mytest       LoadBalancer   10.111.153.27   172.24.4.9    8080:31320/TCP   1m
 service 创建成功。到 openstack 环境里看看 k8s 都创建了哪些资源。
 
 ```shell
-devstack$ source_demo
+$ source_demo
 # 首先，k8s 在 demo 租户里创建了 lb，对外暴露的 port 是8080，也就是 k8s service 的 port
-devstack$ os loadbalancer list
+$ os loadbalancer list
 +--------------------------------------+----------------------------------+----------------------------------+-------------+---------------------+----------+
 | id                                   | name                             | project_id                       | vip_address | provisioning_status | provider |
 +--------------------------------------+----------------------------------+----------------------------------+-------------+---------------------+----------+
 | 25e9a638-f172-4a78-ae6c-62b1fe397d05 | a1310ac8d181b11e8a40ffa163ed6260 | 84ce53873abe4d22a6f2491879e76048 | 10.0.0.9    | ACTIVE              | octavia  |
 +--------------------------------------+----------------------------------+----------------------------------+-------------+---------------------+----------+
-devstack$ os loadbalancer listener list
+$ os loadbalancer listener list
 +--------------------------------------+--------------------------------------+---------------------------------------------+----------------------------------+----------+---------------+----------------+
 | id                                   | default_pool_id                      | name                                        | project_id                       | protocol | protocol_port | admin_state_up |
 +--------------------------------------+--------------------------------------+---------------------------------------------+----------------------------------+----------+---------------+----------------+
 | 878c59a6-4ae6-4c5c-976b-d4720e908836 | 3ba4afaa-ed4f-4351-a586-5341a6954801 | listener_a1310ac8d181b11e8a40ffa163ed6260_0 | 84ce53873abe4d22a6f2491879e76048 | TCP      |          8080 | True           |
 +--------------------------------------+--------------------------------------+---------------------------------------------+----------------------------------+----------+---------------+----------------+
-devstack$ os loadbalancer pool list
+$ os loadbalancer pool list
 +--------------------------------------+-----------------------------------------+----------------------------------+---------------------+----------+--------------+----------------+
 | id                                   | name                                    | project_id                       | provisioning_status | protocol | lb_algorithm | admin_state_up |
 +--------------------------------------+-----------------------------------------+----------------------------------+---------------------+----------+--------------+----------------+
 | 3ba4afaa-ed4f-4351-a586-5341a6954801 | pool_a1310ac8d181b11e8a40ffa163ed6260_0 | 84ce53873abe4d22a6f2491879e76048 | ACTIVE              | TCP      | ROUND_ROBIN  | True           |
 +--------------------------------------+-----------------------------------------+----------------------------------+---------------------+----------+--------------+----------------+
 # lb 的 member 是 node 节点，port 就是 k8s 为 node 节点创建的 NodePort 31320
-devstack$ os loadbalancer member list 3ba4afaa-ed4f-4351-a586-5341a6954801
+$ os loadbalancer member list 3ba4afaa-ed4f-4351-a586-5341a6954801
 +--------------------------------------+------+----------------------------------+---------------------+-----------+---------------+------------------+--------+
 | id                                   | name | project_id                       | provisioning_status | address   | protocol_port | operating_status | weight |
 +--------------------------------------+------+----------------------------------+---------------------+-----------+---------------+------------------+--------+
 | c543804b-acb9-43c9-9258-4b028650f534 |      | 84ce53873abe4d22a6f2491879e76048 | ACTIVE              | 10.0.0.10 |         31320 | NO_MONITOR       |      1 |
 +--------------------------------------+------+----------------------------------+---------------------+-----------+---------------+------------------+--------+
 # 其次，k8s 自动为 vip 绑定了 floatingip，方便用户从 openstack 外部访问
-devstack$ neutron floatingip-list
+$ neutron floatingip-list
 +--------------------------------------+------------------+---------------------+--------------------------------------+
 | id                                   | fixed_ip_address | floating_ip_address | port_id                              |
 +--------------------------------------+------------------+---------------------+--------------------------------------+
 | caf39874-b44c-4e05-9b7d-d07b1dcfff3e | 10.0.0.9         | 172.24.4.9          | bc4b5499-907a-4e01-b024-3e12d7b5edaf |
 +--------------------------------------+------------------+---------------------+--------------------------------------+
 # 尝试访问 service
-devstack$ curl http://172.24.4.9:8080
+$ curl http://172.24.4.9:8080
 ^C
 ```
 
 不能访问 service！我的第一个反应是怀疑安全组规则没有设置好，梳理了一下数据包路径，唯一可疑的就是 k8s node 节点上的 31320 端口。找到 node 节点的 port 并查看安全组规则：
 
 ```shell
-devstack$ neutron port-list -c id -- --device-id d4d6b3b9-e37d-4510-b2f2-d8781eaf296c
+$ neutron port-list -c id -- --device-id d4d6b3b9-e37d-4510-b2f2-d8781eaf296c
 +--------------------------------------+
 | id                                   |
 +--------------------------------------+
 | a81de271-b424-45e4-ae7e-1a73724ee9e3 |
 +--------------------------------------+
-devstack$ neutron port-show a81de271-b424-45e4-ae7e-1a73724ee9e3 -c security_groups
+$ neutron port-show a81de271-b424-45e4-ae7e-1a73724ee9e3 -c security_groups
 +-----------------+--------------------------------------+
 | Field           | Value                                |
 +-----------------+--------------------------------------+
 | security_groups | bb5969cb-40a6-43a5-aeae-4968e50f77c8 |
 +-----------------+--------------------------------------+
-devstack$ neutron security-group-show bb5969cb-40a6-43a5-aeae-4968e50f77c8
+$ neutron security-group-show bb5969cb-40a6-43a5-aeae-4968e50f77c8
 ```
 
-为了节省篇幅我就不贴具体的安全组规则了，但确实没看到允许 31320 端口的数据 通过，这是 k8s 的问题么？带着问题阅读了 k8s 的代码，发现 k8s 的 openstack cloud provider 提供了一个配置项 `manage-security-groups`，当配置为 true 时才会设置必要的安全组规则。于是修改配置，重启 controller-manager 服务，再次创建 service，发现 service 一直处于 pending 状态，查看 controller-manager 服务日志，创建 lb 的过程一直卡在 `error occurred finding security group…` 处，在经过代码走读，最终发现了代码 bug，原来是 k8s 要为 vip port 创建一个新的安全组规则时一个逻辑判断错误。可喜的是，k8s 社区在几天前刚刚修复了这个 bug，可悲的是，目前尚没有可用的 k8s 版本可用，只能期待 v1.10.0版本发布。
+为了节省篇幅我就不贴具体的安全组规则了，但确实没看到有规则允许 31320 端口的数据通过，这是 k8s 的问题么？带着问题阅读了 k8s 的代码，发现 k8s 的 openstack cloud provider 提供了一个配置项 `manage-security-groups`，当配置为 true 时才会设置必要的安全组规则。于是修改配置，重启 controller-manager 服务，再次创建 service，发现 service 一直处于 pending 状态，查看 controller-manager 服务日志，创建 lb 的过程一直卡在 `error occurred finding security group…` 处，在经过代码走读，最终发现了代码 bug，原来是 k8s 要为 vip port 创建一个新的安全组规则时一个逻辑判断错误。可喜的是，k8s 社区在几天前刚刚修复了这个 bug，可悲的是，目前尚没有可用的 k8s 版本可用，只能期待 v1.10.0版本发布。
 
 > 在 Magnum 中，默认会为所有的 node 节点创建安全组规则，允许 k8s 保留的 nodeport 范围(默认是30000-32767)的数据包通过，也算是一种解决方案。
+
+### 验证 Persistent Volume
+
+k8s 为了方便用户使用后端存储，提供了 Dynamic Provisioning 功能，即管理员创建好默认的 StorageClass，如果用户创建 pvc 时不指定 `storageClassName`，则 k8s 使用默认的 StorageClass 创建 pv 并绑定到用户的 pvc，测试过程如下：
+
+```bash
+# 管理员为 k8s 集群创建默认的StorageClass，使用 cinder provider
+cat <<EOF | kubectl create -f -
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: cinder-standard
+  annotations:
+    storageclass.kubernetes.io/is-default-class: "true"
+    kubernetes.io/description: "Use OpenStack Cinder as default storage backend"
+  labels:
+    kubernetes.io/cluster-service: "true"
+    addonmanager.kubernetes.io/mode: EnsureExists
+provisioner: kubernetes.io/cinder
+reclaimPolicy: Delete
+parameters:
+  type: lvmdriver-1
+  availability: nova 
+  fstype: ext4
+EOF
+
+# 然后用户申请 pvc，用户不需要指定 storageClassName
+cat <<EOF | kubectl create -f -
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: cinder-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+EOF
+
+$ kubectl get pvc
+NAME         STATUS    VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS      AGE
+cinder-pvc   Bound     pvc-f15b9966-1a88-11e8-8159-fa163efef722   1Gi        RWO            cinder-standard   8s
+
+# 到 openstack 里验证 volume
+$ cinder list
++--------------------------------------+-----------+-------------------------------------------------------------+------+-------------+----------+-------------+
+| ID                                   | Status    | Name                                                        | Size | Volume Type | Bootable | Attached to |
++--------------------------------------+-----------+-------------------------------------------------------------+------+-------------+----------+-------------+
+| 2c91341f-cdb5-4f84-9f2f-8be18ada69da | available | kubernetes-dynamic-pvc-f15b9966-1a88-11e8-8159-fa163efef722 | 1    | lvmdriver-1 | false    |             |
++--------------------------------------+-----------+-------------------------------------------------------------+------+-------------+----------+-------------+
+
+# 用户创建 pod，挂载 pvc
+cat << EOF | kubectl create -f -
+kind: Pod
+apiVersion: v1
+metadata:
+  name: pod-cinder
+spec:
+  volumes:
+    - name: cinder-storage
+      persistentVolumeClaim:
+       claimName: cinder-pvc
+  containers:
+    - name: cinder-storage-container
+      image: lingxiankong/alpine-test
+      ports:
+        - containerPort: 8080
+          name: "http-server"
+      volumeMounts:
+        - mountPath: "/data"
+          name: cinder-storage
+EOF
+
+# 再看一眼 cinder 里 volume 的状态，volume 已经挂载到 pod 所在的 node 节点了
+$ cinder list
++--------------------------------------+--------+-------------------------------------------------------------+------+-------------+----------+--------------------------------------+
+| ID                                   | Status | Name                                                        | Size | Volume Type | Bootable | Attached to                          |
++--------------------------------------+--------+-------------------------------------------------------------+------+-------------+----------+--------------------------------------+
+| 2c91341f-cdb5-4f84-9f2f-8be18ada69da | in-use | kubernetes-dynamic-pvc-f15b9966-1a88-11e8-8159-fa163efef722 | 1    | lvmdriver-1 | false    | d4d6b3b9-e37d-4510-b2f2-d8781eaf296c |
++--------------------------------------+--------+-------------------------------------------------------------+------+-------------+----------+--------------------------------------+
+# 登录 pod 看看目录在不在，尝试创建一个文件
+$ kubectl exec pod-cinder -it -- bash
+bash-4.4# ls /data
+lost+found
+bash-4.4# echo 'Hello, k8s!' > /data/hello.txt
+bash-4.4# ls /data
+hello.txt   lost+found
+# 登录到 node 节点，可以看到 k8s 已经自动初始化好 volume 的文件系统，进入挂载的 volume，验证文件是否存在
+$ ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -i /home/vagrant/.ssh/id_rsa ubuntu@172.24.4.7
+$ sudo lsblk
+NAME   MAJ:MIN RM SIZE RO TYPE MOUNTPOINT
+vda    253:0    0   7G  0 disk
+└─vda1 253:1    0   7G  0 part /
+vdb    253:16   0   1G  0 disk /var/lib/kubelet/pods/67a8d9e6-1a8a-11e8-8159-fa163efef722/volumes/kubernetes.io~cinder/pvc-f15b9966-1a88-11e8-8159-fa163efef722
+$ sudo ls -l /var/lib/kubelet/pods/67a8d9e6-1a8a-11e8-8159-fa163efef722/volumes/kubernetes.io~cinder/pvc-f15b9966-1a88-11e8-8159-fa163efef722
+total 20
+-rw-r--r-- 1 root root    12 Feb 26 00:21 hello.txt
+drwx------ 2 root root 16384 Feb 26 00:17 lost+found
+$ sudo cat /var/lib/kubelet/pods/67a8d9e6-1a8a-11e8-8159-fa163efef722/volumes/kubernetes.io~cinder/pvc-f15b9966-1a88-11e8-8159-fa163efef722/hello.txt
+Hello, k8s!
+```
+
+### 验证 k8s 与 Keystone 的集成
+
+k8s 默认是没有用户管理的概念的，要么依赖 k8s 配置的静态文件、token、证书等形式，要么依赖于第三方认证服务，既然我们将 k8s 与 openstack 集成，那自然就用 keystone 服务为 k8s 集群提供 authentication and authorization，其实就是满足两点：
+
+1. kubectl 能够提供用户信息(比如用户名密码或 token 等)；
+2. k8s api server 要能够对 token 进行认证，进而对用户操作进行鉴权
+
+#### kubectl
+
+从 kubectl 1.8之后，默认就支持与 keystone 的集成，所以 kubectl 的问题不大，几个命令就搞定了：
+
+```bash
+# 普通用户通过执行如下命令使用自己 keystone 的身份
+kubectl config set-credentials openstackuser --auth-provider=openstack
+kubectl config set-context --cluster=kubernetes --user=openstackuser openstackuser@kubernetes
+kubectl config use-context openstackuser@kubernetes
+# 如果想回到 admin，把 context 切换回去即可
+kubectl config use-context kubernetes-admin@kubernetes
+```
+
+然后就可以 source 你的 rc 文件，使用 kubectl 命令时，kubectl 会到 keystone 获取 token，然后携带 token 向 api server 发请求。
+
+#### api-server
+
+k8s api server 可以使用 [Webhook Token Authentication](https://kubernetes.io/docs/admin/authentication/#webhook-token-authentication) 校验 bearer token。这需要管理员部署一个独立的服务响应 api server 的请求，验证 token 后返回验证结果，在 api server 参数中指定 `--authentication-token-webhook-config-file=<webhook-config>` 与该服务通信。我已经创建了一个 docker image 用于启动一个这样的代理服务：`lingxiankong/k8s-keystone-auth:0.0.1`，在 k8s master 节点上：
+
+```bash
+cat << EOF > /etc/kubernetes/manifests/k8s-keystone-auth.yaml
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  annotations:
+    scheduler.alpha.kubernetes.io/critical-pod: ""
+  labels:
+    component: k8s-keystone-auth
+    tier: control-plane
+  name: k8s-keystone-auth
+  namespace: kube-system
+spec:
+  containers:
+    - name: k8s-keystone-auth
+      image: lingxiankong/k8s-keystone-auth:0.0.1
+      imagePullPolicy: Always
+      args:
+        - ./bin/k8s-keystone-auth
+        - --tls-cert-file
+        - /etc/kubernetes/pki/apiserver.crt
+        - --tls-private-key-file
+        - /etc/kubernetes/pki/apiserver.key
+        - --keystone-policy-file
+        - /etc/kubernetes/pki/webhookpolicy.json
+        - --keystone-url
+        - http://192.168.121.145/identity/v3
+      volumeMounts:
+        - mountPath: /etc/kubernetes/pki
+          name: k8s-certs
+          readOnly: true
+        - mountPath: /etc/ssl/certs
+          name: ca-certs
+          readOnly: true
+      resources:
+        requests:
+          cpu: 200m
+      ports:
+        - containerPort: 8443
+          hostPort: 8443
+          name: https
+          protocol: TCP
+  hostNetwork: true
+  volumes:
+  - hostPath:
+      path: /etc/kubernetes/pki
+      type: DirectoryOrCreate
+    name: k8s-certs
+  - hostPath:
+      path: /etc/ssl/certs
+      type: DirectoryOrCreate
+    name: ca-certs
+status: {}
+EOF
+
+cat << EOF > /etc/kubernetes/pki/webhookconfig.yaml
+---
+apiVersion: v1
+kind: Config
+preferences: {}
+clusters:
+- cluster:
+    insecure-skip-tls-verify: true
+    server: https://localhost:8443/webhook
+  name: webhook
+users:
+- name: webhook
+contexts:
+- context:
+    cluster: webhook
+    user: webhook
+  name: webhook
+current-context: webhook
+EOF
+
+sed -i '/image:/ i \ \ \ \ - --authentication-token-webhook-config-file=/etc/kubernetes/pki/webhookconfig.yaml' /etc/kubernetes/manifests/kube-apiserver.yaml
+```
+
+等待 api server 服务重启成功后就可以尝试跟 k8s 交互：
+
+```bash
+kubectl config use-context openstackuser@kubernetes
+source openrc
+$ kubectl get pods
+Error from server (Forbidden): pods is forbidden: User "demo" cannot list pods in the namespace "default"
+```
+
+因为我们之前只配置了 authentication，并没有 authorization，所以默认还是使用 k8s 的 RBAC，为了测试，我们只需为用户创建 rolebinding：
+
+```bash
+cat << EOF | kubectl create -f -
+---
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  namespace: default
+  name: pod-reader
+rules:
+- apiGroups: [""]
+  resources: ["pods"]
+  verbs: ["get", "watch", "list"]
+---
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: read-pods
+  namespace: default
+subjects:
+- kind: User
+  name: demo
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: pod-reader
+  apiGroup: rbac.authorization.k8s.io
+EOF
+
+$ kubectl get pods
+No resources found.
+```
+
+当然，生产环境中不可能为每一个用户都创建 rolebinding，更合适的做法是使用 project id 作为 group，管理员为 group 配置 rolebinding，这样租户内的用户都具有访问权限，但在我的测试中始终鉴权失败，需要继续研究，等待更新。
 
 ## 遇到的坑
 
