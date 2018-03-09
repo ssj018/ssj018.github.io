@@ -8,6 +8,7 @@ category: 技术
 
 - 2018.02，初稿完成
 - 2018.02，添加对 persistent volume 的测试过程以及与 keystone 的集成，修改文件名
+- 2018.03，添加 ingress controller 测试说明
 
 ## 测试目的
 
@@ -186,7 +187,7 @@ ansible-playbook site.yml -e "rebuild=false flavor=6 image=$image network=$netwo
 popd
 ```
 
-### 验证 service
+### 验证 Service
 
 默认安装完 k8s，demo 用户已经有两个虚拟机，并且都绑定了 floatingip：
 
@@ -309,6 +310,22 @@ $ neutron security-group-show bb5969cb-40a6-43a5-aeae-4968e50f77c8
 为了节省篇幅我就不贴具体的安全组规则了，但确实没看到有规则允许 31320 端口的数据通过，这是 k8s 的问题么？带着问题阅读了 k8s 的代码，发现 k8s 的 openstack cloud provider 提供了一个配置项 `manage-security-groups`，当配置为 true 时才会设置必要的安全组规则。于是修改配置，重启 controller-manager 服务，再次创建 service，发现 service 一直处于 pending 状态，查看 controller-manager 服务日志，创建 lb 的过程一直卡在 `error occurred finding security group…` 处，在经过代码走读，最终发现了代码 bug，原来是 k8s 要为 vip port 创建一个新的安全组规则时一个逻辑判断错误。可喜的是，k8s 社区在几天前刚刚修复了这个 bug，可悲的是，目前尚没有可用的 k8s 版本可用，只能期待 v1.10.0版本发布。
 
 > 在 Magnum 中，默认会为所有的 node 节点创建安全组规则，允许 k8s 保留的 nodeport 范围(默认是30000-32767)的数据包通过，也算是一种解决方案。
+
+在研究 lb 类型的 service 时，突然被问到一个问题，因为 octavia 会为每一个 lb 类型的 service 创建两个 VM(master/slave)和一个 floating ip，这对于用户来说有些 overkill 了，因为一个 lb 的费用并不便宜，毕竟占用了两个 VM 的钱，能不能复用一个 lb，而为每个 service 创建 listener 呢？最初乍听到这个问题，我自己也懵了，答不上来。但稍微细想一下，因为 service 是 k8s 的用户创建的，可能不同的用户开发了不同的 web 应用，都对外暴露80端口，如果复用 lb，他们得到的地址就一样了。
+
+k8s 文档中还有一种访问 service 的方式：Ingress，通过 Ingress 用户可以实现使用 nginx 等开源的反向代理负载均衡器实现对外暴露服务，其实就是把传统的方式在 k8s 中做了抽象，而且这种方式比 LB 类型的 service 更强大(比如支持 TLS termination，7层负载均衡等高级特性)，于是我也试验了一把使用 ingress controller 的方式访问 service
+
+### 验证 Ingress Controller
+
+> 使用 ingress controller 与本篇要讲的与 openstack 集成没有关系，只是顺带稍作记录。
+
+使用 ingress 会涉及三个组件：
+
+- 反向代理负载均衡器(比如老牌的 nginx)，也是真正干活的。可以通过 service 暴露，也可以作为 deamonset 部署到每个 node 使用 host 网络(`hostNetwork: true`)
+- Ingress Controller服务，负责watch service 的 CRUD，生成/更新负载均衡器的配置
+- 设置Ingress规则，用户设置转发规则
+
+我测试使用的就是 nginx ingress controller，[这里](https://github.com/LingxianKong/kubernetes_study/blob/master/test/ingress_test_setup_nginx.sh)是安装脚本，里面有安装测试步骤说明。在实际使用时，所有的配置操作都由用户自己完成，不需要k8s 集群服务的 provider(云厂商) 介入。换言之，使用 nginx ingress controller，用户仅需要创建一个 lb 类型的 service 就可以为不同的内部 service 配置公网访问地址，这比与 ocavia 集成的 lb 类型的 service 要经济便捷的多，而且功能上更加强大，将来肯定是主流的使用方式。
 
 ### 验证 Persistent Volume
 
