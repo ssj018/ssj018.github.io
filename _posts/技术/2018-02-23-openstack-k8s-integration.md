@@ -313,6 +313,9 @@ $ neutron security-group-show bb5969cb-40a6-43a5-aeae-4968e50f77c8
 
 在研究 lb 类型的 service 时，突然被问到一个问题，因为 octavia 会为每一个 lb 类型的 service 创建两个 VM(master/slave)和一个 floating ip，这对于用户来说有些 overkill 了，因为一个 lb 的费用并不便宜，毕竟占用了两个 VM 的钱，能不能复用一个 lb，而为每个 service 创建 listener 呢？最初乍听到这个问题，我自己也懵了，答不上来。但稍微细想一下，因为 service 是 k8s 的用户创建的，可能不同的用户开发了不同的 web 应用，都对外暴露80端口，如果复用 lb，他们得到的地址就一样了。
 
+之前在团队内部为了解释 lb 类型的 service 实现，曾画过一张图可以便于理解：
+![](/images/2018-02-23-openstack-k8s-integration/loadbalancer-type-service-octavia.png)
+
 k8s 文档中还有一种访问 service 的方式：Ingress，通过 Ingress 用户可以实现使用 nginx 等开源的反向代理负载均衡器实现对外暴露服务，其实就是把传统的方式在 k8s 中做了抽象，而且这种方式比 LB 类型的 service 更强大(比如支持 TLS termination，7层负载均衡等高级特性)，于是我也试验了一把使用 ingress controller 的方式访问 service
 
 ### 验证 Ingress Controller
