@@ -321,7 +321,7 @@ k8s 文档中还有一种访问 service 的方式：Ingress，通过 Ingress 用
 
 使用 ingress 会涉及三个组件：
 
-- 反向代理负载均衡器(比如老牌的 nginx)，也是真正干活的。可以通过 service 暴露，也可以作为 deamonset 部署到每个 node 使用 host 网络(`hostNetwork: true`)
+- 反向代理负载均衡器(比如老牌的 nginx)，也是真正干活的。可以创建deployment通过 service 暴露，也可以作为 deamonset 部署到每个 node 使用 host 网络(`hostNetwork: true`)。使用 deployment 的方式可以实现ingress 服务的高可用，使用 daemonset 的方式可以直接通过 node 的 ip 访问，各有千秋
 - Ingress Controller服务，负责watch service 的 CRUD，生成/更新负载均衡器的配置
 - 设置Ingress规则，用户设置转发规则
 

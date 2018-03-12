@@ -4,22 +4,31 @@ title: Kuryr 介绍 - 使用篇 - baremetal use case
 category: 技术
 ---
 
+更新历史：
+
+1. 2018.02.07 初稿完成
+2. 2018.03.12 更新对 kuryr 现状的理解
+
+## 前言
+
 突然关注 Kuryr 是因为我正好在研究 k8s 集群如何跟 openstack 环境通信，我的 qinling 项目也有容器跟虚拟机的通信需求。k8s 现在是热门不假，但毕竟我们还在做 openstack 的生意，自然就会碰到虚拟机和容器的混合部署。直接在 openstack 集群部署 k8s 不现实，那样会对资源管理和运维带来很大不便。所以最直观的部署方式就是 k8s 和 openstack 是相互独立的集群，各自管理各自的资源，当然，更高级一点就是 k8s 跑在 openstack 的 vm 里，彼此是上下层的关系，利用 neutron 的网络做 overlay。但对于处于架构转型的用户来说，一个很现实的需求就是在业务从虚拟机向容器架构的迁移过程中，需要 container 和 vm 之间相互通信来实现过渡期的业务。再者就是对于像 qinling 这样的服务，底层依赖 container 实现，对用户透明，但用户希望自己的 function 里能够访问部署在自己 vm 里的服务，既然来自同一个云的服务，如果再让用户给 vm 绑定一个 floating ip 才能搞定就有些耍流氓了。
 
-openstack 里的 kuryr 项目就是实现 container 和 vm 通信的服务。想想也好笑，当年 openstack 如日中天的时候，华为在以色列招聘了几个“高端专家”来巩固在 openstack 社区贡献的投入力量，这几位专家来了之后先后在 openstack 社区创立了几个项目，Karbor，Dragonflow，Kuryr，Fuxi 等，当时 docker 好像才刚刚出来没多久，况且 openstack 正在一路高歌猛进，并没有多少人会关注 container 和 vm 之间的联系，所以这些项目在当时的华为并没有得到多少重视，也没有予以足够的投入力量，更别说研发落地，就一直处于半死不活的状态。时过境迁，可能现在华为早已不 care 这些项目了，核心贡献者估计都换了一茬又一茬，时至今日，我才发现这些项目在当时其实也算是“高瞻远瞩”吧，只是没赶上天时地利人和。
+openstack 里的 kuryr 项目就是实现 container 和 vm 通信的服务。现在想想这个项目的起源其实挺感慨，当年 openstack 如日中天的时候，华为在以色列招聘了几个“高端专家”来巩固在 openstack 社区贡献的投入力量，这几位专家来了之后先后在 openstack 社区创立了几个项目，Karbor，Dragonflow，Kuryr，Fuxi 等，当时 docker 好像才刚刚出来没多久，况且 openstack 正在一路高歌猛进，并没有多少人会关注 container 和 vm 之间的联系，所以这些项目在当时的华为并没有得到多少重视，也没有予以足够的投入力量，更别说研发落地，就一直处于半死不活的状态。时过境迁，可能现在华为早已不 care 这些项目了，核心贡献者估计都换了一茬又一茬，时至今日，我才发现这些项目在当时其实也算是“高瞻远瞩”吧，只是没赶上天时地利人和。
 
-无论如何，现在来看，至少 kuryr 项目还是有实际的使用价值的。
+无论如何，现在来看，kuryr 项目在一些特定场景下还是有实际的使用价值的。截止目前，kuryr team 主要由来自 redhat 的工程师组成，redhat 在 openshift 中提供了 kuryr-k8s 与 openstack 的集成。
 
-kuryr 项目创立的时候，k8s 还处于婴幼儿期，所以当时 kuryr 主要面向 docker 网络，而现在针对 k8s 的 kuryr-kubernetes 项目反而更加活跃。本文直接忽略 kuryr-libnetwork，主要使用 kuryr-kubernetes。
+## Kuryr 介绍
 
-kuryr 并不是一个单独的服务，而是在 k8s 中提供了两个组件，目的是为 k8s 中的 pod 配置网络。但 kuryr 是利用 neutron 的能力为 pod 提供网络功能，这样 pod 才能与 vm 网络互通。所以，kuryr 的北向是容器网络接口，南向是 OpenStack Neutron。
+kuryr 项目创立的时候，k8s 还处于婴幼儿期，所以当时 kuryr 主要面向 docker 网络，而现在针对 k8s 的 kuryr-kubernetes 项目反而更加活跃。本文直接忽略 kuryr-libnetwork，主要介绍使用 kuryr-kubernetes。
+
+kuryr-k8s 并不是一个单独的服务，而是在 k8s 中提供了两个组件，目的是接管 k8s 中的 pod  的网络，后续又加入了对 service/endpoint 的支持。但 kuryr 是利用 neutron 的能力为 pod 提供网络功能，这样 pod 才能与 vm 网络互通。所以，kuryr 的北向是 k8s api 接口，南向是 OpenStack Neutron。也正是因为 kuryr-k8s 接管了 pod 的网络，所以导致 kuryr-k8s 必须要随着 k8s 后续的网络特性演进，比如要实现 service，比如要支持 network policy，再比如 k8s 有了 ingress，既然 kuryr-k8s 有自己的 service 实现，那么就要想想如何实现 ingress controller(或者如何集成已有的 ingress controller)，感觉有点骑虎难下的意思。而且 kuryr-k8s 中的一些实现可能还与 k8s 自己的实现有冲突，比如如何处理好与 cloud provider 的关系。
 
 kuryr 支持两种典型场景：
 
-- 单独的 k8s 集群 和 openstack 环境，k8s node 与 nova compute node 二层互通，在每个 k8s node 上需要安装 neutron agent，实现 container 与 vm 通信
+- 单独的 k8s 集群 和 openstack 环境，k8s node 与 nova compute node 二层互通，在每个 k8s node 上需要安装 neutron agent，实现 pod 与 vm 通信
   ![](/images/2018-02-07-kuryr-introduction-baremetal-usecase/baremetal.png)
 
-- nested container。即 openstack 环境中创建 vm，在 vm 中安装 k8s 集群，vm 中的 container 与其他 vm 通信。典型的应用就是在 magnum 实现租户的 pod 能够访问自己的 vm。
+- k8s 部署在 vm 中。即 openstack 环境中创建 vm，在 vm 中安装 k8s 集群，vm 中的 pod 与其他 vm 通信。典型的应用就是在 magnum 实现租户的 pod 能够访问自己的 vm。需要在 k8s vm 中安装kuryr-controller 和kuryr-cni，利用 neutron 的 trunk port 功能实现 vm 中的 pod 跟 openstack 环境中其他 vm 通信
   ![](/images/2018-02-07-kuryr-introduction-baremetal-usecase/nested_container.png)
 
 本文关注场景一。并且本文是使用篇，不涉及任何的代码实现。
@@ -33,7 +42,7 @@ mkdir -p /opt/stack && cd /opt/stack
 git clone https://git.openstack.org/openstack/kuryr-kubernetes
 chown -R ubuntu.ubuntu /opt/stack
 cd ~/devstack
-curl -sS https://gist.githubusercontent.com/LingxianKong/42de380d1021f275e0d561e4b6505562/raw/76ea2d8d536c53a8eec15483252b011420b91465/local.conf -o local.conf
+curl -sS https://gist.githubusercontent.com/LingxianKong/42de380d1021f275e0d561e4b6505562/raw/57db591918f868d2e63b4ae28e713b78d150c3e9/kuryr_baremetal_devstack_local.conf -o local.conf
 chown -R ubuntu.ubuntu ~/devstack
 ./stack.sh
 ```
@@ -122,7 +131,7 @@ project = f4e3108ade324967945d87aa54c37203
 | f4e3108ade324967945d87aa54c37203 | k8s                |
 +----------------------------------+--------------------+
 ```
-原来是 kuryr devstack plugin 自动创建的'k8s' 租户。接下来我想验证 pod 与 vm 的通信，所以我想切换到 k8s 租户下的用户，获取创建 vm 需要的参数，但我发现 k8s 下并没有用户，那我使用其他租户怎么能够连通 k8s 租户的网络呢？我看了一眼环境中所有的 subnet：
+原来是 kuryr devstack plugin 自动创建的名为 k8s 租户。接下来我想验证 pod 与 vm 的通信，所以我想切换到 k8s 租户下的用户，获取创建 vm 需要的参数，但我发现 k8s 下并没有用户，那我使用其他租户怎么能够连通 k8s 租户的网络呢？我看了一眼环境中所有的 subnet：
 ```shell
 # os subnet list
 +--------------------------------------+---------------------+--------------------------------------+---------------------+
@@ -167,7 +176,7 @@ PING 10.0.0.7 (10.0.0.7): 56 data bytes
 round-trip min/avg/max = 1.085/1.282/1.611 ms
 ```
 
-为什么能 ping 通呢？两个不同租户的 vm，分别在不同的 subnet 上（当然两个 subnet 的 ip 段不重叠），能够相互通信，在 neutron 中只有一个可能，就是这两个 subnet 连在同一个 router 上：
+为什么能 ping 通呢？两个不同租户的 vm，分别在不同的 subnet 上（当然两个 subnet 的 ip 段不重叠），能够相互通信，在 neutron 中只有一个可能，就是这**两个 subnet 连在同一个 router** 上：
 ```shell
 # source openrc demo demo
 # os router list
