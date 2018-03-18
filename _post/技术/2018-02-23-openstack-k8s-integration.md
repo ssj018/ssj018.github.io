@@ -316,7 +316,7 @@ $ neutron security-group-show bb5969cb-40a6-43a5-aeae-4968e50f77c8
 之前在团队内部为了解释 lb 类型的 service 实现，曾画过一张图可以便于理解：
 ![](/images/2018-02-23-openstack-k8s-integration/loadbalancer-type-service-octavia.png)
 
-k8s 文档中还有一种访问 service 的方式：Ingress，通过 Ingress 用户可以实现使用 nginx 等开源的反向代理负载均衡器实现对外暴露服务，其实就是把传统的方式在 k8s 中做了抽象，而且这种方式比 LB 类型的 service 更强大(比如支持 TLS termination，7层负载均衡等高级特性)，于是我也试验了一把使用 ingress controller 的方式访问 service
+k8s 文档中还有一种访问 service 的方式：Ingress，通过 Ingress 用户可以实现使用 nginx 等开源的反向代理负载均衡器实现对外暴露服务，其实就是把传统的方式在 k8s 中做了抽象，而且这种方式比 LB 类型的 service 更强大(比如支持 URL mapping, TLS termination，7层负载均衡等高级特性)，在 GKE 中，使用 ingress 也是推荐的[方式](https://cloud.google.com/kubernetes-engine/docs/tutorials/http-balancer)，于是我也试验了一把使用 ingress controller 的方式访问 service。
 
 ### 验证 Ingress Controller
 
