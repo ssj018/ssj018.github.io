@@ -34,15 +34,15 @@ author:
   link: http://lingxiankong.github.io/
   weibo: http://www.weibo.com/lingxiankong
   weibo_username: Lingxian_Kong
-  github: https://github.com/LingxianKong
-  github_username: LingxianKong
+  github: https://github.com/lingxiankong
+  github_username: lingxiankong
 
 
-locals:                                     #自定义常量
+locals:
   tags: 标签
   about: 关于
-  active: 技术                                 #自定义常量
-subscribe_rss: /pages/atom.xml              #订阅地址
+  active: 技术
+subscribe_rss: /pages/atom.xml
 
 # 头像
 avatar: /assets/image/favicon.ico
