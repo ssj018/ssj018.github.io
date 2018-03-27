@@ -434,10 +434,10 @@ Hello, k8s!
 
 ### 验证 k8s 与 Keystone 的集成
 
-k8s 默认是没有用户管理的概念的，要么依赖 k8s 配置的静态文件、token、证书等形式，要么依赖于第三方认证服务，既然我们将 k8s 与 openstack 集成，那自然就用 keystone 服务为 k8s 集群提供 authentication and authorization，其实就是满足两点：
+k8s 默认是没有用户管理的概念的，即 k8s 中没有存储用户的信息，要么依赖 k8s 配置的静态文件、token、证书等形式，要么依赖于第三方认证服务，既然我们将 k8s 与 openstack 集成，那自然就用 keystone 服务为 k8s 集群提供 authentication and authorization，其实就是满足两点：
 
-1. kubectl 能够提供用户信息(比如用户名密码或 token 等)；
-2. k8s api server 要能够对 token 进行认证，进而对用户操作进行鉴权
+1. kubectl 或对 api server 请求中能够提供openstack 的用户信息(比如 token)；
+2. k8s api server 要能够对 token 向 keystone 请求认证，或者用户在 keystone 中信息，进而对用户操作进行鉴权
 
 #### kubectl
 
@@ -452,7 +452,27 @@ kubectl config use-context openstackuser@kubernetes
 kubectl config use-context kubernetes-admin@kubernetes
 ```
 
-然后就可以 source 你的 rc 文件，使用 kubectl 命令时，kubectl 会到 keystone 获取 token，然后携带 token 向 api server 发请求。
+然后就可以 source 你的 rc 文件，使用 kubectl 命令时，kubectl 会到 keystone 获取 token，然后携带 token 向 api server 发请求。一个 rc 文件模板(因为 kubectl 可能只支持老版本的环境变量，所以尽可能提供足够多的环境变量信息，比如 kubectl 不支持 `OS_PROJECT_NAME` 变量)：
+
+```bash
+export OS_AUTH_URL="http://10.0.19.138/identity/v3"
+export OS_PROJECT_NAME="demo"
+export OS_TENANT_NAME="demo"
+export OS_USERNAME="demo"
+export OS_PASSWORD="password"
+export OS_REGION_NAME="RegionOne"
+export OS_DOMAIN_NAME="default"
+export OS_IDENTITY_API_VERSION="3"
+```
+
+当然，你可以先获取你在 openstack 中的 token，然后直接指定 token 发送请求：
+
+```bash
+# 使用 kubectl
+kubectl get pod --token=$token
+# 使用 http
+http --verify=no GET https://10.0.19.122:6443/api/v1/namespaces/default/pods Authorization:"Bearer $token"
+```
 
 #### api-server
 
@@ -580,7 +600,7 @@ $ kubectl get pods
 No resources found.
 ```
 
-当然，生产环境中不可能为每一个用户都创建 rolebinding，更合适的做法是使用 project id 作为 group，管理员为 group 配置 rolebinding，这样租户内的用户都具有访问权限，但在我的测试中始终鉴权失败，需要继续研究，等待更新。
+当然，生产环境中不可能为每一个用户都创建 rolebinding，更合适的做法是使用 project id 作为 group，管理员为 group 配置 rolebinding，这样租户内的用户都具有访问权限。
 
 ## 遇到的坑
 
@@ -589,3 +609,4 @@ No resources found.
 - ansible 的 template 中的变量命名不能包含中划线，否则会解析失败
 - 安装 devstack 和使用 ansible 过程中的坑就更多了，精华都在我的 github 里
 - k8s repo 中的 openstack cloud provider，可能真正用的人并不多，否则我碰到的那些 bug 不至于刚刚才被修复。但好在至少还有人在修复，也省去了我们许多麻烦，看，这就是我一直说的开源的好处，有 bug 不怕，怕的是有 bug 没人 fix，如果什么 bug 都需要自己公司出人出力，那使用开源的优势就不复存在了
+- kubectl 不支持 `OS_PROJECT_NAME` 环境变量
