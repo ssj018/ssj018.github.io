@@ -494,7 +494,7 @@ metadata:
 spec:
   containers:
     - name: k8s-keystone-auth
-      image: lingxiankong/k8s-keystone-auth:0.0.1
+      image: lingxiankong/k8s-keystone-auth:0.0.3
       imagePullPolicy: Always
       args:
         - ./bin/k8s-keystone-auth
@@ -566,7 +566,7 @@ $ kubectl get pods
 Error from server (Forbidden): pods is forbidden: User "demo" cannot list pods in the namespace "default"
 ```
 
-因为我们之前只配置了 authentication，并没有 authorization，所以默认还是使用 k8s 的 RBAC，为了测试，我们只需为用户创建 rolebinding：
+因为我们只配置了 authentication，并没有 authorization，所以默认还是使用 k8s 的 RBAC，为了测试，我们只需为用户创建 rolebinding：
 
 ```bash
 cat << EOF | kubectl create -f -
@@ -601,6 +601,8 @@ No resources found.
 ```
 
 当然，生产环境中不可能为每一个用户都创建 rolebinding，更合适的做法是使用 project id 作为 group，管理员为 group 配置 rolebinding，这样租户内的用户都具有访问权限。
+
+除了 RBAC 的鉴权方式，authorization 也支持插件化，可以配置 `--authorization-mode=Webhook` 由第三方进行鉴权。使用场景是：用户的配置管理以 keystone 为准，openstack 管理员为用户配置一些访问 k8s 专用的 role，比如 k8s-member，k8s-viewer，k8s-editor 等，在 authentication 后可以得到用户的 role，接着由 k8s-keystone-auth 服务进行鉴权。
 
 ## 遇到的坑
 
