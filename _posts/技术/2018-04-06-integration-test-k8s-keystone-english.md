@@ -4,6 +4,8 @@ title: Integration Test of Kubernetes and Keystone - English Version
 category: 技术
 ---
 
+本博客于2018.04.21号被 OpenStack Superuser 收录，[这里](https://superuser.openstack.org/articles/kubernetes-keystone-integration-test/)是链接。
+
 At [Catalyst Cloud](https://catalystcloud.nz/) we are going to deploy Magnum service in our OpenStack based public cloud in New Zealand. [Magnum](https://docs.openstack.org/magnum/latest/) is an OpenStack service offering Container Clusters as a service, with support for Docker Swarm, Kubernetes, Mesos or DC/OS(Catalyst Cloud will support Kubernetes at the first step). Users of the service can deploy clusters of thousands of nodes in minutes, and access them securely using their native APIs.
 
 One of the feature requests coming from our existing customers is integration with OpenStack Keystone for both authentication and authorization so that the existing users within a tenant could have access to Kubernetes cluster created by the tenant administrator in Magnum without too much extra user management configuration inside the Kubernetes cluster. We(development team in Catalyst Cloud) tested the integration between Keystone and Kubernetes, after some bugfix and improvements, it works perfectly fine!
