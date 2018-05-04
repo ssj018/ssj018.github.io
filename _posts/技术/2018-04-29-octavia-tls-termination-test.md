@@ -110,65 +110,65 @@ Welcome to 10.0.0.5:81
 
 - admin 用户允许 demo 用户使用 barbican 服务(主要是存储证书)
 
-  ```bash
-  source_adm
-  openstack role add --user demo --project demo creator
-  ```
+```bash
+source_adm
+openstack role add --user demo --project demo creator
+```
 
 - 使用 demo 用户在 barbican 注册 web server 的证书。
 
-  ```bash
-  source_demo
-  secret1_id=$(openstack secret store --name='lb_tls_secret_1' -t 'application/octet-stream' -e 'base64' --payload="$(base64 < www.server1.com.p12)" -f value -c "Secret href")
-  secret2_id=$(openstack secret store --name='lb_tls_secret_2' -t 'application/octet-stream' -e 'base64' --payload="$(base64 < www.server2.com.p12)" -f value -c "Secret href")
-  ```
+```bash
+source_demo
+secret1_id=$(openstack secret store --name='lb_tls_secret_1' -t 'application/octet-stream' -e 'base64' --payload="$(base64 < www.server1.com.p12)" -f value -c "Secret href")
+secret2_id=$(openstack secret store --name='lb_tls_secret_2' -t 'application/octet-stream' -e 'base64' --payload="$(base64 < www.server2.com.p12)" -f value -c "Secret href")
+```
 
 - demo 用户允许 octavia 服务用户访问 demo 用户在 barbican 的证书。
 
-  ```bash
-  source_adm; octavia_user_id=$(os user show admin -f value -c id); echo $octavia_user_id; source_demo
-  openstack acl user add -u $octavia_user_id $secret1_id
-  openstack acl user add -u $octavia_user_id $secret2_id
-  ```
+```bash
+source_adm; octavia_user_id=$(os user show admin -f value -c id); echo $octavia_user_id; source_demo
+openstack acl user add -u $octavia_user_id $secret1_id
+openstack acl user add -u $octavia_user_id $secret2_id
+```
 
 - demo 用户创建 loadbalancer/listener/pool/member，注意创建 listener 时的参数
 
-  ```bash
-  IP=10.0.0.5 # 虚拟机的 IP
-  subnetid=$(os subnet show private-subnet -f value -c id); echo $subnetid
-  lb_id=$(openstack loadbalancer create --name test_tls_termination --vip-subnet-id $subnetid -f value -c id); echo $lb_id
-  # 等待 loadbalancer 创建成功后继续执行以下命令
-  listener_id=$(openstack loadbalancer listener create $lb_id --name https_listener --protocol-port 443 --protocol TERMINATED_HTTPS --default-tls-container=$secret1_id --sni-container-refs $secret1_id $secret2_id -f value -c id); echo $listener_id
-  pool_id=$(openstack loadbalancer pool create --protocol HTTP --listener $listener_id --lb-algorithm ROUND_ROBIN -f value -c id); echo $pool_id
-  openstack loadbalancer member create --address ${IP} --subnet-id $subnetid --protocol-port 80 $pool_id
-  # 给 vip 分配 floating ip
-  public_network=$(os network show public -f value -c id)
-  fip=$(os floating ip create $public_network -f value -c floating_ip_address)
-  vip=$(lb show $lb_id -c vip_address -f value)
-  vip_port=$(os port list --fixed-ip ip-address=$vip -c ID -f value)
-  os floating ip set $fip --fixed-ip-address $vip --port $vip_port
-  echo "$fip www.server2.com" >> /etc/hosts
-  echo "$fip www.server1.com" >> /etc/hosts
-  ```
+```bash
+IP=10.0.0.5 # 虚拟机的 IP
+subnetid=$(os subnet show private-subnet -f value -c id); echo $subnetid
+lb_id=$(openstack loadbalancer create --name test_tls_termination --vip-subnet-id $subnetid -f value -c id); echo $lb_id
+# 等待 loadbalancer 创建成功后继续执行以下命令
+listener_id=$(openstack loadbalancer listener create $lb_id --name https_listener --protocol-port 443 --protocol TERMINATED_HTTPS --default-tls-container=$secret1_id --sni-container-refs $secret1_id $secret2_id -f value -c id); echo $listener_id
+pool_id=$(openstack loadbalancer pool create --protocol HTTP --listener $listener_id --lb-algorithm ROUND_ROBIN -f value -c id); echo $pool_id
+openstack loadbalancer member create --address ${IP} --subnet-id $subnetid --protocol-port 80 $pool_id
+# 给 vip 分配 floating ip
+public_network=$(os network show public -f value -c id)
+fip=$(os floating ip create $public_network -f value -c floating_ip_address)
+vip=$(lb show $lb_id -c vip_address -f value)
+vip_port=$(os port list --fixed-ip ip-address=$vip -c ID -f value)
+os floating ip set $fip --fixed-ip-address $vip --port $vip_port
+echo "$fip www.server2.com" >> /etc/hosts
+echo "$fip www.server1.com" >> /etc/hosts
+```
 
 - 测试以不同方式访问  loadbalancer
 
-  ```bash
-  root@test:~# curl -k https://$fip
-  Welcome to 10.0.0.5:80
-  root@test:~# curl -k https://www.server1.com
-  Welcome to 10.0.0.5:80
-  root@test:~# curl --cacert ca.crt https://$fip
-  curl: (51) SSL: certificate subject name (www.server1.com) does not match target host name '172.24.4.8'
-  root@test:~# curl --cacert ca.crt https://www.server1.com
-  Welcome to 10.0.0.5:80
-  root@test:~# curl -k https://www.server2.com
-  Welcome to 10.0.0.5:80
-  root@test:~# curl --cacert ca.crt https://www.server2.com
-  Welcome to 10.0.0.5:80
-  ```
+```bash
+root@test:~# curl -k https://$fip
+Welcome to 10.0.0.5:80
+root@test:~# curl -k https://www.server1.com
+Welcome to 10.0.0.5:80
+root@test:~# curl --cacert ca.crt https://$fip
+curl: (51) SSL: certificate subject name (www.server1.com) does not match target host name '172.24.4.8'
+root@test:~# curl --cacert ca.crt https://www.server1.com
+Welcome to 10.0.0.5:80
+root@test:~# curl -k https://www.server2.com
+Welcome to 10.0.0.5:80
+root@test:~# curl --cacert ca.crt https://www.server2.com
+Welcome to 10.0.0.5:80
+```
 
-  同时能够使用 https://www.server1.com 和 https://www.server2.com 访问说明 SNI 生效。
+同时能够使用 https://www.server1.com 和 https://www.server2.com 访问说明 SNI 生效。
 
 ## 赠送 - 测试 L7 policy
 
