@@ -17,15 +17,15 @@ It is vital that both pieces are properly configured to route traffic from an ou
 
 ## Why octavia-ingress-controller
 
-As an OpenStack based public cloud provider in [Catalyst Cloud](https://catalystcloud.nz/), one of our goals is to continuously provide the customers the capability of innovation by delivering robust and comprehensive cloud services. After deploying Octavia and Magnum service in the public cloud, we are thinking about how to help customers to develop their applications running on the Kubernetes cluster and make their services accessible to the public in a high-performance way.
+As an OpenStack-based public cloud provider, one of our goals at [Catalyst Cloud](https://catalystcloud.nz/) is to continuously provide the customers the capability to innovate by delivering robust and comprehensive cloud services. After deploying Octavia and Magnum service in the public cloud, we are thinking about how to help customers to develop their applications running on the Kubernetes cluster and make their services accessible to the public in a high-performance way.
 
-After creating a Kubernetes cluster in Magnum, the most common way to expose the application to the outside world is to use [LoadBalancer](https://kubernetes.io/docs/concepts/services-networking/service/#type-loadbalancer) type service. In the OpenStack cloud, Octavia(LBaaS v2) is the default implementation of LoadBalancer type service, as a result, for each LoadBalancer type service, there is a load balancer created in the cloud tenant account. We could see some drawbacks of this way:
+After creating a Kubernetes cluster in Magnum, the most common way to expose the application to the outside world is to use [LoadBalancer](https://kubernetes.io/docs/concepts/services-networking/service/#type-loadbalancer) type service. In the OpenStack cloud, Octavia(LBaaS v2) is the default implementation of LoadBalancer type service, as a result, for each LoadBalancer type service, there is a load balancer created in the cloud tenant account. There are a few drawbacks of this approach:
 
 - The cost of Kubernetes Service is a little bit high if it's one-to-one mapping from the service to Octavia load balancer, the customers have to pay for a load balancer per exposed service, which can get expensive.
 - There is no filtering, no routing, etc. for the service. This means you can send almost any kind of traffic to it, like HTTP, TCP, UDP, Websockets, gRPC, or whatever.
 - The traditional ingress controllers such as NGINX ingress controller,  HAProxy ingress controller, Træfik, etc. don't make much sense in the cloud environment because the user still needs to expose service for the ingress controller itself which may increase the network delay and decrease the performance of the application.
 
-The octavia-ingress-controller could solve all the above problems in the OpenStack environment by creating a single load balancer for multiple [NodePort](https://kubernetes.io/docs/concepts/services-networking/service/#type-nodeport) type services in an Ingress. In order to use the octavia-ingress-controller in Kubernetes cluster, use the value `openstack` for the annotation `kubernetes.io/ingress.class` in the metadata section of the Ingress Resource as shown below:
+The octavia-ingress-controller could solve all the above problems in the OpenStack environment by creating a single load balancer for multiple [NodePort](https://kubernetes.io/docs/concepts/services-networking/service/#type-nodeport) type services in an Ingress. In order to use the octavia-ingress-controller in Kubernetes cluster, use the value `openstack` for the annotation `kubernetes.io/ingress.class` in the metadata section of the Ingress Resource as shown below:
 
 ```bash
 annotations: kubernetes.io/ingress.class: openstack
@@ -35,7 +35,7 @@ annotations: kubernetes.io/ingress.class: openstack
 
 ### Prepare kubeconfig file
 
-Kubeconfig file is used to configure access to Kubernetes clusters. This is a generic way of referring to configuration files in Kubernetes. The following commands are performed in a Kubernetes cluster created using kubeadm.
+The kubeconfig file is used to configure access to Kubernetes clusters. This is a generic way of referring to configuration files in Kubernetes. The following commands are performed in a Kubernetes cluster created using kubeadm.
 
 - Install cfssl tools, which are used for generating TLS certs
 
@@ -270,7 +270,7 @@ NAME                TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)          AG
 hostname-echo-svc   NodePort    10.106.36.88   <none>        8080:32066/TCP   33s
 ```
 
-When you create a Service of type NodePort, Kubernetes makes your Service available on a randomly- selected high port number (e.g. 32066) on all the nodes in your cluster. Generally the Kubernetes nodes are not externally accessible by default, creating this Service does not make your application accessible from the Internet. However, we could verify the service using its `CLUSTER-IP` on Kubernetes master node:
+When you create a Service of type NodePort, Kubernetes makes your Service available on a randomly-selected high port number (e.g. 32066) on all the nodes in your cluster. Generally, the Kubernetes nodes are not externally accessible by default, creating this Service does not make your application accessible from the Internet. However, we could verify the service using its `CLUSTER-IP` on Kubernetes master node:
 
 ```bash
 $ curl http://10.106.36.88:8080
