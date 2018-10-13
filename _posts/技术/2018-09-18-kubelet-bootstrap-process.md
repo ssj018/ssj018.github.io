@@ -4,6 +4,11 @@ title: Kubernetes - kubelet bootstrap 流程
 category: 技术
 ---
 
+更新历史：
+
+- 2018.09.18，初稿完成
+- 2018.10.13，增加 kubeadm 的方法
+
 很长时间没写东西了。离家在外两个人带娃很忙，在家空闲的时间基本都用来陪娃了，在加上前段时间在备考 CKA，时间上更是抠抠缩缩。业内人士都知道 CKA 是 Kubernetes(下面简称 k8s) 社区认证的管理员证书，我作为早期参与 openstack(下面简称 os) 的社区开发人员，openstack 的证书都没怎么关心过，现在为啥要考这个 CKA 呢？其实原因很简单，就是想对 k8s 多一些了解。我从2013年开始以开发人员的角色接触 os，当时年轻气盛，精力无限，一上来就是边阅读源码边安装试用，碰到问题都是通过读代码解决，从 os 内部的实现机制入手然后再从外往内看使用场景以及 os 的各种优势。时过境迁，人年龄大了，接触的东西多了，不能什么新事物和新技术一上来就是啃代码，没了年轻的资本，才不得不采取更为稳妥也更科学的学习方式，**从外到内，先会用，然后再了解其原理机制，必要时才去定制**。那怎么才算是会用呢，或者怎么才能向别人证明你会用呢？答案自然就是考证了。我见过有很多人是为了考证而考证，特别是那些急于找工作的。但 CKA 对我而言其实更多的是一种鞭策，让自己心里有个小目标，同时能够以运维人员而非开发者的身份去系统的学习使用 k8s。
 
 说回到 CKA，考试时长三个小时，在自己的电脑上开摄像头和共享屏幕，远程监考。考前考官会要求你出示 ID，转动电脑，检查周边环境。考试期间，没有特殊理由头部不能离开屏幕，要让考官全程能够清楚的看到你的答题状态。我这人平时有个习惯，思考问题的时候会不自觉手托下巴，会把嘴挡住，中间就被考官提醒过两次。考题其实并不难，答案基本都能在官方文档上找到，所以要对文档熟悉。考试时长三个小时，共24道题，主要是考动手操作能力。我其实在将近两个小时的时候就做完了23道，剩下的一道关于kubelet bootstrap的，我确实生疏，但所幸时间充裕，我就慢慢悠悠的研究了一个小时，最后按时做完。最终我的得分是96%。我不确定那道题我是否拿到了满分，但考完后心里一直念叨，于是趁热打铁，重新梳理了一下kubelet bootstrap的流程，本文讲解其原理和记录实验过程。
@@ -327,6 +332,30 @@ test-node                 Ready     <none>    3m        v1.11.1
 总结一下 kubelet 的 bootstrap 流程：
 
 ![](/images/2018-09-18-kubelet-bootstrap-process/bootstrap-process.png)
+
+## 如果使用 kubeadm
+
+上面的所有步骤都是假设 kubeadm 不可用，而且 CKA 的考试也不会让你用 kubeadm。但如果是你自己的环境，那么使用 kubeadm 引导一个新的 kubelet 节点是最简单的，因为 kubeadm 会自动帮你干很多事儿。
+
+1. 在 master node 生成一个新的 token
+
+   因为 bootstrap token 有效期默认是24小时，所以当你考虑向 cluster 中新增 node 时，原来创建的 token 可能早已过期，你需要创建一个新的 bootstrap token。
+
+   ```shell
+   $ kubeadm token list
+   TOKEN                     TTL         EXPIRES                USAGES                   DESCRIPTION   EXTRA GROUPS
+   ebpxef.6059low577z0imyv   <invalid>   2018-09-30T05:45:38Z   authentication,signing   <none>        system:bootstrappers:kubeadm:default-node-token
+   $ kubeadm token create
+   mfa708.ppxrbz1g945jj2un
+   ```
+
+2. 在新 worker node 上：
+
+   ```
+   kubeadm join --discovery-token-unsafe-skip-ca-verification --token mfa708.ppxrbz1g945jj2un 10.0.0.18:6443
+   ```
+
+   这里我为了省事儿，没有去验证 master 的 CA 公钥。命令执行后，你就会看到一个新的 node 已经加入 k8s cluster，是不是很简单？
 
 ## 参考文档
 
