@@ -36,6 +36,12 @@ kata-runtime  : 1.3.1
    OCI specs: 1.0.1
 ```
 
+如果你是在虚拟机里安装 kata，最好执行下面的命令检测是否成功安装。因为 kata 实际上会创建虚拟机，所以要求安装 kata 的主机开启 nested virtualization：
+
+```shell
+$ kata-runtime kata-check
+```
+
 ## 与 Docker 集成
 
 本文假设你已经安装了 docker。配置 docker，增加对 kata runtime 的支持。
@@ -99,9 +105,8 @@ sudo tar -xvf crictl-v1.12.0-linux-amd64.tar.gz -C /usr/local/bin/
 # 编译安装 crio，假设你的机器上已经安装了golang
 apt-get install -y libglib2.0-dev libseccomp-dev libgpgme11-dev libdevmapper-dev make git
 go get -d github.com/kubernetes-sigs/cri-o; pushd $GOPATH/src/github.com/kubernetes-sigs/cri-o
-make install.tools && make && make install
+make install.tools && make && make install && make install.config
 # 生成默认的配置文件在 /etc/crio/crio.conf
-make install.config
 popd
 
 # 配置 crio systemd service
@@ -138,12 +143,19 @@ sudo mkdir -p \
   /opt/cni/bin
 curl -SLO https://github.com/containernetworking/plugins/releases/download/v0.7.1/cni-plugins-amd64-v0.7.1.tgz
 sudo tar -xvf cni-plugins-amd64-v0.7.1.tgz -C /opt/cni/bin/
-add-apt-repository -y ppa:projectatomic/ppa && apt-get update && apt-get install -y skopeo-containers
-systemctl restart crio
+add-apt-repository -y ppa:projectatomic/ppa && apt-get update && apt-get install -y skopeo-containers; systemctl restart crio
 ```
 
 ### 初始化 K8S 集群
-假设你已经在 host 上安装了 kubelet(但还没有开始安装整个 k8s 集群)，前几个步骤安装配置了runc和crio，接下来就需要告诉 kubelet 使用 crio (而不是 docker) 创建 pod 中的容器。
+
+安装 kubelet：
+```shell
+curl -sSL https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
+add-apt-repository "deb http://apt.kubernetes.io/ kubernetes-xenial main"
+apt update; apt install -y kubelet=1.11.1-00 kubectl=1.11.1-00 kubeadm=1.11.1-00
+```
+
+现在你已经在 host 上安装了 kubelet(但还没有开始安装整个 k8s 集群)，前几个步骤安装配置了runc和crio，接下来就需要告诉 kubelet 使用 crio (而不是 docker) 创建 pod 中的容器。
 ```shell
 cat <<EOF > /etc/systemd/system/kubelet.service.d/0-crio.conf
 [Service]
@@ -152,7 +164,7 @@ EOF
 systemctl daemon-reload; systemctl restart kubelet
 ```
 
-准备初始化 k8s：
+初始化 k8s：
 ```shell
 # kubeadm init 需要的配置文件
 cat <<EOF > $HOME/kubeadm.conf
@@ -201,7 +213,7 @@ kubectl apply -f https://docs.projectcalico.org/v3.1/getting-started/kubernetes/
 systemctl restart crio kubelet
 ```
 
- 等待一段时间，知道使用 kubectl 命令查看系统 pod 全部 running：
+等待一段时间，直到使用 kubectl 命令查看系统 pod 全部 running：
 
 ```shell
 $ kubectl get po -n kube-system
@@ -216,7 +228,7 @@ kube-proxy-xb5nb                          1/1       Running   0          3m
 kube-scheduler-kata-k8s-master            1/1       Running   0          3m
 ```
 
-可以使用 `crictl` 查看系统创建的容器，因为我们没有用 docker，所以不能用以前常用的 docker 命令了。虽然不能用 docker，但可以使用 `runc` 命令查看容器
+可以使用 `crictl` 查看系统创建的容器，因为我们没有用 docker，所以不能用以前常用的 docker 命令了。虽然不能用 docker，但可以使用 `runc` 命令查看容器：
 
 ```shell
 $ crictl ps
