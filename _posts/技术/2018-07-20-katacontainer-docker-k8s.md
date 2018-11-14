@@ -105,9 +105,8 @@ sudo tar -xvf crictl-v1.12.0-linux-amd64.tar.gz -C /usr/local/bin/
 # 编译安装 crio，假设你的机器上已经安装了golang
 apt-get install -y libglib2.0-dev libseccomp-dev libgpgme11-dev libdevmapper-dev make git
 go get -d github.com/kubernetes-sigs/cri-o; pushd $GOPATH/src/github.com/kubernetes-sigs/cri-o
-make install.tools && make && make install && make install.config
+make install.tools && make && make install && make install.config && popd
 # 生成默认的配置文件在 /etc/crio/crio.conf
-popd
 
 # 配置 crio systemd service
 cat <<EOF > /etc/systemd/system/crio.service
@@ -178,7 +177,7 @@ nodeRegistration:
   criSocket: /var/run/crio/crio.sock
 EOF
 
-# 因为我的 k8s 依然是在 openstack 环境下安装，所以需要 cloud-provider 配置文件。这个跟 kata 没关系
+# 因为我的 k8s 依然是在 openstack 环境下安装，所以需要 cloud-provider 配置文件。这个跟 kata 没关系，你可以不使用，但需要删除上面的 cloudProvider 一行配置。
 cat <<EOF > /etc/kubernetes/cloud-config
 [Global]
 auth-url=http://10.52.0.188/identity
@@ -322,17 +321,17 @@ test-kata-b45ddf6b-dkgv5
 默认情况下，系统中所有 pod 是互通的，所以我们先创建一个普通 pod(使用 runc)，在 pod 里面访问之前创建的 service：
 
 ```shell
-$ kubectl run curl-client --rm -it --image=tutum/curl --restart=Never
+$ kubectl run http-client --rm -it --restart=Never --image=lingxiankong/http-client /bin/sh
 If you don't see a command prompt, try pressing enter.
-root@curl-client:/# curl 10.102.46.239
+/# http -b 10.102.46.239
 test-kata-b45ddf6b-dkgv5
-root@curl-client:/# curl 192.168.0.5:8080
+/# http -b 192.168.0.5:8080
 test-kata-b45ddf6b-dkgv5
-root@curl-client:/# curl 192.168.0.6:8080
+/# http -b 192.168.0.6:8080
 test-kata-b45ddf6b-78xvq
 ```
 
-其中 `192.168.0.5` 和 `192.168.0.6` 是之前创建的 deployment 中的两个 pod 的 IP 地址。这里虽然我们使用不同的 runtime 创建容器(curl-client是runc创建，test-kata是kata-runtime创建)，但默认情况，网络是互通的。
+其中 `192.168.0.5` 和 `192.168.0.6` 是之前创建的 deployment 中的两个 pod 的 IP 地址。这里虽然我们使用不同的 runtime 创建容器(http-client是runc创建，test-kata是kata-runtime创建)，但默认情况，网络是互通的。
 
 创建 network policy 禁用 pod 之间的网络：
 
@@ -350,14 +349,14 @@ spec:
 EOF
 ```
 
-这时在 curl-client pod 里已经不能访问 service 和 pod 了，说明 network policy 生效。再创建一个 network policy 允许 curl-client pod 访问：
+这时在 http-client pod 里已经不能访问 service 和 pod 了，说明 network policy 生效。再创建一个 network policy 允许 http-client pod 访问：
 
 ```shell
 cat <<EOF | kubectl apply -f -
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: allow-curl-client
+  name: allow-http-client
   namespace: default
 spec:
   podSelector:
@@ -369,11 +368,11 @@ spec:
   - from:
     - podSelector:
         matchLabels:
-          run: curl-client
+          run: http-client
 EOF
 ```
 
-然后你会发现 curl-client pod 里又可以成功访问 service 和 pod 了，说明network policy功能也正常。
+然后你会发现 http-client pod 里又可以成功访问 service 和 pod 了，说明network policy功能也正常。
 
 ## 参考文档
 
