@@ -17,9 +17,9 @@ title: 技术改变世界 - 孔令贤的个人博客
 联系方式：
 
 - Weibo：[Lingxian_Kong](http://weibo.com/lingxiankong)
-- Email: <larrykong2016@gmail.com>
+- Email: <lingxian.kong.nz@gmail.com>
 - Linkdin: <https://www.linkedin.com/in/lingxian-kong-a1b23610a>
-- 微信公众号二维码：  
+- 微信公众号二维码：
 
   ![微信公众号二维码](/images/1986-08-29-about-me/my_wechat.jpg)
 
