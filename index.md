@@ -7,4 +7,3 @@ I am learning to build my blog.
 this is fork from konglingxian.
 
 ---
-{% include disqus.html %}
