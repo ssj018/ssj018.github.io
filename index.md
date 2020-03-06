@@ -1,6 +1,6 @@
 ---
 layout: page
-title: 技术改变世界 - 孔令贤的个人博客
+title: 技术改变人生 - 孙双建的个人博客
 ---
 ---
 I am learning to build my blog.
