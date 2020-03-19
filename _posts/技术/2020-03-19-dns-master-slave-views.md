@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Bind View 实现DNS主从同步（Master/Slave)和智能DNS解析
-description: Swarm源码分析
+description: DNS view and Master/Slave
 category: BIND
 ---
 
@@ -16,9 +16,9 @@ category: BIND
 
 ## On Master(host2) configuration：
 
-1. filename：/etc/name.conf
+### filename：/etc/name.conf
 
-- all zone should put in views, so comment  the zone configs and added to /etc/named.conf.local;
+ - all zone should put in views, so comment  the zone configs and added to /etc/named.conf.local;
 
 ```
 options {
@@ -90,11 +90,11 @@ include "/etc/named.root.key";
 
 ```
 
-2. filename:/etc/named.conf.local
+### filename:/etc/named.conf.local
 
-- two acl to defined different clients
-- each view has one databasefile to resolve hosts
-- each view notify to different slave
+ - two acl to defined different clients
+ - each view has one databasefile to resolve hosts
+ - each view notify to different slave
 
 ```
 acl "gds_lan" { 10.1.93.0/24;};
@@ -216,7 +216,7 @@ view "gds" {
 ```
 
 ## on slave (host1 and host3)server
-- cat /etc/named.conf
+ - cat /etc/named.conf
 
 ```
 options {
