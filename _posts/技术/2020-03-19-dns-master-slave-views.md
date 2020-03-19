@@ -1,9 +1,13 @@
 ---
 layout: post
-title: DNS View 实现三地主从同步（Master/Slave)和智能DNS解析
+title: Bind View 实现DNS主从同步（Master/Slave)和智能DNS解析
 description: Swarm源码分析
-category: 技术
+category: BIND
 ---
+
+## 需求
+- 主从同步
+- 不同的客户端，解析相同的域名，要得到不同的IP地址（使用view实现）
 
 ## 框架图概览：
 ![](../../images/2020-03-19-dns-master-slave-views/dns.png)
@@ -85,7 +89,6 @@ include "/etc/named.root.key";
 ```
 
 2. filename:/etc/named.conf.local
-
 -  two acl to defined different clients
 - each view has one databasefile to resolve hosts
 - each view notify to different slave
@@ -207,10 +210,11 @@ view "gds" {
 
 
 };
-
 ```
+
 ## on slave (host1 and host3)server
-   - cat /etc/named.conf
+- cat /etc/named.conf
+
 ```
 options {
 	listen-on port 53 { 127.0.0.1;any; };
@@ -276,6 +280,7 @@ zone "atzweb.com" IN {
 
 include "/etc/named.rfc1912.zones";
 include "/etc/named.root.key";
-
 ```
 
+## 参考文档
+https://kb.isc.org/docs/aa-00851
