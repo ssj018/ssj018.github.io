@@ -89,7 +89,7 @@ include "/etc/named.root.key";
 ```
 
 2. filename:/etc/named.conf.local
--  two acl to defined different clients
+- two acl to defined different clients
 - each view has one databasefile to resolve hosts
 - each view notify to different slave
 
@@ -283,4 +283,4 @@ include "/etc/named.root.key";
 ```
 
 ## 参考文档
-https://kb.isc.org/docs/aa-00851
+[kb.isc.org](https://kb.isc.org/docs/aa-00851)
