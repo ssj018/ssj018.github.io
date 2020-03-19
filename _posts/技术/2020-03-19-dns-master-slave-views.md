@@ -10,7 +10,8 @@ category: 技术
 
 ## On Master(host2) configuration：
 1.  filename：/etc/name.conf
-   -  all zone should put in views, so comment  the zone configs and added to /etc/named.conf.local;
+   -all zone should put in views, so comment  the zone configs and added to /etc/named.conf.local;
+
 ```
 options {
 	listen-on port 53 { any; };
