@@ -88,7 +88,8 @@ include "/etc/named.conf.local";
 include "/etc/named.root.key";
 ```
 
-2. filename:/etc/named.conf.local
+2.  filename:/etc/named.conf.local
+
 - two acl to defined different clients
 - each view has one databasefile to resolve hosts
 - each view notify to different slave
