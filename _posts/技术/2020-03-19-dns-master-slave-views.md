@@ -6,10 +6,11 @@ category: 技术
 ---
 
 ## 框架图概览：
-![../../images/2020-03-19-dns-master-slave-views/dns.png]
+![](../../images/2020-03-19-dns-master-slave-views/dns.png)
 
 ## On Master(host2) configuration：
 1.  filename：/etc/name.conf
+
    -all zone should put in views, so comment  the zone configs and added to /etc/named.conf.local;
 
 ```
