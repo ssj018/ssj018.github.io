@@ -8,10 +8,12 @@ category: 技术
 ## 框架图概览：
 ![](../../images/2020-03-19-dns-master-slave-views/dns.png)
 
+
+
 ## On Master(host2) configuration：
 1.  filename：/etc/name.conf
 
-   -all zone should put in views, so comment  the zone configs and added to /etc/named.conf.local;
+- all zone should put in views, so comment  the zone configs and added to /etc/named.conf.local;
 
 ```
 options {
@@ -82,9 +84,9 @@ include "/etc/named.conf.local";
 include "/etc/named.root.key";
 ```
 2. filename:/etc/named.conf.local;
-        -  two acl to defined different clients
-        - each view has one databasefile to resolve hosts
-        - each view notify to different slave
+-  two acl to defined different clients
+- each view has one databasefile to resolve hosts
+- each view notify to different slave
 ```
 acl "gds_lan" { 10.1.93.0/24;};
 acl "office" {!gds_lan;any;};
@@ -204,7 +206,7 @@ view "gds" {
 };
 
 ```
-## on slave (vhost1 and zue6)server
+## on slave (host1 and host3)server
    - cat /etc/named.conf
 ```
 options {
