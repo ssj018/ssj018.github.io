@@ -15,6 +15,7 @@ category: BIND
 
 
 ## On Master(host2) configuration：
+
 1. filename：/etc/name.conf
 
 - all zone should put in views, so comment  the zone configs and added to /etc/named.conf.local;
@@ -88,6 +89,7 @@ include "/etc/named.conf.local";
 include "/etc/named.root.key";
 
 ```
+
 2. filename:/etc/named.conf.local
 
 - two acl to defined different clients
