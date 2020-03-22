@@ -57,6 +57,5 @@ image: /assets/image/
 
 # disqus 设置
 disqus:
-  shortname: lingxiankong
-
+  shortname: sunshuangjian
 theme: jekyll-theme-cayman
