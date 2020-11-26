@@ -2,7 +2,7 @@
 layout: post
 title: Bind View 实现DNS主从同步（Master/Slave)和智能DNS解析
 description: DNS view and Master/Slave
-category: BIND
+category: Linux
 ---
 
 ## 需求
